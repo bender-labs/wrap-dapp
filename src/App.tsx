@@ -1,26 +1,26 @@
 import React from 'react';
-import logo from './logo.svg';
+import {Web3ReactProvider} from '@web3-react/core';
 import './App.css';
+import {getLibrary} from "./features/ethereum/web3React";
+import connectorsFactory from "./features/ethereum/connectorsFactory";
+import {ethereumConfig} from "./config";
+import WalletConnection from "./components/ethereum/WalletConnection";
+import {SnackbarProvider} from "notistack";
+
+const {connectors, chainIdToNetworkName, supportedChainIds} = connectorsFactory(ethereumConfig);
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    <Web3ReactProvider getLibrary={getLibrary}>
+      <SnackbarProvider autoHideDuration={6000}>
+        <div className="App">
+          <header className="App-header">
+            <WalletConnection connectors={connectors}/>
+          </header>
+        </div>
+        </SnackbarProvider>
+    </Web3ReactProvider>
+);
 }
 
 export default App;
