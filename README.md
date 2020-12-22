@@ -1,3 +1,9 @@
+# Bender Dapp
+
+## Launch dev server
+
+Don't forget to launch the dev server with **HTTPS** enabled : `HTTPS=true yarn start` 
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
