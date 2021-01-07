@@ -12,7 +12,7 @@ const fullChainIdToNetworkName = {
   42: "Kovan"
 }
 
-export type ConnectorsList = Record<string, AbstractConnector>;
+export type ConnectorsList = Record<string, {connector: AbstractConnector, name: string}>;
 
 function getUrl(chainRpcUrls: Record<number, string>, chainId: number): string {
   if (chainRpcUrls[chainId] == null) throw new Error(`Ethereum Rpc Url for chain ${chainId} not found`);
@@ -22,21 +22,27 @@ function getUrl(chainRpcUrls: Record<number, string>, chainId: number): string {
 export default function connectorsFactory(config: EthereumConfig) {
   const supportedChainIds: number[] = Object.keys(config.chainRpcUrls).map(e => parseInt(e));
   const connectors: ConnectorsList = {
-    injected: new InjectedConnector({
-      supportedChainIds: supportedChainIds
-    }),
-    ledger: new LedgerConnector({
-      chainId: config.mainnetChainId,
-      url: getUrl(config.chainRpcUrls, config.mainnetChainId),
-      pollingInterval: config.pollingInterval,
-      requestTimeoutMs: config.pollingInterval
-    })
+    injected: {
+      name: "Browser Extension",
+      connector: new InjectedConnector({
+        supportedChainIds: supportedChainIds
+      })
+    },
+    ledger: {
+      name: "Ledger",
+      connector: new LedgerConnector({
+        chainId: config.mainnetChainId,
+        url: getUrl(config.chainRpcUrls, config.mainnetChainId),
+        pollingInterval: config.pollingInterval,
+        requestTimeoutMs: config.pollingInterval
+      })
+    }
   };
 
   const chainIdToNetworkName: Record<number, string> = Object.fromEntries(
     Object.entries(fullChainIdToNetworkName)
       .map<[number, string]>(([key, value]) => [parseInt(key), value])
-      .filter(([key, value]) => supportedChainIds.includes(key))
+      .filter(([key, _]) => supportedChainIds.includes(key))
   );
 
   return {
