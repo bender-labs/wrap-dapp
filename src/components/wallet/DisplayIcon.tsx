@@ -1,5 +1,5 @@
 import {makeStyles} from "@material-ui/core";
-import {blueGrey, orange, red} from "@material-ui/core/colors";
+import {blueGrey, green, orange, red} from "@material-ui/core/colors";
 import {ConnectionStatus} from "../../features/wallet/connectionStatus";
 import OfflineBoltIcon from "@material-ui/icons/OfflineBolt";
 import ContactlessIcon from "@material-ui/icons/Contactless";
@@ -22,8 +22,8 @@ export default ({status}: { status: ConnectionStatus }) => {
     case ConnectionStatus.CONNECTING:
       return <ContactlessIcon className={classes.statusIcon} style={{color: orange[400]}} />
     case ConnectionStatus.CONNECTED:
-      return <ContactlessIcon className={classes.statusIcon}/>
+      return <ContactlessIcon className={classes.statusIcon} style={{color: green[400]}} />
     case ConnectionStatus.ERRORED:
-      return <ErrorIcon className={classes.statusIcon}  style={{color: red[400]}}/>;
+      return <ErrorIcon className={classes.statusIcon} color="error"/>;
   }
 }

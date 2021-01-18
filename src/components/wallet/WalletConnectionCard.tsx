@@ -10,7 +10,8 @@ type Props = {
   blockchainIcon: ReactNode,
   connectionStatus: ConnectionStatus,
   providers: ProviderList,
-  onSelectedProvider: (key: string) => void
+  onSelectedProvider: (key: string) => void,
+  networkName: string
 }
 
 const useStyles = makeStyles((theme) => ({
@@ -19,7 +20,7 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-export default ({blockchain, blockchainIcon, connectionStatus, providers, onSelectedProvider}: Props) => {
+export default ({blockchain, blockchainIcon, connectionStatus, providers, onSelectedProvider, networkName}: Props) => {
   const classes = useStyles();
   const [isOpen, setOpen] = useState(false);
   const blockchainName = humanizeSupportedBlockchain(blockchain);
@@ -35,7 +36,7 @@ export default ({blockchain, blockchainIcon, connectionStatus, providers, onSele
         <CardHeader
           title={blockchainName}
           avatar={blockchainIcon}
-          subheader={humanizeConnectionStatus(connectionStatus)}/>
+          subheader={humanizeConnectionStatus(connectionStatus, networkName)}/>
         <CardContent className={classes.cardContent}>
           <DisplayIcon status={connectionStatus}/>
         </CardContent>

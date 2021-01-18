@@ -5,14 +5,14 @@ export enum ConnectionStatus {
   ERRORED
 }
 
-export function humanizeConnectionStatus(status: ConnectionStatus): string {
+export function humanizeConnectionStatus(status: ConnectionStatus, networkName?: string): string {
   switch (status) {
     case ConnectionStatus.NOT_CONNECTED:
       return "not connected";
     case ConnectionStatus.CONNECTING:
       return "connecting...";
     case ConnectionStatus.CONNECTED:
-      return "connected";
+      return `connected to ${networkName} network`;
     case ConnectionStatus.ERRORED:
       return "error";
   }

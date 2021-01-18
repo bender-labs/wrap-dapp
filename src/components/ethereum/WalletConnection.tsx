@@ -1,5 +1,4 @@
 import React from "react";
-import {ConnectorsList} from "../../features/ethereum/connectorsFactory";
 import {useWeb3React} from "@web3-react/core";
 import {Web3Provider} from "@ethersproject/providers";
 import {useSnackbar} from "notistack";
@@ -12,13 +11,12 @@ import {
 import WalletConnectionCard from "../wallet/WalletConnectionCard";
 import {ProviderList, SupportedBlockchain} from "../../features/wallet/blockchain";
 import Icon from "./Icon";
+import {useEthereumConfig} from "../config/ConfigContext";
+import connectorsFactory from "../../features/ethereum/connectorsFactory";
 
-interface Props {
-  connectors: ConnectorsList
-}
-
-export default function WalletConnection({connectors}: Props) {
-  const {activate, active} = useWeb3React<Web3Provider>()
+export default function WalletConnection() {
+  const {connectors, chainIdToNetworkName} = connectorsFactory(useEthereumConfig())
+  const {activate, active, account, chainId} = useWeb3React<Web3Provider>()
   const {enqueueSnackbar} = useSnackbar();
 
   const providers: ProviderList =
@@ -46,6 +44,7 @@ export default function WalletConnection({connectors}: Props) {
         connectionStatus={connectionStatus}
         providers={providers}
         onSelectedProvider={onStartConnection}
+        networkName={chainId == null ? "Not Connected" : chainIdToNetworkName[chainId]}
       />
     </React.Fragment>
   );
