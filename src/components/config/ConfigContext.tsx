@@ -10,6 +10,5 @@ const ConfigContext = React.createContext(config);
 
 export function useEthereumConfig() {
   const {ethereumConfig} = React.useContext(ConfigContext);
-
   return ethereumConfig;
 }

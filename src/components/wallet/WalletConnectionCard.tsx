@@ -40,6 +40,7 @@ export default ({blockchain, blockchainIcon, connectionStatus, providers, onSele
         <CardContent className={classes.cardContent}>
           <DisplayIcon status={connectionStatus}/>
         </CardContent>
+        {connectionStatus !== ConnectionStatus.CONNECTED &&
         <CardActions>
           <Button
             variant="contained"
@@ -51,6 +52,7 @@ export default ({blockchain, blockchainIcon, connectionStatus, providers, onSele
             Connect
           </Button>
         </CardActions>
+        }
       </Card>
       <ProviderSelectionDialog
         open={isOpen}
