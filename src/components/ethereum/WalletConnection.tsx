@@ -18,12 +18,11 @@ export default function WalletConnection() {
   const {connectors, chainIdToNetworkName} = connectorsFactory(useEthereumConfig())
   const {activate, active, account, chainId} = useWeb3React<Web3Provider>()
   const {enqueueSnackbar} = useSnackbar();
+  const [connectionStatus, dispatchConnectionAction] = React.useReducer(connectionStatusReducer, connectionStatusInitialState(active));
 
   const providers: ProviderList =
     Object.entries(connectors)
       .map<{ name: string, key: string }>(([key, value]) => ({name: value.name, key}));
-
-  const [connectionStatus, dispatchConnectionAction] = React.useReducer(connectionStatusReducer, connectionStatusInitialState(active));
 
   const onStartConnection = (key: string) => {
     dispatchConnectionAction({type: ConnectionActions.launchingConnection});

@@ -1,13 +1,31 @@
+type tokenMetadata = Record<string, {
+name: string,
+  address: string
+}>
+
 export interface EthereumConfig {
   pollingInterval: number;
   chainRpcUrls: Record<number, string>;
   mainnetChainId: number;
-  tokens: Record<number, Record<string, {
-    name: string,
-    address: string
-  }>>;
-  benderCustodianContracts: Record<number, string>;
+  tokens: Record<number, tokenMetadata>;
+  benderContracts: Record<number, string>;
 }
+
+export interface EthereumConfigForCurrentChain {
+  chainRpcUrl: string;
+  pollingInterval: number;
+  chainId: number;
+  tokens: tokenMetadata;
+  benderContract: string
+}
+
+export const ethereumConfigForCurrentChain = ({chainRpcUrls, pollingInterval, tokens, benderContracts}: EthereumConfig) => (chainId: number): EthereumConfigForCurrentChain => ({
+  chainRpcUrl: chainRpcUrls[chainId],
+  pollingInterval,
+  chainId,
+  tokens: tokens[chainId],
+  benderContract: benderContracts[chainId],
+})
 
 export const ethereumConfig: EthereumConfig = {
   chainRpcUrls: {
@@ -16,9 +34,9 @@ export const ethereumConfig: EthereumConfig = {
   },
   pollingInterval: parseInt(process.env.REACT_APP_ETH_POLLING_INTERVAL || "12000"),
   mainnetChainId: 1,
-  benderCustodianContracts: {
+  benderContracts: {
     1: "",
-    4: "0x89b959F572b7fCd4A48f0878F6bee8Db80fC42eE"
+    4: "0xc7ECdf6694eE77B696b114CAEDd4124aAeF644ba"
   },
   tokens: {
     1: {},

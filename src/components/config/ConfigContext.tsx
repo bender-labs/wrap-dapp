@@ -1,5 +1,5 @@
 import React from "react";
-import {ethereumConfig} from "../../config";
+import {ethereumConfig, ethereumConfigForCurrentChain} from "../../config";
 
 const config = {
   ethereumConfig: ethereumConfig,
