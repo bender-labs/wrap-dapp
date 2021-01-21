@@ -16,7 +16,7 @@ export default function AmountToWrapInput({balance, amountToWrap, decimals, toke
   const error = amountToWrap.gt(balance);
   const helperText = error
     ? `Insufficient Balance of ${formattedBalance}`
-    : `Balance: ${formattedBalance}`;
+    : `Current balance: ${formattedBalance}`;
 
 
   const handleOnChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -35,9 +35,8 @@ export default function AmountToWrapInput({balance, amountToWrap, decimals, toke
       helperText={helperText}
       label="Amount to wrap"
       aria-describedby="standard-weight-helper-text"
-      inputProps={{
-        'aria-label': 'weight',
-        startAdornment: <InputAdornment position="start">{token}</InputAdornment>
+      InputProps={{
+        startAdornment: <InputAdornment position="start">{token}</InputAdornment>,
       }}
     />
   )
