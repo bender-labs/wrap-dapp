@@ -16,6 +16,7 @@ import TokenIcon from "../ethereum/TokenIcon";
 import {EthereumERC20Contract} from "../../features/ethereum/contract";
 import {ethereumConfigForCurrentChain} from "../../config";
 import {BigNumber, ethers} from "ethers";
+import AmountToWrapInput from "./AmountToWrapInput";
 
 type Props = {
   chainId: number;
@@ -36,8 +37,10 @@ export default function SwapCard({chainId, web3Provider, account}: Props) {
   const classes = useStyles();
   const {tokens, benderContract} = ethereumConfigForCurrentChain(useEthereumConfig())(chainId);
   const erc20ContractFor = EthereumERC20Contract.withProvider(web3Provider);
+  const [token, setToken] = useState<string>("");
   const [contract, setContract] = useState<EthereumERC20Contract>();
   const [balance, setBalance] = useState<{balance: ethers.BigNumber, decimals: number}>();
+  const [amountToWrap, setAmountToWrap] = useState<ethers.BigNumber>(ethers.BigNumber.from(0));
   const [allowance, setAllowance] = useState<number>();
 
   const refreshBalance = (c: EthereumERC20Contract) => {
@@ -57,6 +60,7 @@ export default function SwapCard({chainId, web3Provider, account}: Props) {
   const onTokenChosen = (event: React.ChangeEvent<{ value: unknown }>) => {
     event.preventDefault();
     const tokenKey = event.target.value as string;
+    setToken(tokenKey);
     const {address, name} = tokens[tokenKey]
     let ethereumERC20Contract = erc20ContractFor(address, tokenKey, name, benderContract, account);
     setContract(ethereumERC20Contract);
@@ -98,7 +102,7 @@ export default function SwapCard({chainId, web3Provider, account}: Props) {
           <FormHelperText>Only supported token are listed</FormHelperText>
         </FormControl>
         {balance != null && (
-        <h3>Balance: {ethers.utils.formatUnits(balance.balance, balance.decimals)}</h3>
+          <AmountToWrapInput balance={balance.balance} decimals={balance.decimals} token={token} onChange={setAmountToWrap} amountToWrap={amountToWrap} />
         )}
         <br />
       </CardContent>

@@ -1,5 +1,5 @@
 type tokenMetadata = Record<string, {
-name: string,
+  name: string,
   address: string
 }>
 
@@ -19,7 +19,12 @@ export interface EthereumConfigForCurrentChain {
   benderContract: string
 }
 
-export const ethereumConfigForCurrentChain = ({chainRpcUrls, pollingInterval, tokens, benderContracts}: EthereumConfig) => (chainId: number): EthereumConfigForCurrentChain => ({
+export const ethereumConfigForCurrentChain = ({
+                                                chainRpcUrls,
+                                                pollingInterval,
+                                                tokens,
+                                                benderContracts
+                                              }: EthereumConfig) => (chainId: number): EthereumConfigForCurrentChain => ({
   chainRpcUrl: chainRpcUrls[chainId],
   pollingInterval,
   chainId,
