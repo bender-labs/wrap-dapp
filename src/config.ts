@@ -7,7 +7,7 @@ export interface EthereumConfig {
   chainRpcUrls: Record<number, string>;
   mainnetChainId: number;
   tokens: Record<number, tokenConfig>;
-  benderContracts: Record<number, string>;
+  benderContractAddress: Record<number, string>;
 }
 
 export interface EthereumConfigForCurrentChain {
@@ -15,20 +15,20 @@ export interface EthereumConfigForCurrentChain {
   pollingInterval: number;
   chainId: number;
   tokens: tokenConfig;
-  benderContract: string
+  benderContractAddress: string
 }
 
 export const ethereumConfigForCurrentChain = ({
                                                 chainRpcUrls,
                                                 pollingInterval,
                                                 tokens,
-                                                benderContracts
+                                                benderContractAddress
                                               }: EthereumConfig) => (chainId: number): EthereumConfigForCurrentChain => ({
   chainRpcUrl: chainRpcUrls[chainId],
   pollingInterval,
   chainId,
   tokens: tokens[chainId],
-  benderContract: benderContracts[chainId],
+  benderContractAddress: benderContractAddress[chainId],
 })
 
 export const ethereumConfig: EthereumConfig = {
@@ -38,9 +38,9 @@ export const ethereumConfig: EthereumConfig = {
   },
   pollingInterval: parseInt(process.env.REACT_APP_ETH_POLLING_INTERVAL || "12000"),
   mainnetChainId: 1,
-  benderContracts: {
+  benderContractAddress: {
     1: "",
-    4: "0xc7ECdf6694eE77B696b114CAEDd4124aAeF644ba"
+    4: "0x6e3d2fF2C4727B9E7F50D9604D7D661de2Ac2c46"
   },
   tokens: {
     1: {},

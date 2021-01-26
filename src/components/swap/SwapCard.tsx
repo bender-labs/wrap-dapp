@@ -13,7 +13,7 @@ import SwapHorizontalCircleIcon from '@material-ui/icons/SwapHorizontalCircle';
 import {useEthereumConfig} from "../config/ConfigContext";
 import {Web3Provider} from "@ethersproject/providers";
 import TokenIcon from "../ethereum/TokenIcon";
-import {EthereumERC20ContractApi} from "../../features/ethereum/contract";
+import {BenderLabsEthWrappingContractApi, EthereumERC20ContractApi} from "../../features/ethereum/contract";
 import {ethereumConfigForCurrentChain} from "../../config";
 import {ethers} from "ethers";
 import AmountToWrapInput from "./AmountToWrapInput";
@@ -37,8 +37,9 @@ const useStyles = makeStyles((theme) => ({
 
 export default function SwapCard({chainId, web3Provider, account}: Props) {
   const classes = useStyles();
-  const {tokens, benderContract} = ethereumConfigForCurrentChain(useEthereumConfig())(chainId);
+  const {tokens, benderContractAddress} = ethereumConfigForCurrentChain(useEthereumConfig())(chainId);
   const erc20ContractFor = EthereumERC20ContractApi.withProvider(web3Provider);
+  const benderContractFor = BenderLabsEthWrappingContractApi.withProvider(web3Provider);
 
   const [{token, decimals, ethContractAddress, name}, setToken] = useState<Token>(EmptyToken);
   const [contract, setContract] = useState<EthereumERC20ContractApi>();
@@ -46,35 +47,45 @@ export default function SwapCard({chainId, web3Provider, account}: Props) {
   const [amountToWrap, setAmountToWrap] = useState<ethers.BigNumber>(ethers.BigNumber.from(0));
   const [allowance, setAllowance] = useState<ethers.BigNumber>(ethers.BigNumber.from(0));
 
+  const tokenOptions = Object.entries(tokens);
+  const benderContract = benderContractFor(benderContractAddress);
+
   useEffect(() => {
-    if(token === "") return;
-    setContract(erc20ContractFor(ethContractAddress, benderContract, account));
+    if (token === "") return;
+    setContract(erc20ContractFor(ethContractAddress, benderContractAddress, account));
   }, [token]);
 
   useEffect(() => {
-    if(contract == null) return;
+    if (contract == null) return;
     refreshAllowance();
     refreshBalance();
   }, [contract]);
-
   const refreshBalance = () => {
     contract?.balanceOf().then(setBalance);
-  }
 
+  }
   const refreshAllowance = () => {
     contract?.allowance().then(setAllowance);
-  }
 
+  }
   const onTokenChosen = (event: React.ChangeEvent<{ value: unknown }>) => {
     const tokenKey = event.target.value as string;
     setToken({...tokens[tokenKey], token: tokenKey});
-  }
 
+  }
   const onApprove = (amount: ethers.BigNumber) => {
     contract?.approve(amount);
+
+  }
+  const handleOnWrap = (event: React.MouseEvent<HTMLElement>) => {
+    event.preventDefault()
+    onWrap(amountToWrap);
   }
 
-  const tokenOptions = Object.entries(tokens);
+  const onWrap = (amount: ethers.BigNumber) => {
+    benderContract.wrap(amount, ethContractAddress)
+  }
+
   return (
     <Card className={classes.swapContainer}>
       <CardHeader
@@ -116,26 +127,27 @@ export default function SwapCard({chainId, web3Provider, account}: Props) {
             amountToWrap={amountToWrap}
           />
         )}
-        <br />
-      </CardContent>
-      {amountToWrap.gt(0) && (
-      <CardActions>
-        <AllowanceButton
-          currentAllowance={allowance}
-          balanceToWrap={amountToWrap}
-          decimals={decimals}
-          onAuthorize={onApprove}
-          token={token} />
-        <Button
+        <br/>
+        {amountToWrap.gt(0) && (
+          <>
+          <AllowanceButton
+            currentAllowance={allowance}
+            balanceToWrap={amountToWrap}
+            decimals={decimals}
+            onAuthorize={onApprove}
+            token={token}/>
+          <Button
           variant="contained"
           size="small"
           color="primary"
+          onClick={handleOnWrap}
           disabled={false}
-        >
-          SWAP
-        </Button>
-      </CardActions>
-      )}
+          >
+          WRAP
+          </Button>
+          </>
+          )}
+      </CardContent>
     </Card>
   )
 }
