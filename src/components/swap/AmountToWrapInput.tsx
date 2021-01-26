@@ -32,7 +32,6 @@ export default function AmountToWrapInput({balance, amountToWrap, decimals, toke
       value={ethers.utils.formatUnits(amountToWrap, decimals)}
       onChange={handleOnChange}
       helperText={helperText}
-      label="Amount to wrap"
       aria-describedby="standard-weight-helper-text"
       InputProps={{
         startAdornment: <InputAdornment position="start">{token}</InputAdornment>,

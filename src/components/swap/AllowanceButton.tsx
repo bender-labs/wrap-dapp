@@ -24,7 +24,7 @@ export default function AllowanceButton({currentAllowance, balanceToWrap, decima
   const classes = useStyles();
   const amountToAllow = balanceToWrap.sub(currentAllowance);
   const {color, disabled, text} = amountToAllow.lte(0)
-    ? {color: "default", disabled: true, text: `Allowed ${formatAmount(token, currentAllowance, decimals)}`}
+    ? {color: "primary", disabled: true, text: `Allowed ${formatAmount(token, currentAllowance, decimals)}`}
     : {color: "secondary", disabled: false, text: `Allow ${formatAmount(token, amountToAllow, decimals)}`}
 
   const handleOnClick = (event: React.MouseEvent<HTMLElement>) => {
