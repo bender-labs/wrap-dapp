@@ -1,14 +1,12 @@
 import {Web3Provider} from '@ethersproject/providers';
 import {ethers} from "ethers";
 
-export class EthereumERC20Contract {
+export class EthereumERC20ContractApi {
 
-  constructor(contract: ethers.Contract, token: string, tokenName: string, benderContractAddress: string, accountAddress: string) {
+  constructor(contract: ethers.Contract, benderContractAddress: string, accountAddress: string) {
     this.contract = contract;
     this.benderContractAddress = benderContractAddress;
-    this._tokenName = tokenName;
     this.accountAddress = accountAddress;
-    this._token = token;
   }
 
   async balanceOf() {
@@ -19,30 +17,18 @@ export class EthereumERC20Contract {
     return this.contract.allowance(this.accountAddress, this.benderContractAddress);
   }
 
-  async decimals() {
-    return this.contract.decimals();
+  async approve(amount: ethers.BigNumber) {
+    return this.contract.approve(this.benderContractAddress, amount);
   }
 
-  tokenName() {
-    return this._tokenName;
-  }
-
-  token() {
-    return this._token;
-  }
-
-  private readonly _tokenName: string;
-  private readonly _token: string;
   private readonly contract: ethers.Contract;
   private readonly benderContractAddress: string;
   private readonly accountAddress: string;
 
   static withProvider(provider: Web3Provider) {
-    return (contractAddress: string, token: string, tokenName: string, benderContractAddress: string, accountAddress: string) =>
-      new EthereumERC20Contract(
-        new ethers.Contract(contractAddress, new ethers.utils.Interface(ERC20_ABI), provider),
-        token,
-        tokenName,
+    return (contractAddress: string, benderContractAddress: string, accountAddress: string) =>
+      new EthereumERC20ContractApi(
+        new ethers.Contract(contractAddress, new ethers.utils.Interface(ERC20_ABI), provider.getSigner()),
         benderContractAddress,
         accountAddress
       )

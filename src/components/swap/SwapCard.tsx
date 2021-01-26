@@ -1,4 +1,4 @@
-import React, {useState} from "react"
+import React, {useEffect, useState} from "react"
 import {
   Button,
   Card,
@@ -13,10 +13,12 @@ import SwapHorizontalCircleIcon from '@material-ui/icons/SwapHorizontalCircle';
 import {useEthereumConfig} from "../config/ConfigContext";
 import {Web3Provider} from "@ethersproject/providers";
 import TokenIcon from "../ethereum/TokenIcon";
-import {EthereumERC20Contract} from "../../features/ethereum/contract";
+import {EthereumERC20ContractApi} from "../../features/ethereum/contract";
 import {ethereumConfigForCurrentChain} from "../../config";
-import {BigNumber, ethers} from "ethers";
+import {ethers} from "ethers";
 import AmountToWrapInput from "./AmountToWrapInput";
+import {EmptyToken, Token} from "../../features/swap/token";
+import AllowanceButton from "./AllowanceButton";
 
 type Props = {
   chainId: number;
@@ -36,36 +38,40 @@ const useStyles = makeStyles((theme) => ({
 export default function SwapCard({chainId, web3Provider, account}: Props) {
   const classes = useStyles();
   const {tokens, benderContract} = ethereumConfigForCurrentChain(useEthereumConfig())(chainId);
-  const erc20ContractFor = EthereumERC20Contract.withProvider(web3Provider);
-  const [token, setToken] = useState<string>("");
-  const [contract, setContract] = useState<EthereumERC20Contract>();
-  const [balance, setBalance] = useState<{balance: ethers.BigNumber, decimals: number}>();
-  const [amountToWrap, setAmountToWrap] = useState<ethers.BigNumber>(ethers.BigNumber.from(0));
-  const [allowance, setAllowance] = useState<number>();
+  const erc20ContractFor = EthereumERC20ContractApi.withProvider(web3Provider);
 
-  const refreshBalance = (c: EthereumERC20Contract) => {
-    Promise.all([
-      c.decimals(),
-      c.balanceOf()
-    ]).then(([decimals, balance]) => {
-      setBalance({decimals, balance});
-      console.log(decimals, balance)
-    });
+  const [{token, decimals, ethContractAddress, name}, setToken] = useState<Token>(EmptyToken);
+  const [contract, setContract] = useState<EthereumERC20ContractApi>();
+  const [balance, setBalance] = useState<ethers.BigNumber>();
+  const [amountToWrap, setAmountToWrap] = useState<ethers.BigNumber>(ethers.BigNumber.from(0));
+  const [allowance, setAllowance] = useState<ethers.BigNumber>(ethers.BigNumber.from(0));
+
+  useEffect(() => {
+    if(token === "") return;
+    setContract(erc20ContractFor(ethContractAddress, benderContract, account));
+  }, [token]);
+
+  useEffect(() => {
+    if(contract == null) return;
+    refreshAllowance();
+    refreshBalance();
+  }, [contract]);
+
+  const refreshBalance = () => {
+    contract?.balanceOf().then(setBalance);
   }
 
-  const refreshAllowance = (c: EthereumERC20Contract) => {
-    c.allowance().then(setAllowance);
+  const refreshAllowance = () => {
+    contract?.allowance().then(setAllowance);
   }
 
   const onTokenChosen = (event: React.ChangeEvent<{ value: unknown }>) => {
-    event.preventDefault();
     const tokenKey = event.target.value as string;
-    setToken(tokenKey);
-    const {address, name} = tokens[tokenKey]
-    let ethereumERC20Contract = erc20ContractFor(address, tokenKey, name, benderContract, account);
-    setContract(ethereumERC20Contract);
-    refreshBalance(ethereumERC20Contract);
-    refreshAllowance(ethereumERC20Contract);
+    setToken({...tokens[tokenKey], token: tokenKey});
+  }
+
+  const onApprove = (amount: ethers.BigNumber) => {
+    contract?.approve(amount);
   }
 
   const tokenOptions = Object.entries(tokens);
@@ -81,7 +87,7 @@ export default function SwapCard({chainId, web3Provider, account}: Props) {
             Select the token you want to swap
           </InputLabel>
           <Select
-            value={contract?.token() || ""}
+            value={token}
             onChange={onTokenChosen}
             displayEmpty
             inputProps={{
@@ -102,19 +108,24 @@ export default function SwapCard({chainId, web3Provider, account}: Props) {
           <FormHelperText>Only supported token are listed</FormHelperText>
         </FormControl>
         {balance != null && (
-          <AmountToWrapInput balance={balance.balance} decimals={balance.decimals} token={token} onChange={setAmountToWrap} amountToWrap={amountToWrap} />
+          <AmountToWrapInput
+            balance={balance}
+            decimals={decimals}
+            token={token}
+            onChange={setAmountToWrap}
+            amountToWrap={amountToWrap}
+          />
         )}
         <br />
       </CardContent>
+      {amountToWrap.gt(0) && (
       <CardActions>
-        <Button
-          variant="contained"
-          size="small"
-          color="primary"
-          disabled={false}
-        >
-          AUTHORIZE
-        </Button>
+        <AllowanceButton
+          currentAllowance={allowance}
+          balanceToWrap={amountToWrap}
+          decimals={decimals}
+          onAuthorize={onApprove}
+          token={token} />
         <Button
           variant="contained"
           size="small"
@@ -124,6 +135,7 @@ export default function SwapCard({chainId, web3Provider, account}: Props) {
           SWAP
         </Button>
       </CardActions>
+      )}
     </Card>
   )
 }

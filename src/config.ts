@@ -1,13 +1,12 @@
-type tokenMetadata = Record<string, {
-  name: string,
-  address: string
-}>
+import {TokenMetadata} from "./features/swap/token";
+
+type tokenConfig = Record<string, TokenMetadata>
 
 export interface EthereumConfig {
   pollingInterval: number;
   chainRpcUrls: Record<number, string>;
   mainnetChainId: number;
-  tokens: Record<number, tokenMetadata>;
+  tokens: Record<number, tokenConfig>;
   benderContracts: Record<number, string>;
 }
 
@@ -15,7 +14,7 @@ export interface EthereumConfigForCurrentChain {
   chainRpcUrl: string;
   pollingInterval: number;
   chainId: number;
-  tokens: tokenMetadata;
+  tokens: tokenConfig;
   benderContract: string
 }
 
@@ -48,7 +47,8 @@ export const ethereumConfig: EthereumConfig = {
     4: {
       'FAU': {
         name: "Token Faucet",
-        address: "0xFab46E002BbF0b4509813474841E0716E6730136"
+        decimals: 18,
+        ethContractAddress: "0xFab46E002BbF0b4509813474841E0716E6730136"
       }
     }
   }

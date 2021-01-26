@@ -1,6 +1,7 @@
 import {InputAdornment, TextField} from "@material-ui/core";
 import {ethers} from "ethers";
 import React from "react";
+import {formatAmount} from "../../features/ethereum/token";
 
 type Props = {
   balance: ethers.BigNumber;
@@ -12,12 +13,10 @@ type Props = {
 
 export default function AmountToWrapInput({balance, amountToWrap, decimals, token, onChange}: Props) {
 
-  const formattedBalance = `${token} ${ethers.utils.formatUnits(balance, decimals)}`;
   const error = amountToWrap.gt(balance);
-  const helperText = error
-    ? `Insufficient Balance of ${formattedBalance}`
-    : `Current balance: ${formattedBalance}`;
-
+  const helperText = amountToWrap.gt(balance)
+    ? `Insufficient Balance of ${(formatAmount(token, balance, decimals))}`
+    : `Current balance: ${(formatAmount(token, balance, decimals))}`;
 
   const handleOnChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     event.preventDefault();
