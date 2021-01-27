@@ -43,7 +43,7 @@ export class BenderLabsEthWrappingContractApi {
     this._contract = contract;
   }
 
-  async wrap(amount: ethers.BigNumber, erc20ContractAddress: string, destinationTezosAddress: string = "tz1abc") {
+  async wrap(amount: ethers.BigNumber, erc20ContractAddress: string, destinationTezosAddress: string = "tz1exrEuATYhFmVSXhkCkkFzY72T75hpsthj") {
     let overrides = {
       gasLimit: 60000
     };
