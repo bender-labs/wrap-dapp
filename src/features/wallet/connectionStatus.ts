@@ -8,7 +8,7 @@ export enum ConnectionStatus {
 export function humanizeConnectionStatus(status: ConnectionStatus, networkName?: string): string {
   switch (status) {
     case ConnectionStatus.NOT_CONNECTED:
-      return "not connected";
+      return "please connect your wallet";
     case ConnectionStatus.CONNECTING:
       return "connecting...";
     case ConnectionStatus.CONNECTED:

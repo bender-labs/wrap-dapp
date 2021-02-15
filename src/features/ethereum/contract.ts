@@ -47,7 +47,7 @@ export class BenderLabsEthWrappingContractApi {
     let overrides = {
       gasLimit: 60000
     };
-    return this._contract.wrap(amount, erc20ContractAddress, destinationTezosAddress, overrides);
+    return this._contract.wrapERC20(erc20ContractAddress, amount, destinationTezosAddress, overrides);
   }
 
   private _contract: ethers.Contract;

@@ -1,26 +1,29 @@
 import React from 'react';
 import {Web3ReactProvider} from '@web3-react/core';
 import './App.css';
-import {getLibrary} from "./features/ethereum/web3React";
-
+import {getLibrary as getEthLibrary} from "./features/ethereum/web3React";
+import {getLibrary as getTezosLibrary} from "./features/tezos/beacon";
+import TezosProvider from "./components/tezos/TezosContext";
 import {SnackbarProvider} from "notistack";
 import {Box, Container, CssBaseline} from "@material-ui/core";
 import AppBar from "./screens/AppBar";
-import Swap from "./screens/Swap";
+import Wrap from "./screens/Wrap";
 
 
 function App() {
   return (
-    <Web3ReactProvider getLibrary={getLibrary}>
+    <Web3ReactProvider getLibrary={getEthLibrary}>
+        <TezosProvider getLibrary={getTezosLibrary}>
       <SnackbarProvider autoHideDuration={6000}>
         <CssBaseline/>
-        <Container maxWidth="lg">
+        <Container maxWidth="md">
           <AppBar/>
           <Box mt={4}>
-            <Swap/>
+            <Wrap/>
           </Box>
         </Container>
       </SnackbarProvider>
+        </TezosProvider>
     </Web3ReactProvider>
   );
 }

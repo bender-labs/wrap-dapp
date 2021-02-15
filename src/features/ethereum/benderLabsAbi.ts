@@ -1,4 +1,4 @@
-export default [
+export default[
   {
     "inputs": [],
     "payable": false,
@@ -29,6 +29,68 @@ export default [
       }
     ],
     "name": "ChangedThreshold",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "user",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "token",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "tezosDestinationAddress",
+        "type": "string"
+      }
+    ],
+    "name": "ERC20WrapAsked",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "user",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "token",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "tokenId",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "tezosDestinationAddress",
+        "type": "string"
+      }
+    ],
+    "name": "ERC721WrapAsked",
     "type": "event"
   },
   {
@@ -68,37 +130,6 @@ export default [
       }
     ],
     "name": "RemovedOwner",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": false,
-        "internalType": "address",
-        "name": "user",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "amount",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "address",
-        "name": "token",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "string",
-        "name": "tezosDestinationAddress",
-        "type": "string"
-      }
-    ],
-    "name": "WrapAsked",
     "type": "event"
   },
   {
@@ -341,14 +372,14 @@ export default [
     "constant": false,
     "inputs": [
       {
+        "internalType": "address",
+        "name": "token",
+        "type": "address"
+      },
+      {
         "internalType": "uint256",
         "name": "amount",
         "type": "uint256"
-      },
-      {
-        "internalType": "address",
-        "name": "contractAddress",
-        "type": "address"
       },
       {
         "internalType": "string",
@@ -356,7 +387,38 @@ export default [
         "type": "string"
       }
     ],
-    "name": "wrap",
+    "name": "wrapERC20",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "success",
+        "type": "bool"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "token",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "tokenId",
+        "type": "uint256"
+      },
+      {
+        "internalType": "string",
+        "name": "tezosAddress",
+        "type": "string"
+      }
+    ],
+    "name": "wrapERC721",
     "outputs": [
       {
         "internalType": "bool",
@@ -387,9 +449,9 @@ export default [
         "type": "bytes"
       },
       {
-        "internalType": "bytes",
-        "name": "tezosTransaction",
-        "type": "bytes"
+        "internalType": "string",
+        "name": "tezosOperation",
+        "type": "string"
       },
       {
         "internalType": "bytes",
@@ -428,9 +490,9 @@ export default [
         "type": "bytes"
       },
       {
-        "internalType": "bytes",
-        "name": "tezosTransaction",
-        "type": "bytes"
+        "internalType": "string",
+        "name": "tezosOperation",
+        "type": "string"
       }
     ],
     "name": "encodeTransactionData",
@@ -464,9 +526,9 @@ export default [
         "type": "bytes"
       },
       {
-        "internalType": "bytes",
-        "name": "tezosTransaction",
-        "type": "bytes"
+        "internalType": "string",
+        "name": "tezosOperation",
+        "type": "string"
       }
     ],
     "name": "getTransactionHash",
@@ -485,12 +547,12 @@ export default [
     "constant": true,
     "inputs": [
       {
-        "internalType": "bytes",
-        "name": "tezosTransaction",
-        "type": "bytes"
+        "internalType": "string",
+        "name": "tezosOperation",
+        "type": "string"
       }
     ],
-    "name": "isTezosTransactionProcessed",
+    "name": "isTezosOperationProcessed",
     "outputs": [
       {
         "internalType": "bool",
@@ -500,6 +562,42 @@ export default [
     ],
     "payable": false,
     "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      },
+      {
+        "internalType": "bytes",
+        "name": "",
+        "type": "bytes"
+      }
+    ],
+    "name": "onERC721Received",
+    "outputs": [
+      {
+        "internalType": "bytes4",
+        "name": "",
+        "type": "bytes4"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "nonpayable",
     "type": "function"
   }
 ];

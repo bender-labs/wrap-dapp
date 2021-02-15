@@ -22,6 +22,7 @@ export default function WalletConnection() {
         providers={[{name: "NOT IMPLEMENTED", key: "NOT_IMPLEMENTED"}]}
         onSelectedProvider={key => alert(key)}
         networkName="NOT IMPLEMENTED"
+        account={null}
       />
     </React.Fragment>
   );

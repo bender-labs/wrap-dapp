@@ -40,7 +40,7 @@ export const ethereumConfig: EthereumConfig = {
   mainnetChainId: 1,
   benderContractAddress: {
     1: "",
-    4: "0x6e3d2fF2C4727B9E7F50D9604D7D661de2Ac2c46"
+    4: "0x9A0bfC0Aa91B58Ae07E2fFdfAb29904B7513a917"
   },
   tokens: {
     1: {},
