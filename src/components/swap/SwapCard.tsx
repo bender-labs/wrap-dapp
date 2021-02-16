@@ -1,9 +1,8 @@
 import React, {useEffect, useState} from "react"
 import {Button, Card, CardContent, makeStyles, Step, StepContent, StepLabel, Stepper} from "@material-ui/core";
-import {useEthereumConfig} from "../config/ConfigContext";
+import {useConfig} from "../config/ConfigContext";
 import {Web3Provider} from "@ethersproject/providers";
-import {BenderLabsEthWrappingContractApi, EthereumERC20ContractApi} from "../../features/ethereum/contract";
-import {ethereumConfigForCurrentChain} from "../../config";
+import {CustodianContractApi, EthereumERC20ContractApi} from "../../features/ethereum/contract";
 import {ethers} from "ethers";
 import AmountToWrapInput from "./AmountToWrapInput";
 import {EmptyToken, Token} from "../../features/swap/token";
@@ -24,9 +23,10 @@ const useStyles = makeStyles((theme) => ({
 
 export default function SwapCard({chainId, web3Provider, account}: Props) {
   const classes = useStyles();
-  const {tokens, benderContractAddress} = ethereumConfigForCurrentChain(useEthereumConfig())(chainId);
-  const erc20ContractFor = EthereumERC20ContractApi.withProvider(web3Provider);
-  const benderContractFor = BenderLabsEthWrappingContractApi.withProvider(web3Provider);
+  const {tokens, ethereum: {custodianContractAddress, custodianContractAbi}} = useConfig();
+  const benderContract = CustodianContractApi.withProvider(web3Provider).forContract(custodianContractAddress, custodianContractAbi);
+
+  const erc20Api = EthereumERC20ContractApi.withProvider(web3Provider);
 
   const [{token, decimals, ethContractAddress}, setToken] = useState<Token>(EmptyToken);
   const [contract, setContract] = useState<EthereumERC20ContractApi>();
@@ -35,11 +35,10 @@ export default function SwapCard({chainId, web3Provider, account}: Props) {
   const [allowance, setAllowance] = useState<ethers.BigNumber>(ethers.BigNumber.from(0));
   const [step, setCurrentStep] = useState<number>(0);
 
-  const benderContract = benderContractFor(benderContractAddress);
 
   useEffect(() => {
     if (token === "") return;
-    setContract(erc20ContractFor(ethContractAddress, benderContractAddress, account));
+    setContract(erc20Api.forContract(ethContractAddress, custodianContractAddress, account));
   }, [token]);
 
   useEffect(() => {

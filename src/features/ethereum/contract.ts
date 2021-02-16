@@ -1,7 +1,6 @@
 import {Web3Provider} from '@ethersproject/providers';
 import {ethers} from "ethers";
 import ERC20_ABI from "./erc20Abi";
-import BENDER_ABI from "./benderLabsAbi";
 
 export class EthereumERC20ContractApi {
 
@@ -28,16 +27,18 @@ export class EthereumERC20ContractApi {
   private readonly accountAddress: string;
 
   static withProvider(provider: Web3Provider) {
-    return (contractAddress: string, benderContractAddress: string, accountAddress: string) =>
-      new EthereumERC20ContractApi(
-        new ethers.Contract(contractAddress, new ethers.utils.Interface(ERC20_ABI), provider.getSigner()),
-        benderContractAddress,
-        accountAddress
-      )
+    return {
+      forContract: (contractAddress: string, benderContractAddress: string, accountAddress: string) =>
+        new EthereumERC20ContractApi(
+          new ethers.Contract(contractAddress, new ethers.utils.Interface(ERC20_ABI), provider.getSigner()),
+          benderContractAddress,
+          accountAddress
+        )
+    }
   }
 }
 
-export class BenderLabsEthWrappingContractApi {
+export class CustodianContractApi {
 
   constructor(contract: ethers.Contract) {
     this._contract = contract;
@@ -53,9 +54,10 @@ export class BenderLabsEthWrappingContractApi {
   private _contract: ethers.Contract;
 
   static withProvider(provider: Web3Provider) {
-    return (benderContractAddress: string) =>
-      new BenderLabsEthWrappingContractApi(
-        new ethers.Contract(benderContractAddress, new ethers.utils.Interface(BENDER_ABI), provider.getSigner())
-      );
+    return {
+      forContract: (contractAddress: string, abi: Array<object>) => new CustodianContractApi(
+        new ethers.Contract(contractAddress, new ethers.utils.Interface(abi), provider.getSigner())
+      )
+    }
   }
 }

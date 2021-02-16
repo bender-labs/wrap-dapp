@@ -1,6 +1,12 @@
-export default[
+export default [
   {
-    "inputs": [],
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_administrator",
+        "type": "address"
+      }
+    ],
     "payable": false,
     "stateMutability": "nonpayable",
     "type": "constructor"
@@ -279,21 +285,6 @@ export default[
     "type": "function"
   },
   {
-    "constant": true,
-    "inputs": [],
-    "name": "nonce",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
     "constant": false,
     "inputs": [
       {
@@ -347,18 +338,13 @@ export default[
     "constant": false,
     "inputs": [
       {
-        "internalType": "address",
-        "name": "_administrator",
-        "type": "address"
-      },
-      {
         "internalType": "address[]",
-        "name": "_owners",
+        "name": "owners",
         "type": "address[]"
       },
       {
         "internalType": "uint256",
-        "name": "_threshold",
+        "name": "threshold",
         "type": "uint256"
       }
     ],

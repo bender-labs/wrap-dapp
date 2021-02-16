@@ -4,6 +4,7 @@ import './App.css';
 import {getLibrary as getEthLibrary} from "./features/ethereum/web3React";
 import {getLibrary as getTezosLibrary} from "./features/tezos/beacon";
 import TezosProvider from "./components/tezos/TezosContext";
+import ConfigProvider from "./components/config/ConfigContext";
 import {SnackbarProvider} from "notistack";
 import {Box, Container, CssBaseline} from "@material-ui/core";
 import AppBar from "./screens/AppBar";
@@ -12,19 +13,21 @@ import Wrap from "./screens/Wrap";
 
 function App() {
   return (
-    <Web3ReactProvider getLibrary={getEthLibrary}>
+    <ConfigProvider>
+      <Web3ReactProvider getLibrary={getEthLibrary}>
         <TezosProvider getLibrary={getTezosLibrary}>
-      <SnackbarProvider autoHideDuration={6000}>
-        <CssBaseline/>
-        <Container maxWidth="md">
-          <AppBar/>
-          <Box mt={4}>
-            <Wrap/>
-          </Box>
-        </Container>
-      </SnackbarProvider>
+          <SnackbarProvider autoHideDuration={6000}>
+            <CssBaseline/>
+            <Container maxWidth="md">
+              <AppBar/>
+              <Box mt={4}>
+                <Wrap/>
+              </Box>
+            </Container>
+          </SnackbarProvider>
         </TezosProvider>
-    </Web3ReactProvider>
+      </Web3ReactProvider>
+    </ConfigProvider>
   );
 }
 

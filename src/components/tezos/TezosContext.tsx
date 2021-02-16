@@ -4,20 +4,17 @@ import React, {Dispatch, DispatchWithoutAction, PropsWithChildren, ReactChildren
 import {
   DAppClient,
   NetworkType,
-  PermissionRequestInput,
-  PermissionResponseOutput
+  PermissionResponseOutput,
+  RequestPermissionInput
 } from "@airgap/beacon-sdk";
 import {tap} from "../../features/tap";
-import {network} from "../../../../../example/web3-react/example/connectors";
 
-enum StateStatus {
+export enum ConnectionStatus {
   UNINITIALIZED,
   CONNECTED
 }
 
-type State =
-  | {status: StateStatus.UNINITIALIZED, library: DAppClient}
-  | {status: StateStatus.CONNECTED, library: DAppClient, account: string, network: NetworkType}
+type State = {status: ConnectionStatus, library: DAppClient, account?: string, network?: NetworkType}
 
 enum ActionType {
   CONNECTED
@@ -27,17 +24,18 @@ type Action =
   | {type: ActionType.CONNECTED, network: NetworkType}
 
 type Effects = {
-  activate: (request: PermissionRequestInput) => void
+  activate: (request: RequestPermissionInput) => void
 }
 
 function reducer(state: State, {type, ...payload}: Action): State {
   switch (type) {
     case ActionType.CONNECTED: {
+      console.log("connected");
       const {network} = payload;
       return ({
         ...state,
         network,
-        status: StateStatus.CONNECTED,
+        status: ConnectionStatus.CONNECTED,
         account: "lolilol"
       });
     }
@@ -46,11 +44,11 @@ function reducer(state: State, {type, ...payload}: Action): State {
 
 function _activate(dispatch: Dispatch<Action>) {
   return (client: DAppClient) =>
-    async (request: PermissionRequestInput) => {
+    async (request: RequestPermissionInput) => {
       await client
         .requestPermissions(request)
         .then(tap(
-          (output: PermissionResponseOutput) => dispatch({type: ActionType.CONNECTED, network: request.network.type})
+          (output: PermissionResponseOutput) => dispatch({type: ActionType.CONNECTED, network: request.network?.type!})
         ));
     }
 }
@@ -63,7 +61,7 @@ type Props = {
 
 export default function Provider({getLibrary, children}: PropsWithChildren<Props>) {
   const library = useMemo(() => getLibrary(), []);
-  const [state, dispatch] = React.useReducer(reducer, {status: StateStatus.UNINITIALIZED, library});
+  const [state, dispatch] = React.useReducer(reducer, {status: ConnectionStatus.UNINITIALIZED, library});
   const activate = useCallback(_activate(dispatch)(library), []);
 
   return (

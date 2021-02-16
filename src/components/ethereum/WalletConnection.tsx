@@ -17,11 +17,12 @@ type Props = {
   activate: (connector: AbstractConnector, onError?: (((error: Error) => void) | undefined), throwErrors?: (boolean | undefined)) => Promise<void>,
   active: boolean,
   account: string | null | undefined,
-  chainId: number | undefined
+  chainId: undefined | number
 }
 
 export default function WalletConnection({activate, active, account, chainId}: Props) {
-  const {connectors, chainIdToNetworkName} = connectorsFactory(useEthereumConfig())
+  let ethereumConfig = useEthereumConfig();
+  const connectors = connectorsFactory(ethereumConfig)
 
   const {enqueueSnackbar} = useSnackbar();
   const [connectionStatus, dispatchConnectionAction] = React.useReducer(connectionStatusReducer, connectionStatusInitialState(active));
@@ -32,7 +33,7 @@ export default function WalletConnection({activate, active, account, chainId}: P
 
   const onStartConnection = (key: string) => {
     dispatchConnectionAction({type: ConnectionActions.launchingConnection});
-    activate(connectors[key].connector, _ => null, true)
+    activate(connectors[key as keyof typeof connectors].connector, _ => null, true)
       .then(() => dispatchConnectionAction({type: ConnectionActions.connectionSuccessful}))
       .catch(error => {
         const {message, variant} = errorMessage(error);
@@ -49,7 +50,7 @@ export default function WalletConnection({activate, active, account, chainId}: P
         connectionStatus={connectionStatus}
         providers={providers}
         onSelectedProvider={onStartConnection}
-        networkName={chainId == null ? "Not Connected" : chainIdToNetworkName[chainId]}
+        networkName={ethereumConfig.networkName}
         account={account}
       />
     </React.Fragment>
