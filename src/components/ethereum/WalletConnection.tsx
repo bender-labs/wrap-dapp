@@ -17,10 +17,9 @@ type Props = {
   activate: (connector: AbstractConnector, onError?: (((error: Error) => void) | undefined), throwErrors?: (boolean | undefined)) => Promise<void>,
   active: boolean,
   account: string | null | undefined,
-  chainId: undefined | number
 }
 
-export default function WalletConnection({activate, active, account, chainId}: Props) {
+export default function WalletConnection({activate, active, account}: Props) {
   let ethereumConfig = useEthereumConfig();
   const connectors = connectorsFactory(ethereumConfig)
 

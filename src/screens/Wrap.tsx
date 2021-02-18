@@ -7,7 +7,7 @@ import {useWeb3React} from "@web3-react/core";
 import {Web3Provider} from "@ethersproject/providers";
 import WrapEmptyStateCard from "../components/swap/WrapEmptyStateCard";
 import React, {useState} from "react";
-import {useTezosContext} from "../components/tezos/TezosContext";
+import {ConnectionStatus, useTezosContext} from "../components/tezos/TezosContext";
 
 enum TabValues {
   WRAP,
@@ -26,8 +26,8 @@ const useStyles = makeStyles(theme => ({
 
 export default () => {
   const classes = useStyles();
-  const {activate: ethActivate, active: ethActive, library: ethLibrary, account: ethAccount, chainId: ethChainId} = useWeb3React<Web3Provider>();
-  const {activate: tezosActivate, network: tezosNetwork, status: tezosConnectionStatus, library: tezosLibrary, account: tezosAccount} = useTezosContext();
+  const {activate: ethActivate, active: ethActive, library: ethLibrary, account: ethAccount} = useWeb3React<Web3Provider>();
+  const {activate: tzActivate, status: tzConnectionStatus, library: tzLibrary, account: tzAccount} = useTezosContext();
   const [activeTab, setActiveTab] = useState<TabValues>(TabValues.WRAP)
 
   const handleActiveTab = (event: React.ChangeEvent<{}>, newValue: TabValues) => {
@@ -37,13 +37,13 @@ export default () => {
   return (
     <Grid container spacing={2} direction="column">
       <Grid item>
-        <EthWalletConnection account={ethAccount} activate={ethActivate} active={ethActive} chainId={ethChainId}/>
+        <EthWalletConnection account={ethAccount} activate={ethActivate} active={ethActive} />
       </Grid>
       <Grid item>
-        <TezosWalletConnection account={tezosAccount} activate={tezosActivate} status={tezosConnectionStatus} network={tezosNetwork}/>
+        <TezosWalletConnection account={tzAccount} activate={tzActivate} status={tzConnectionStatus} />
       </Grid>
       <Grid item container>
-        {!ethActive || ethChainId == null || ethLibrary == null || ethAccount == null
+        {!ethActive || ethLibrary == null || ethAccount == null || tzConnectionStatus === ConnectionStatus.UNINITIALIZED || tzAccount == null
           ? <WrapEmptyStateCard/>
           : <>
             <Paper className={classes.appContainer}>
@@ -59,7 +59,7 @@ export default () => {
                 <Tab value={TabValues.BURN} label={<Typography variant="subtitle1">TEZOS <ArrowForwardIcon
                   className={classes.wrapIcon}/> ETH</Typography>}/>
               </Tabs>
-              {activeTab === TabValues.WRAP && <SwapCard web3Provider={ethLibrary} chainId={ethChainId} account={ethAccount}/>}
+              {activeTab === TabValues.WRAP && <SwapCard tzAccount={tzAccount} web3Provider={ethLibrary} ethAccount={ethAccount} beaconWallet={tzLibrary}/>}
             </Paper>
           </>
         }

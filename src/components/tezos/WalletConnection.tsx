@@ -3,7 +3,7 @@ import {makeStyles} from "@material-ui/core";
 import WalletConnectionCard from "../wallet/WalletConnectionCard";
 import {SupportedBlockchain} from "../../features/wallet/blockchain";
 import Icon from "./Icon";
-import {NetworkType, RequestPermissionInput} from "@airgap/beacon-sdk";
+import {RequestPermissionInput} from "@airgap/beacon-sdk";
 import {
   ConnectionActions,
   connectionStatusInitialState,
@@ -20,11 +20,10 @@ type Props = {
   account: undefined | string;
   activate: (args: RequestPermissionInput) => Promise<string>;
   status: TezosConnectionStatus;
-  network: undefined|NetworkType;
 }
 
-export default function WalletConnection({account,activate,status,network} : Props) {
-  const {rpcUrl, networkId} = useTezosConfig();
+export default function WalletConnection({account,activate,status} : Props) {
+  const {rpcUrl, networkId, networkName} = useTezosConfig();
   const classes = useStyles();
 
   const {enqueueSnackbar} = useSnackbar();
@@ -52,7 +51,7 @@ export default function WalletConnection({account,activate,status,network} : Pro
         connectionStatus={connectionStatus}
         providers={[{name: "Beacon", key: "beacon"}]}
         onSelectedProvider={handleConnection}
-        networkName={(network == null) ? "Not connected" : network}
+        networkName={(networkId == null) ? "Not connected" : networkName}
         account={account}
       />
     </React.Fragment>

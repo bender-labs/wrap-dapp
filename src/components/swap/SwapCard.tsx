@@ -8,11 +8,13 @@ import AmountToWrapInput from "./AmountToWrapInput";
 import {EmptyToken, Token} from "../../features/swap/token";
 import AllowanceButton from "./AllowanceButton";
 import TokenSelection from "./TokenSelection";
+import {BeaconWallet} from "@taquito/beacon-wallet";
 
 type Props = {
-  chainId: number;
   web3Provider: Web3Provider;
-  account: string;
+  ethAccount: string;
+  beaconWallet: BeaconWallet;
+  tzAccount: string;
 }
 
 const useStyles = makeStyles((theme) => ({
@@ -21,7 +23,7 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-export default function SwapCard({chainId, web3Provider, account}: Props) {
+export default function SwapCard({web3Provider, ethAccount, tzAccount, beaconWallet}: Props) {
   const classes = useStyles();
   const {tokens, ethereum: {custodianContractAddress, custodianContractAbi}} = useConfig();
   const benderContract = CustodianContractApi.withProvider(web3Provider).forContract(custodianContractAddress, custodianContractAbi);
@@ -38,7 +40,7 @@ export default function SwapCard({chainId, web3Provider, account}: Props) {
 
   useEffect(() => {
     if (token === "") return;
-    setContract(erc20Api.forContract(ethContractAddress, custodianContractAddress, account));
+    setContract(erc20Api.forContract(ethContractAddress, custodianContractAddress, ethAccount));
   }, [token]);
 
   useEffect(() => {
@@ -70,7 +72,7 @@ export default function SwapCard({chainId, web3Provider, account}: Props) {
   }
 
   const onWrap = (amount: ethers.BigNumber) => {
-    benderContract.wrap(amount, ethContractAddress)
+    benderContract.wrap(amount, ethContractAddress, tzAccount);
   }
 
   return (

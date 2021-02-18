@@ -44,7 +44,7 @@ export class CustodianContractApi {
     this._contract = contract;
   }
 
-  async wrap(amount: ethers.BigNumber, erc20ContractAddress: string, destinationTezosAddress: string = "tz1exrEuATYhFmVSXhkCkkFzY72T75hpsthj") {
+  async wrap(amount: ethers.BigNumber, erc20ContractAddress: string, destinationTezosAddress: string) {
     let overrides = {
       gasLimit: 60000
     };
