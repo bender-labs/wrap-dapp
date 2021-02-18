@@ -7,7 +7,7 @@ import {useWeb3React} from "@web3-react/core";
 import {Web3Provider} from "@ethersproject/providers";
 import WrapEmptyStateCard from "../components/swap/WrapEmptyStateCard";
 import React, {useState} from "react";
-import {ConnectionStatus, useTezosContext} from "../components/tezos/TezosContext";
+import {useTezosContext} from "../components/tezos/TezosContext";
 
 enum TabValues {
   WRAP,

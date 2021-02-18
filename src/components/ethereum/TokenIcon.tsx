@@ -1,5 +1,5 @@
 import {SvgIcon, SvgIconProps} from "@material-ui/core";
-import {ElementType, ReactNode} from "react";
+import {ElementType} from "react";
 import {ReactComponent as ERC20} from "cryptocurrency-icons/svg/black/generic.svg";
 
 type Props = {

@@ -20,7 +20,7 @@ export default function AmountToWrapInput({balance, amountToWrap, decimals, toke
 
   const handleOnChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     event.preventDefault();
-    const value = event.target.value == "" ? "0" : event.target.value;
+    const value = event.target.value === "" ? "0" : event.target.value;
     if(value.includes(",")) return;
     onChange(ethers.utils.parseUnits(value, decimals));
   }

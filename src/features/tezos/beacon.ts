@@ -1,6 +1,6 @@
-import {DAppClient} from "@airgap/beacon-sdk";
+import {BeaconWallet} from "@taquito/beacon-wallet";
 
 
 export function getLibrary() {
-  return new DAppClient({name: 'BenderLabs'});
+  return new BeaconWallet({name: 'BenderLabs'});
 }

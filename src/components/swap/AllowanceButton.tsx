@@ -2,7 +2,7 @@ import {Button, makeStyles, Typography} from "@material-ui/core";
 import React from "react";
 import {ethers} from "ethers";
 import {formatAmount} from "../../features/ethereum/token";
-import {green, grey, orange} from "@material-ui/core/colors";
+import {grey} from "@material-ui/core/colors";
 
 type Props = {
   currentAllowance: ethers.BigNumber;

@@ -1,4 +1,4 @@
-import React, {PropsWithChildren, useCallback, useMemo, useState} from "react";
+import React, {PropsWithChildren, useMemo, useState} from "react";
 import {Config, config, Environment} from "../../config";
 
 type ContextValue = undefined | Config;

@@ -1,62 +1,54 @@
+import React, {Dispatch, PropsWithChildren, useCallback, useMemo} from "react";
 
-import React, {Dispatch, DispatchWithoutAction, PropsWithChildren, ReactChildren, useCallback, useMemo} from "react";
-
-import {
-  DAppClient,
-  NetworkType,
-  PermissionResponseOutput,
-  RequestPermissionInput
-} from "@airgap/beacon-sdk";
-import {tap} from "../../features/tap";
+import {NetworkType, RequestPermissionInput} from "@airgap/beacon-sdk";
+import {BeaconWallet} from "@taquito/beacon-wallet";
 
 export enum ConnectionStatus {
   UNINITIALIZED,
   CONNECTED
 }
 
-type State = {status: ConnectionStatus, library: DAppClient, account?: string, network?: NetworkType}
+type State = {status: ConnectionStatus, library: BeaconWallet, account?: string, network?: NetworkType}
 
 enum ActionType {
   CONNECTED
 }
 
 type Action =
-  | {type: ActionType.CONNECTED, network: NetworkType}
+  | {type: ActionType.CONNECTED, network: NetworkType, account: string}
 
 type Effects = {
-  activate: (request: RequestPermissionInput) => void
+  activate: (request: RequestPermissionInput) => Promise<string>
 }
 
 function reducer(state: State, {type, ...payload}: Action): State {
   switch (type) {
     case ActionType.CONNECTED: {
-      console.log("connected");
-      const {network} = payload;
+      const {network, account} = payload;
       return ({
         ...state,
         network,
         status: ConnectionStatus.CONNECTED,
-        account: "lolilol"
+        account
       });
     }
   }
 }
 
 function _activate(dispatch: Dispatch<Action>) {
-  return (client: DAppClient) =>
+  return (client: BeaconWallet) =>
     async (request: RequestPermissionInput) => {
-      await client
-        .requestPermissions(request)
-        .then(tap(
-          (output: PermissionResponseOutput) => dispatch({type: ActionType.CONNECTED, network: request.network?.type!})
-        ));
+      await client.requestPermissions(request)
+      const account = await client.getPKH();
+      dispatch({type: ActionType.CONNECTED, network: request.network?.type!, account});
+      return account;
     }
 }
 
 const TezosContext = React.createContext<null | State & Effects>(null);
 
 type Props = {
-  getLibrary: () => DAppClient;
+  getLibrary: () => BeaconWallet;
 }
 
 export default function Provider({getLibrary, children}: PropsWithChildren<Props>) {

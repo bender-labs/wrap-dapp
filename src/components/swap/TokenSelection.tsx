@@ -1,5 +1,4 @@
-import {FormControl, FormHelperText, InputLabel, ListItemIcon, makeStyles, MenuItem, Select} from "@material-ui/core";
-import TokenIcon from "../ethereum/TokenIcon";
+import {FormControl, FormHelperText, MenuItem, Select} from "@material-ui/core";
 import React from "react";
 import {TokenMetadata} from "../../features/swap/token";
 

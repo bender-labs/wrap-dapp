@@ -1,8 +1,7 @@
-import {Card, CardContent, CardHeader, Grid, makeStyles, Paper, Typography} from "@material-ui/core";
+import {Grid, makeStyles, Paper, Typography} from "@material-ui/core";
 import SwapHorizontalCircleIcon from "@material-ui/icons/SwapHorizontalCircle";
 import React from "react";
 import {grey} from "@material-ui/core/colors";
-import {humanizeConnectionStatus} from "../../features/wallet/connectionStatus";
 
 const useStyles = makeStyles((theme) => ({
   swapContainer: {
