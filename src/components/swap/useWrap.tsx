@@ -111,7 +111,7 @@ export function useWrap(contractFactory: EthereumWrapApiFactory, tokens: Record<
           });
           return;
         } else {
-          if (counter > 15) throw new Error("Timeout");
+          if (counter > 30) throw new Error("Timeout");
           refreshCurrentAllowance();
         }
       }, 1500);
