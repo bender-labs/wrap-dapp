@@ -13,7 +13,6 @@ type WrapState = {
   amountToWrap: ethers.BigNumber,
 }
 
-
 export enum WrapStatus {
   UNINITIALIZED,
   TOKEN_SELECTED,
@@ -91,7 +90,7 @@ export function useWrap(contractFactory: EthereumWrapApiFactory, tokens: Record<
       type: WrapStatus.AMOUNT_TO_WRAP_SELECTED,
       payload: {amountToWrap}
     })
-  }, [state.currentAllowance]);
+  },[]);
 
   const launchAllowanceApproval = useCallback(() => {
     const startAllowanceProcess = async () => {

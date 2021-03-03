@@ -48,53 +48,6 @@ export default function SwapCard({ethLibrary, ethAccount, tzAccount, tzLibrary}:
         break;
     }
   }, [status])
-  /*const [{token, decimals, ethContractAddress}, setToken] = useState<Token>(EmptyToken);
-  const [contract, setContract] = useState<EthereumWrapApi>();
-  const [balance, setBalance] = useState<ethers.BigNumber>();
-  const [amountToWrap, setAmountToWrap] = useState<ethers.BigNumber>(ethers.BigNumber.from(0));
-  const [allowance, setAllowance] = useState<ethers.BigNumber>(ethers.BigNumber.from(0));
-  const [waitingForAllowance, setWaitingForAllowance] = useState<boolean>(false);
-
-  useEffect(() => {
-    if (token === "") return;
-    setContract(ethWrapApiFactory.forErc20(ethContractAddress));
-  }, [token]);
-
-  useEffect(() => {
-    if (contract == null) return;
-    refreshAllowance();
-    refreshBalance();
-  }, [contract]);
-
-  useEffect(() => {
-    if (balance != null && contract != null) {
-      setCurrentStep(1);
-    }
-    if (amountToWrap.gt(0)) {
-      setCurrentStep(2);
-    }
-    if (amountToWrap.gt(0) && allowance.gte(amountToWrap)) {
-      setCurrentStep(3);
-    }
-  }, [contract, balance, amountToWrap]);
-
-  const refreshBalance = () => contract?.balanceOf().then(setBalance)
-  const refreshAllowance = () => contract?.allowanceOf().then(setAllowance)
-  const onApprove = async (amount: ethers.BigNumber) => {
-    await contract?.approve(amount);
-    setWaitingForAllowance(true);
-  }
-  const onTokenSelect = (tokenKey: string) => setToken({...tokens[tokenKey], token: tokenKey});
-
-  const handleOnWrap = (event: React.MouseEvent<HTMLElement>) => {
-    event.preventDefault()
-    onWrap(amountToWrap);
-  }
-
-  const onWrap = (amount: ethers.BigNumber) => {
-    contract?.wrap(amount);
-  }
-  */
 
   return (
     <Card className={classes.swapContainer}>
