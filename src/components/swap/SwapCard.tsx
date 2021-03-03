@@ -2,18 +2,17 @@ import React, {useEffect, useState} from "react"
 import {Button, Card, CardContent, makeStyles, Step, StepContent, StepLabel, Stepper} from "@material-ui/core";
 import {useConfig} from "../config/ConfigContext";
 import {Web3Provider} from "@ethersproject/providers";
-import {CustodianContractApi, EthereumERC20ContractApi} from "../../features/ethereum/contract";
-import {ethers} from "ethers";
 import AmountToWrapInput from "./AmountToWrapInput";
-import {EmptyToken, Token} from "../../features/swap/token";
 import AllowanceButton from "./AllowanceButton";
 import TokenSelection from "./TokenSelection";
-import {BeaconWallet} from "@taquito/beacon-wallet";
+import {TezosToolkit} from "@taquito/taquito";
+import {EthereumWrapApiBuilder} from "../../features/ethereum/contract";
+import {useWrap, WrapStatus} from "./useWrap";
 
 type Props = {
-  web3Provider: Web3Provider;
+  ethLibrary: Web3Provider;
   ethAccount: string;
-  beaconWallet: BeaconWallet;
+  tzLibrary: TezosToolkit;
   tzAccount: string;
 }
 
@@ -23,24 +22,42 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-export default function SwapCard({web3Provider, ethAccount, tzAccount, beaconWallet}: Props) {
+export default function SwapCard({ethLibrary, ethAccount, tzAccount, tzLibrary}: Props) {
   const classes = useStyles();
-  const {tokens, ethereum: {custodianContractAddress, custodianContractAbi}} = useConfig();
-  const benderContract = CustodianContractApi.withProvider(web3Provider).forContract(custodianContractAddress, custodianContractAbi);
-
-  const erc20Api = EthereumERC20ContractApi.withProvider(web3Provider);
-
-  const [{token, decimals, ethContractAddress}, setToken] = useState<Token>(EmptyToken);
-  const [contract, setContract] = useState<EthereumERC20ContractApi>();
+  const {tokens, ethereum: {custodianContractAddress}} = useConfig();
+  const ethWrapApiFactory = EthereumWrapApiBuilder
+    .withProvider(ethLibrary)
+    .forCustodianContract(custodianContractAddress)
+    .forAccount(ethAccount, tzAccount)
+    .createFactory();
+  const {status, amountToWrap, currentAllowance, currentBalance, token, decimals, launchAllowanceApproval, selectAmountToWrap, selectToken, launchWrap} = useWrap(ethWrapApiFactory, tokens);
+  const [step, setCurrentStep] = useState<number>(0);
+  useEffect(() => {
+    switch (status) {
+      case WrapStatus.UNINITIALIZED:
+        setCurrentStep(0);
+        break;
+      case WrapStatus.TOKEN_SELECTED:
+        setCurrentStep(1);
+        break;
+      case WrapStatus.AMOUNT_TO_WRAP_SELECTED:
+        setCurrentStep(2);
+        break;
+      case WrapStatus.READY_TO_WRAP:
+        setCurrentStep(3);
+        break;
+    }
+  }, [status])
+  /*const [{token, decimals, ethContractAddress}, setToken] = useState<Token>(EmptyToken);
+  const [contract, setContract] = useState<EthereumWrapApi>();
   const [balance, setBalance] = useState<ethers.BigNumber>();
   const [amountToWrap, setAmountToWrap] = useState<ethers.BigNumber>(ethers.BigNumber.from(0));
   const [allowance, setAllowance] = useState<ethers.BigNumber>(ethers.BigNumber.from(0));
-  const [step, setCurrentStep] = useState<number>(0);
-
+  const [waitingForAllowance, setWaitingForAllowance] = useState<boolean>(false);
 
   useEffect(() => {
     if (token === "") return;
-    setContract(erc20Api.forContract(ethContractAddress, custodianContractAddress, ethAccount));
+    setContract(ethWrapApiFactory.forErc20(ethContractAddress));
   }, [token]);
 
   useEffect(() => {
@@ -59,11 +76,14 @@ export default function SwapCard({web3Provider, ethAccount, tzAccount, beaconWal
     if (amountToWrap.gt(0) && allowance.gte(amountToWrap)) {
       setCurrentStep(3);
     }
-  }, [contract, balance, amountToWrap])
+  }, [contract, balance, amountToWrap]);
 
   const refreshBalance = () => contract?.balanceOf().then(setBalance)
-  const refreshAllowance = () => contract?.allowance().then(setAllowance)
-  const onApprove = (amount: ethers.BigNumber) => contract?.approve(amount)
+  const refreshAllowance = () => contract?.allowanceOf().then(setAllowance)
+  const onApprove = async (amount: ethers.BigNumber) => {
+    await contract?.approve(amount);
+    setWaitingForAllowance(true);
+  }
   const onTokenSelect = (tokenKey: string) => setToken({...tokens[tokenKey], token: tokenKey});
 
   const handleOnWrap = (event: React.MouseEvent<HTMLElement>) => {
@@ -72,8 +92,9 @@ export default function SwapCard({web3Provider, ethAccount, tzAccount, beaconWal
   }
 
   const onWrap = (amount: ethers.BigNumber) => {
-    benderContract.wrap(amount, ethContractAddress, tzAccount);
+    contract?.wrap(amount);
   }
+  */
 
   return (
     <Card className={classes.swapContainer}>
@@ -84,7 +105,7 @@ export default function SwapCard({web3Provider, ethAccount, tzAccount, beaconWal
               Please select the token you wish to wrap
             </StepLabel>
             <StepContent>
-              <TokenSelection token={token} onTokenSelect={onTokenSelect} tokens={tokens}/>
+              <TokenSelection token={token} onTokenSelect={selectToken} tokens={tokens}/>
             </StepContent>
           </Step>
           <Step expanded={step > 1}>
@@ -92,9 +113,8 @@ export default function SwapCard({web3Provider, ethAccount, tzAccount, beaconWal
               Select the token amount you wish to wrap
             </StepLabel>
             <StepContent>
-              {balance != null &&
-              <AmountToWrapInput balance={balance} decimals={decimals} token={token} onChange={setAmountToWrap}
-                                 amountToWrap={amountToWrap}/>}
+              <AmountToWrapInput balance={currentBalance} decimals={decimals} token={token} onChange={selectAmountToWrap}
+                                 amountToWrap={amountToWrap}/>
             </StepContent>
           </Step>
           <Step expanded={step > 2}>
@@ -103,10 +123,10 @@ export default function SwapCard({web3Provider, ethAccount, tzAccount, beaconWal
             </StepLabel>
             <StepContent>
               <AllowanceButton
-                currentAllowance={allowance}
+                currentAllowance={currentAllowance}
                 balanceToWrap={amountToWrap}
                 decimals={decimals}
-                onAuthorize={onApprove}
+                onAuthorize={launchAllowanceApproval}
                 token={token}/>
             </StepContent>
           </Step>
@@ -119,7 +139,7 @@ export default function SwapCard({web3Provider, ethAccount, tzAccount, beaconWal
                 variant="contained"
                 size="small"
                 color="primary"
-                onClick={handleOnWrap}
+                onClick={launchWrap}
                 disabled={false}
               >
                 WRAP

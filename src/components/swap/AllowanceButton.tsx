@@ -22,14 +22,13 @@ const useStyles = makeStyles((theme) => ({
 
 export default function AllowanceButton({currentAllowance, balanceToWrap, decimals, onAuthorize, token}: Props) {
   const classes = useStyles();
-  const amountToAllow = balanceToWrap.sub(currentAllowance);
-  const {color, disabled, text} = amountToAllow.lte(0)
+  const {color, disabled, text} = balanceToWrap.lte(currentAllowance)
     ? {color: "primary", disabled: true, text: `Allowed ${formatAmount(token, currentAllowance, decimals)}`}
-    : {color: "secondary", disabled: false, text: `Allow ${formatAmount(token, amountToAllow, decimals)}`}
+    : {color: "secondary", disabled: false, text: `Allow ${formatAmount(token, balanceToWrap, decimals)}`}
 
   const handleOnClick = (event: React.MouseEvent<HTMLElement>) => {
     event.preventDefault();
-    onAuthorize(amountToAllow);
+    onAuthorize(balanceToWrap);
   }
 
   return (

@@ -44,12 +44,13 @@ export const config: Record<Environment, Config> = {
     },
     tokens: {
       "FAU": {
-        name: "Faucet Token",
+        name: "Faucet Token", //@todo tzName
         type: "ERC20",
         symbol: "FAU",
         decimals: 18,
         ethContractAddress: "0xFab46E002BbF0b4509813474841E0716E6730136",
-        tzWrappingContract: "OOOO"
+        tzWrappingContract: "OOOO",
+        tzTokenId: 0
       }
     }
   },

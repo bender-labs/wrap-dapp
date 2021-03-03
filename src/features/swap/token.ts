@@ -6,6 +6,7 @@ export type TokenMetadata = {
   tzWrappingContract: string,
   decimals: number,
   symbol: string,
+  tzTokenId: number
 }
 
 export type Token = {
@@ -19,5 +20,6 @@ export const EmptyToken: Token = {
   token: "",
   name: "",
   ethContractAddress: "",
-  decimals: 0
+  decimals: 0,
+  tzTokenId: 0
 }

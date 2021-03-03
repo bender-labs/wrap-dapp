@@ -1,6 +1,7 @@
 import React, {Dispatch, PropsWithChildren, useCallback, useMemo} from "react";
 
 import {NetworkType, RequestPermissionInput} from "@airgap/beacon-sdk";
+import {TezosToolkit} from '@taquito/taquito';
 import {BeaconWallet} from "@taquito/beacon-wallet";
 
 export enum ConnectionStatus {
@@ -8,14 +9,14 @@ export enum ConnectionStatus {
   CONNECTED
 }
 
-type State = {status: ConnectionStatus, library: BeaconWallet, account?: string, network?: NetworkType}
+type State = {status: ConnectionStatus, wallet: BeaconWallet, library?: TezosToolkit, account?: string, network?: NetworkType}
 
 enum ActionType {
   CONNECTED
 }
 
 type Action =
-  | {type: ActionType.CONNECTED, network: NetworkType, account: string}
+  | {type: ActionType.CONNECTED, network: NetworkType, account: string, library: TezosToolkit}
 
 type Effects = {
   activate: (request: RequestPermissionInput) => Promise<string>
@@ -24,12 +25,13 @@ type Effects = {
 function reducer(state: State, {type, ...payload}: Action): State {
   switch (type) {
     case ActionType.CONNECTED: {
-      const {network, account} = payload;
+      const {network, account, library} = payload;
       return ({
         ...state,
         network,
         status: ConnectionStatus.CONNECTED,
-        account
+        account,
+        library
       });
     }
   }
@@ -38,9 +40,11 @@ function reducer(state: State, {type, ...payload}: Action): State {
 function _activate(dispatch: Dispatch<Action>) {
   return (client: BeaconWallet) =>
     async (request: RequestPermissionInput) => {
-      await client.requestPermissions(request)
+      const library = new TezosToolkit(request.network?.rpcUrl || "");
+      await client.requestPermissions(request);
+      library.setWalletProvider(client);
       const account = await client.getPKH();
-      dispatch({type: ActionType.CONNECTED, network: request.network?.type!, account});
+      dispatch({type: ActionType.CONNECTED, network: request.network?.type!, account, library});
       return account;
     }
 }
@@ -52,9 +56,9 @@ type Props = {
 }
 
 export default function Provider({getLibrary, children}: PropsWithChildren<Props>) {
-  const library = useMemo(() => getLibrary(), []);
-  const [state, dispatch] = React.useReducer(reducer, {status: ConnectionStatus.UNINITIALIZED, library});
-  const activate = useCallback(_activate(dispatch)(library), []);
+  const wallet = useMemo(() => getLibrary(), []);
+  const [state, dispatch] = React.useReducer(reducer, {status: ConnectionStatus.UNINITIALIZED, wallet: wallet});
+  const activate = useCallback(_activate(dispatch)(wallet), []);
 
   return (
     <TezosContext.Provider value={{...state, activate}}>

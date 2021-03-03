@@ -33,6 +33,10 @@ export default () => {
   const handleActiveTab = (event: React.ChangeEvent<{}>, newValue: TabValues) => {
     setActiveTab(newValue)
   }
+  if(tzLibrary != null) {
+    console.log("launch");
+    //mintErc20(tzLibrary);
+  }
 
   return (
     <Grid container spacing={2} direction="column">
@@ -43,7 +47,7 @@ export default () => {
         <TezosWalletConnection account={tzAccount} activate={tzActivate} status={tzConnectionStatus} />
       </Grid>
       <Grid item container>
-        {!ethActive || ethLibrary == null || ethAccount == null || tzConnectionStatus === ConnectionStatus.UNINITIALIZED || tzAccount == null
+        {!ethActive || ethLibrary == null || ethAccount == null || tzConnectionStatus === ConnectionStatus.UNINITIALIZED || tzAccount == null || tzLibrary == null
           ? <WrapEmptyStateCard/>
           : <>
             <Paper className={classes.appContainer}>
@@ -59,7 +63,7 @@ export default () => {
                 <Tab value={TabValues.BURN} label={<Typography variant="subtitle1">TEZOS <ArrowForwardIcon
                   className={classes.wrapIcon}/> ETH</Typography>}/>
               </Tabs>
-              {activeTab === TabValues.WRAP && <SwapCard tzAccount={tzAccount} web3Provider={ethLibrary} ethAccount={ethAccount} beaconWallet={tzLibrary}/>}
+              {activeTab === TabValues.WRAP && <SwapCard tzAccount={tzAccount} ethLibrary={ethLibrary} ethAccount={ethAccount} tzLibrary={tzLibrary}/>}
             </Paper>
           </>
         }
