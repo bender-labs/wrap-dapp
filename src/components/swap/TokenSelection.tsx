@@ -28,9 +28,9 @@ export default function TokenSelection({token, tokens, onTokenSelect}: Props) {
         }}
       >
         <MenuItem value="" disabled>Please select</MenuItem>
-        {tokenList.map(([key, {name}]) => (
+        {tokenList.map(([key, {ethereumName}]) => (
           <MenuItem value={key} key={key}>
-            {name} ({key})
+            {ethereumName} ({key})
           </MenuItem>
         ))}
       </Select>

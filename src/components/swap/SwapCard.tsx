@@ -6,7 +6,7 @@ import AmountToWrapInput from "./AmountToWrapInput";
 import AllowanceButton from "./AllowanceButton";
 import TokenSelection from "./TokenSelection";
 import {TezosToolkit} from "@taquito/taquito";
-import {EthereumWrapApiBuilder} from "../../features/ethereum/contract";
+import {EthereumWrapApiBuilder} from "../../features/ethereum/EthereumWrapApi";
 import {useWrap, WrapStatus} from "./useWrap";
 
 type Props = {

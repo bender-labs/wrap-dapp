@@ -1,12 +1,14 @@
 
 export type TokenMetadata = {
-  name: string,
   type: 'ERC20' | 'ERC721',
-  ethContractAddress: string,
-  tzWrappingContract: string,
+  ethereumName: string,
+  ethereumSymbol: string,
+  ethereumContractAddress: string,
   decimals: number,
-  symbol: string,
-  tzTokenId: number
+  tezosWrappingContract: string,
+  tezosTokenId: number,
+  tezosSymbol: string,
+  tezosName: string
 }
 
 export type Token = {
@@ -15,11 +17,13 @@ export type Token = {
 
 export const EmptyToken: Token = {
   type: 'ERC20',
-  symbol: "",
-  tzWrappingContract: "",
+  ethereumSymbol: "",
+  tezosWrappingContract: "",
   token: "",
-  name: "",
-  ethContractAddress: "",
+  ethereumName: "",
+  ethereumContractAddress: "",
   decimals: 0,
-  tzTokenId: 0
+  tezosTokenId: 0,
+  tezosName: "",
+  tezosSymbol: ""
 }

@@ -1,6 +1,6 @@
 import {ethers} from "ethers";
 import {useCallback, useEffect, useReducer} from "react";
-import {EthereumWrapApi, EthereumWrapApiFactory} from "../../features/ethereum/contract";
+import {EthereumWrapApi, EthereumWrapApiFactory} from "../../features/ethereum/EthereumWrapApi";
 import {TokenMetadata} from "../../features/swap/token";
 
 type WrapState = {
@@ -80,8 +80,8 @@ export function useWrap(contractFactory: EthereumWrapApiFactory, tokens: Record<
   });
 
   const selectToken = useCallback((token: string) => {
-    const {decimals, ethContractAddress} = tokens[token];
-    const contract = contractFactory.forErc20(ethContractAddress);
+    const {decimals, ethereumContractAddress} = tokens[token];
+    const contract = contractFactory.forErc20(ethereumContractAddress);
     dispatch({type: WrapStatus.TOKEN_SELECTED, payload: {token, decimals, contract}});
   }, []);
 
