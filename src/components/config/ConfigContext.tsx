@@ -57,12 +57,12 @@ export default function Provider({children}: PropsWithChildren<{}>) {
 
   useEffect(() => {
     const loadConfig = async () => {
-      console.log("launchconfig");
       setConfigStatus(ConfigStatus.LOADING);
       const initConfig = initialConfig[environment];
       const indexerConfig = await indexerApi(initConfig.indexerUrl).fetchConfig();
       setConfig({
         environmentName: initConfig.environmentName,
+        indexerUrl: initConfig.indexerUrl,
         ethereum: {
           ...initConfig.ethereum,
           custodianContractAddress: indexerConfig.ethereumWrapContract

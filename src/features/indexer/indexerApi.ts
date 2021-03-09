@@ -1,23 +1,26 @@
-import {ethers} from "ethers";
 import axios from "axios";
+import {EthereumAddress, TezosAddress} from "../ethereum/EthereumWrapApi";
 
-interface SignerEventPayload {
-  parameters: {
-    amount: ethers.BigNumber
-    blockHash: string,
-    erc20: string,
-    logIndex: number,
-    owner: string
-  },
-  quorum: {
-    minterContract: string,
-    quorumContract: string
-  },
-  signatures: Array<{
-    signerId: string,
-    signature: string
-  }>,
-  transactionHash: string
+interface IndexerTokenPayload {
+  id: string,
+  source: string,
+  destination: string,
+  token: string,
+  transactionHash: string,
+  signatures: Record<string, string>
+}
+
+interface IndexerERC20Payload extends IndexerTokenPayload {
+  amount: string
+}
+
+interface IndexerERC721Payload extends IndexerTokenPayload {
+  tokenId: string
+}
+
+interface IndexerWrapPayload {
+  erc20Wraps: Array<IndexerERC20Payload>,
+  erc721Wraps: Array<IndexerERC721Payload>
 }
 
 interface IndexerConfigPayload {
@@ -50,7 +53,11 @@ export default function indexerApi(baseURL: string) {
 
   const fetchConfig: (_: void) => Promise<IndexerConfigPayload> = () => axiosInstance.get("configuration").then(({data}) => data);
 
+  const fetchPendingWrap: (ethereumAddress: EthereumAddress, tezosAddress: TezosAddress) => Promise<IndexerWrapPayload> =
+    (ethereumAddress, tezosAddress) => axiosInstance.get("wraps", {params: {ethereumAddress, tezosAddress}}).then(({data}) => data);
+
   return ({
-    fetchConfig
+    fetchConfig,
+    fetchPendingWrap
   })
 }

@@ -18,6 +18,7 @@ export interface InitialConfig {
 
 export interface Config {
   environmentName: string,
+  indexerUrl: string,
   ethereum: {
     rpcUrl: string,
     networkId: number,
@@ -61,43 +62,11 @@ export const initialConfig: Record<string, InitialConfig> = {
     },
     tezos: {
       rpcUrl: process.env.REACT_APP_TZ_RPC_TESTNET || "",
-      networkId: NetworkType.DELPHINET,
-      networkName: "Delphi",
+      networkId: NetworkType.EDONET,
+      networkName: "Edo2net",
     }
   },
   [Environment.MAINNET]: {
     environmentName: "Mainnet"
   } as InitialConfig
 }
-/*
-export const config: Record<Environment, Config> = {
-  [Environment.TESTNET]: {
-    environmentName: "Testnet",
-    ethereum: {
-      rpcUrl: process.env.REACT_APP_ETH_RPC_TESTNET || "",
-      networkId: 4,
-      networkName: "Rinkeby",
-      custodianContractAddress: "0x352488cAaDf763Acaa41fB05E4b5B3a45647C8D5",
-    },
-    tezos: {
-      rpcUrl: process.env.REACT_APP_TZ_RPC_TESTNET || "",
-      networkId: NetworkType.DELPHINET,
-      networkName: "Delphi",
-    },
-    tokens: {
-      "FAU": {
-        name: "Faucet Token", //@todo tzName
-        type: "ERC20",
-        symbol: "FAU",
-        decimals: 18,
-        ethContractAddress: "0xFab46E002BbF0b4509813474841E0716E6730136",
-        tzWrappingContract: "OOOO",
-        tzTokenId: 0
-      }
-    }
-  },
-  [Environment.MAINNET]: {
-    environmentName: "Mainnet"
-  } as Config //@todo: provide correct config
-}
-*/
