@@ -7,7 +7,9 @@ interface IndexerTokenPayload {
   destination: string,
   token: string,
   transactionHash: string,
-  signatures: Record<string, string>
+  signatures: Record<string, string>,
+  confirmations: number,
+  confirmationsThreshold: number
 }
 
 interface IndexerERC20Payload extends IndexerTokenPayload {
@@ -18,12 +20,12 @@ interface IndexerERC721Payload extends IndexerTokenPayload {
   tokenId: string
 }
 
-interface IndexerWrapPayload {
+export interface IndexerWrapPayload {
   erc20Wraps: Array<IndexerERC20Payload>,
   erc721Wraps: Array<IndexerERC721Payload>
 }
 
-interface IndexerConfigPayload {
+export interface IndexerConfigPayload {
   ethereumNetwork: string,
   ethereumNetworkId: string,
   tezosNetwork: string,
