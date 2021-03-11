@@ -81,6 +81,7 @@ export default function SwapCard({ethLibrary, ethAccount, tzAccount, tzLibrary}:
                 balanceToWrap={amountToWrap}
                 decimals={decimals}
                 onAuthorize={launchAllowanceApproval}
+                loading={status === WrapStatus.WAITING_FOR_ALLOWANCE_APPROVAL}
                 symbol={token}/>
             </StepContent>
           </Step>

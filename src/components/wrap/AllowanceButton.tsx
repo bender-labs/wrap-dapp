@@ -1,4 +1,4 @@
-import {Button, makeStyles, Typography} from "@material-ui/core";
+import {Button, CircularProgress, makeStyles, Typography} from "@material-ui/core";
 import React from "react";
 import {ethers} from "ethers";
 import {formatAmount} from "../../features/ethereum/token";
@@ -10,6 +10,7 @@ type Props = {
   decimals: number;
   onAuthorize: (allowance: ethers.BigNumber) => void;
   symbol: string;
+  loading: boolean;
 };
 
 const useStyles = makeStyles((theme) => ({
@@ -17,10 +18,31 @@ const useStyles = makeStyles((theme) => ({
     color: grey[600],
     display: "block",
     margin: "5 0"
-  }
+  },
+  buttonProgress: {
+    color: "#000",
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    marginTop: -12,
+    marginLeft: -12,
+    zIndex: 99,
+  },
+  wrapper: {
+    margin: theme.spacing(1),
+    position: 'relative',
+    width: 'fit-content'
+  },
 }));
 
-export default function AllowanceButton({currentAllowance, balanceToWrap, decimals, onAuthorize, symbol}: Props) {
+export default function AllowanceButton({
+                                          currentAllowance,
+                                          balanceToWrap,
+                                          decimals,
+                                          onAuthorize,
+                                          symbol,
+                                          loading
+                                        }: Props) {
   const classes = useStyles();
   const {color, disabled, text} = balanceToWrap.lte(currentAllowance)
     ? {color: "primary", disabled: true, text: `Allowed ${formatAmount(symbol, currentAllowance, decimals)}`}
@@ -36,14 +58,17 @@ export default function AllowanceButton({currentAllowance, balanceToWrap, decima
       <Typography variant="caption" className={classes.helperText}>
         Current Allowance: {formatAmount(symbol, currentAllowance, decimals)}
       </Typography>
-      <Button
-        variant="outlined"
-        disabled={disabled}
-        color={color as any}
-        onClick={handleOnClick}
-      >
-        {text}
-      </Button>
+      <div className={classes.wrapper}>
+        <Button
+          variant="outlined"
+          disabled={disabled || loading}
+          color={color as any}
+          onClick={handleOnClick}
+        >
+          {text}
+        </Button>
+        {loading && <CircularProgress size={24} className={classes.buttonProgress}/>}
+      </div>
       <Typography variant="caption" className={classes.helperText}>
         The bender contract will be allowed to spend {formatAmount(symbol, balanceToWrap, decimals)} on your behalf.
       </Typography>
