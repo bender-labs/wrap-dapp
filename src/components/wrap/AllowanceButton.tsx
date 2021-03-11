@@ -9,7 +9,7 @@ type Props = {
   balanceToWrap: ethers.BigNumber;
   decimals: number;
   onAuthorize: (allowance: ethers.BigNumber) => void;
-  token: string;
+  symbol: string;
 };
 
 const useStyles = makeStyles((theme) => ({
@@ -20,11 +20,11 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-export default function AllowanceButton({currentAllowance, balanceToWrap, decimals, onAuthorize, token}: Props) {
+export default function AllowanceButton({currentAllowance, balanceToWrap, decimals, onAuthorize, symbol}: Props) {
   const classes = useStyles();
   const {color, disabled, text} = balanceToWrap.lte(currentAllowance)
-    ? {color: "primary", disabled: true, text: `Allowed ${formatAmount(token, currentAllowance, decimals)}`}
-    : {color: "secondary", disabled: false, text: `Allow ${formatAmount(token, balanceToWrap, decimals)}`}
+    ? {color: "primary", disabled: true, text: `Allowed ${formatAmount(symbol, currentAllowance, decimals)}`}
+    : {color: "secondary", disabled: false, text: `Allow ${formatAmount(symbol, balanceToWrap, decimals)}`}
 
   const handleOnClick = (event: React.MouseEvent<HTMLElement>) => {
     event.preventDefault();
@@ -34,7 +34,7 @@ export default function AllowanceButton({currentAllowance, balanceToWrap, decima
   return (
     <div>
       <Typography variant="caption" className={classes.helperText}>
-        Current Allowance: {formatAmount(token, currentAllowance, decimals)}
+        Current Allowance: {formatAmount(symbol, currentAllowance, decimals)}
       </Typography>
       <Button
         variant="outlined"
@@ -45,7 +45,7 @@ export default function AllowanceButton({currentAllowance, balanceToWrap, decima
         {text}
       </Button>
       <Typography variant="caption" className={classes.helperText}>
-        The bender contract will be allowed to spend {formatAmount(token, balanceToWrap, decimals)} on your behalf.
+        The bender contract will be allowed to spend {formatAmount(symbol, balanceToWrap, decimals)} on your behalf.
       </Typography>
     </div>
   );

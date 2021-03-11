@@ -31,7 +31,12 @@ type Props = {
 
 export function MintCard({ethAccount, tzAccount, tzLibrary}: Props) {
   const classes = useStyles();
-  const {indexerUrl, fungibleTokens, wrapSignatureThreshold, tezos: {quorumContractAddress, minterContractAddress} } = useConfig();
+  const {
+    indexerUrl,
+    fungibleTokens,
+    wrapSignatureThreshold,
+    tezos: {quorumContractAddress, minterContractAddress}
+  } = useConfig();
   const [{erc20Wraps, erc721Wraps}, setPendingWrap] = useState<IndexerWrapPayload>({erc20Wraps: [], erc721Wraps: []});
 
   const tokensByEthAddress = useMemo(() => Object.entries(fungibleTokens).reduce<Record<string, TokenMetadata>>((acc, [token, metadata]) => {
@@ -45,6 +50,8 @@ export function MintCard({ethAccount, tzAccount, tzLibrary}: Props) {
       setPendingWrap(pendingWrap);
     };
     loadPendingWrap();
+    const intervalId = setInterval(loadPendingWrap, 5000);
+    return () => clearInterval(intervalId);
   }, []);
 
   const erc20PrimaryText = (amount: string, token: string) => {
@@ -53,9 +60,9 @@ export function MintCard({ethAccount, tzAccount, tzLibrary}: Props) {
   };
 
   const erc20SecondaryText = (confirmations: number, confirmationsThreshold: number, signatureNumber: number) => {
-    if(confirmations < confirmationsThreshold) {
+    if (confirmations < confirmationsThreshold) {
       return `Pending... (${confirmations}/${confirmationsThreshold} confirmations)`;
-    } else if(signatureNumber < wrapSignatureThreshold) {
+    } else if (signatureNumber < wrapSignatureThreshold) {
       return `Waiting for signatures... (Received: ${signatureNumber}/${wrapSignatureThreshold} signatures)`
     }
     return `Ready to mint (${signatureNumber}/${wrapSignatureThreshold} signatures received)`;
@@ -87,12 +94,14 @@ export function MintCard({ethAccount, tzAccount, tzLibrary}: Props) {
                 secondary={erc20SecondaryText(erc20.confirmations, erc20.confirmationsThreshold, Object.entries(erc20.signatures).length)}
               />
               <ListItemSecondaryAction>
-                <Button variant="outlined" color="primary" disabled={!isReadyToMint(Object.entries(erc20.signatures).length)} onClick={handleMintClick(erc20.signatures, erc20.amount, erc20.destination, erc20.token, erc20.id)}>
+                <Button variant="outlined" color="primary"
+                        disabled={!isReadyToMint(Object.entries(erc20.signatures).length)}
+                        onClick={handleMintClick(erc20.signatures, erc20.amount, erc20.destination, erc20.token, erc20.id)}>
                   MINT
                 </Button>
               </ListItemSecondaryAction>
             </ListItem>
-            )))}
+          )))}
         </List>
       </CardContent>
     </Card>

@@ -81,7 +81,7 @@ export default function SwapCard({ethLibrary, ethAccount, tzAccount, tzLibrary}:
                 balanceToWrap={amountToWrap}
                 decimals={decimals}
                 onAuthorize={launchAllowanceApproval}
-                token={token}/>
+                symbol={token}/>
             </StepContent>
           </Step>
           <Step expanded={step > 3}>
