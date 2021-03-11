@@ -74,7 +74,7 @@ export default function Provider({children}: PropsWithChildren<{}>) {
         },
         wrapSignatureThreshold: indexerConfig.wrapRequiredSignatures,
         unwrapSignatureThreshold: indexerConfig.unwrapRequiredSignatures,
-        tokens: indexerConfig.tokens.reduce<Record<string, Token>>((acc, e) => {
+        fungibleTokens: indexerConfig.tokens.filter(t => t.type === "ERC20").reduce<Record<string, Token>>((acc, e) => {
           acc[e.ethereumSymbol] = {
             ...e,
             tezosTokenId: parseInt(e.tezosTokenId || "0"),

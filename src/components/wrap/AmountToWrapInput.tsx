@@ -6,17 +6,17 @@ import {formatAmount} from "../../features/ethereum/token";
 type Props = {
   balance: ethers.BigNumber;
   decimals: number;
-  token: string;
+  symbol: string;
   onChange: (amount: ethers.BigNumber) => void;
   amountToWrap: ethers.BigNumber
 };
 
-export default function AmountToWrapInput({balance, amountToWrap, decimals, token, onChange}: Props) {
+export default function AmountToWrapInput({balance, amountToWrap, decimals, symbol, onChange}: Props) {
 
   const error = amountToWrap.gt(balance);
   const helperText = amountToWrap.gt(balance)
-    ? `Insufficient Balance of ${(formatAmount(token, balance, decimals))}`
-    : `Current balance: ${(formatAmount(token, balance, decimals))}`;
+    ? `Insufficient Balance of ${(formatAmount(symbol, balance, decimals))}`
+    : `Current balance: ${(formatAmount(symbol, balance, decimals))}`;
 
   const handleOnChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     event.preventDefault();
@@ -34,7 +34,7 @@ export default function AmountToWrapInput({balance, amountToWrap, decimals, toke
       helperText={helperText}
       aria-describedby="standard-weight-helper-text"
       InputProps={{
-        startAdornment: <InputAdornment position="start">{token}</InputAdornment>,
+        startAdornment: <InputAdornment position="start">{symbol}</InputAdornment>,
       }}
     />
   )

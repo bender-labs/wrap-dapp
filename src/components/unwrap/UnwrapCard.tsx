@@ -2,12 +2,12 @@ import React, {useEffect, useState} from "react"
 import {Button, Card, CardContent, makeStyles, Step, StepContent, StepLabel, Stepper} from "@material-ui/core";
 import {useConfig} from "../config/ConfigContext";
 import {Web3Provider} from "@ethersproject/providers";
-import AmountToWrapInput from "./AmountToWrapInput";
-import AllowanceButton from "./AllowanceButton";
-import TokenSelection from "./TokenSelection";
 import {TezosToolkit} from "@taquito/taquito";
 import {EthereumWrapApiBuilder} from "../../features/ethereum/EthereumWrapApi";
-import {useWrap, WrapStatus} from "./useWrap";
+import {useUnwrap, WrapStatus} from "./useUnwrap";
+import {SupportedBlockchain} from "../../features/wallet/blockchain";
+import TokenSelection from "../wrap/TokenSelection";
+import AmountToWrapInput from "../wrap/AmountToWrapInput";
 
 type Props = {
   ethLibrary: Web3Provider;
@@ -22,15 +22,15 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-export default function SwapCard({ethLibrary, ethAccount, tzAccount, tzLibrary}: Props) {
+export default function UnwrapCard({ethLibrary, ethAccount, tzAccount, tzLibrary}: Props) {
   const classes = useStyles();
-  const {tokens, ethereum: {custodianContractAddress}} = useConfig();
+  const {fungibleTokens, ethereum: {custodianContractAddress}} = useConfig();
   const ethWrapApiFactory = EthereumWrapApiBuilder
     .withProvider(ethLibrary)
     .forCustodianContract(custodianContractAddress)
     .forAccount(ethAccount, tzAccount)
     .createFactory();
-  const {status, amountToWrap, currentAllowance, currentBalance, token, decimals, launchAllowanceApproval, selectAmountToWrap, selectToken, launchWrap} = useWrap(ethWrapApiFactory, tokens);
+  const {status, amountToWrap, currentAllowance, currentBalance, token, decimals, launchAllowanceApproval, selectAmountToWrap, selectToken, launchWrap} = useUnwrap(ethWrapApiFactory, fungibleTokens);
   const [step, setCurrentStep] = useState<number>(0);
   useEffect(() => {
     switch (status) {
@@ -55,37 +55,24 @@ export default function SwapCard({ethLibrary, ethAccount, tzAccount, tzLibrary}:
         <Stepper activeStep={step} orientation="vertical">
           <Step expanded={step > 0}>
             <StepLabel>
-              Please select the token you wish to wrap
+              Please select the token you wish to unwrap
             </StepLabel>
             <StepContent>
-              <TokenSelection token={token} onTokenSelect={selectToken} tokens={tokens}/>
+              <TokenSelection token={token} onTokenSelect={selectToken} tokens={fungibleTokens} blockchainTarget={SupportedBlockchain.Tezos}/>
             </StepContent>
           </Step>
           <Step expanded={step > 1}>
             <StepLabel>
-              Select the token amount you wish to wrap
+              Select the token amount you wish to unwrap
             </StepLabel>
             <StepContent>
-              <AmountToWrapInput balance={currentBalance} decimals={decimals} token={token} onChange={selectAmountToWrap}
+              <AmountToWrapInput balance={currentBalance} decimals={decimals} symbol={fungibleTokens[token]?.tezosSymbol} onChange={selectAmountToWrap}
                                  amountToWrap={amountToWrap}/>
             </StepContent>
           </Step>
           <Step expanded={step > 2}>
             <StepLabel>
-              Please allow the bender contract to move your tokens
-            </StepLabel>
-            <StepContent>
-              <AllowanceButton
-                currentAllowance={currentAllowance}
-                balanceToWrap={amountToWrap}
-                decimals={decimals}
-                onAuthorize={launchAllowanceApproval}
-                token={token}/>
-            </StepContent>
-          </Step>
-          <Step expanded={step > 3}>
-            <StepLabel>
-              You can launch the wrapping
+              You can launch the unwrapping
             </StepLabel>
             <StepContent>
               <Button

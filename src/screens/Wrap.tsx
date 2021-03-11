@@ -2,13 +2,14 @@ import {Grid, makeStyles, Paper, Tab, Tabs, Typography} from "@material-ui/core"
 import ArrowForwardIcon from '@material-ui/icons/ArrowForward';
 import EthWalletConnection from "../components/ethereum/WalletConnection";
 import TezosWalletConnection from "../components/tezos/WalletConnection";
-import SwapCard from "../components/swap/SwapCard";
+import SwapCard from "../components/wrap/SwapCard";
 import {useWeb3React} from "@web3-react/core";
 import {Web3Provider} from "@ethersproject/providers";
-import WrapEmptyStateCard from "../components/swap/WrapEmptyStateCard";
+import WrapEmptyStateCard from "../components/wrap/WrapEmptyStateCard";
 import React, {useState} from "react";
 import {ConnectionStatus, useTezosContext} from "../components/tezos/TezosContext";
-import {MintCard} from "../components/swap/MintCard";
+import {MintCard} from "../components/wrap/MintCard";
+import UnwrapCard from "../components/unwrap/UnwrapCard";
 
 enum TabValues {
   WRAP,
@@ -77,6 +78,8 @@ export default () => {
                 </Tabs>
                 {activeTab === TabValues.WRAP &&
                 <SwapCard tzAccount={tzAccount} ethLibrary={ethLibrary} ethAccount={ethAccount} tzLibrary={tzLibrary}/>}
+                {activeTab === TabValues.BURN &&
+                <UnwrapCard tzAccount={tzAccount} ethLibrary={ethLibrary} ethAccount={ethAccount} tzLibrary={tzLibrary}/>}
               </Paper>
             </Grid>
           </>

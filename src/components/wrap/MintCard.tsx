@@ -31,13 +31,13 @@ type Props = {
 
 export function MintCard({ethAccount, tzAccount, tzLibrary}: Props) {
   const classes = useStyles();
-  const {indexerUrl, tokens, wrapSignatureThreshold, tezos: {quorumContractAddress, minterContractAddress} } = useConfig();
+  const {indexerUrl, fungibleTokens, wrapSignatureThreshold, tezos: {quorumContractAddress, minterContractAddress} } = useConfig();
   const [{erc20Wraps, erc721Wraps}, setPendingWrap] = useState<IndexerWrapPayload>({erc20Wraps: [], erc721Wraps: []});
 
-  const tokensByEthAddress = useMemo(() => Object.entries(tokens).reduce<Record<string, TokenMetadata>>((acc, [token, metadata]) => {
+  const tokensByEthAddress = useMemo(() => Object.entries(fungibleTokens).reduce<Record<string, TokenMetadata>>((acc, [token, metadata]) => {
     acc[metadata.ethereumContractAddress] = metadata;
     return acc;
-  }, {}), [tokens]);
+  }, {}), [fungibleTokens]);
 
   useEffect(() => {
     const loadPendingWrap = async () => {

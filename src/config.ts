@@ -34,7 +34,7 @@ export interface Config {
   },
   wrapSignatureThreshold: number,
   unwrapSignatureThreshold: number,
-  tokens: Record<string, TokenMetadata>
+  fungibleTokens: Record<string, TokenMetadata>
 }
 
 export type EthereumConfig = Config["ethereum"];
