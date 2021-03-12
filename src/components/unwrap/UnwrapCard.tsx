@@ -22,12 +22,12 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-export default function UnwrapCard({ethLibrary, ethAccount, tzAccount, tzLibrary}: Props) {
+export default function UnwrapCard({ethAccount, tzAccount, tzLibrary}: Props) {
   const classes = useStyles();
-  const {fungibleTokens, tezos: {quorumContractAddress}} = useConfig();
+  const {fungibleTokens, tezos: {minterContractAddress}} = useConfig();
   const tezosUnwrapApiFactory = TezosUnwrapApiBuilder
     .withProvider(tzLibrary)
-    .forCustodianContract(quorumContractAddress)
+    .forMinterContract(minterContractAddress)
     .forAccount(ethAccount, tzAccount)
     .createFactory();
   const {status, amountToUnwrap, currentBalance, token, decimals, selectAmountToUnwrap, selectToken, launchWrap} = useUnwrap(tezosUnwrapApiFactory, fungibleTokens);

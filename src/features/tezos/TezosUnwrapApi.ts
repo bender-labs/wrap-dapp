@@ -6,10 +6,11 @@ export type TezosAddress = string;
 export type EthereumAddress = string;
 
 export class TezosUnwrapApi {
-  constructor(tezosWrappingContract: string, tezosTokenId: number, quorumContract: string, ethAccountAddress: EthereumAddress, tzAccountAddress: TezosAddress, tzToolkit: TezosToolkit) {
+  constructor(erc20ContractAddress: EthereumAddress, tezosWrappingContract: string, tezosTokenId: number, minterContract: string, ethAccountAddress: EthereumAddress, tzAccountAddress: TezosAddress, tzToolkit: TezosToolkit) {
+    this.erc20ContractAddress = erc20ContractAddress;
     this.tezosWrappingContract = tezosWrappingContract;
     this.tezosTokenId = tezosTokenId;
-    this.quorumContract = quorumContract;
+    this.minterContract = minterContract;
     this.ethAccountAddress = ethAccountAddress;
     this.tzAccountAddress = tzAccountAddress;
     this.tzToolkit = tzToolkit;
@@ -23,34 +24,42 @@ export class TezosUnwrapApi {
   }
 
   async unwrap(amount: BigNumber) {
-    await Promise.resolve();
-    /*return this.custodianContract.wrapERC20(this.erc20ContractAddress(), amount, this.tzAccountAddress, {
-      gasLimit: 60000
-    });*/
+    const contract = await this.tzToolkit.wallet.at(this.minterContract);
+    //TODO: calculate fees given configuration values
+    await contract
+        .methods
+        .unwrap_erc20(
+            amount.toString(),
+            this.ethAccountAddress.toLowerCase().substring(2),
+            this.erc20ContractAddress.toLowerCase().substring(2),
+            amount.div(100).toString()
+        ).send();
   }
 
   private readonly ethAccountAddress: EthereumAddress;
   private readonly tzAccountAddress: TezosAddress;
-  private readonly quorumContract: string;
+  private readonly minterContract: string;
   private readonly tezosWrappingContract: string;
   private readonly tezosTokenId: number;
   private readonly tzToolkit: TezosToolkit;
+  private readonly erc20ContractAddress: EthereumAddress;
 }
 
 export class TezosUnwrapApiFactory {
 
-  constructor(quorumContract: string, ethAccountAddress: EthereumAddress, tzAccountAddress: TezosAddress, tzToolkit: TezosToolkit) {
+  constructor(minterContract: string, ethAccountAddress: EthereumAddress, tzAccountAddress: TezosAddress, tzToolkit: TezosToolkit) {
     this.ethAccountAddress = ethAccountAddress;
     this.tezosAccountAddress = tzAccountAddress;
-    this.quorumContract = quorumContract;
+    this.minterContract = minterContract;
     this.tzToolkit = tzToolkit;
   }
 
   public forFa20(erc20ContractAddress: EthereumAddress, tezosWrappingContract: string, tezosTokenId: number): TezosUnwrapApi{
     return new TezosUnwrapApi(
+        erc20ContractAddress,
         tezosWrappingContract,
         tezosTokenId,
-        this.quorumContract,
+        this.minterContract,
         this.ethAccountAddress,
         this.tezosAccountAddress,
         this.tzToolkit
@@ -58,7 +67,7 @@ export class TezosUnwrapApiFactory {
   }
 
   private readonly tzToolkit: TezosToolkit;
-  private readonly quorumContract: string;
+  private readonly minterContract: string;
   private readonly ethAccountAddress: EthereumAddress;
   private readonly tezosAccountAddress: TezosAddress;
 }
@@ -79,22 +88,22 @@ export class TezosUnwrapApiBuilder {
     return this
   }
 
-  public forCustodianContract(quorumContractAddress: string): TezosUnwrapApiBuilder {
-    this.quorumContractAddress = quorumContractAddress;
+  public forMinterContract(minterContractAddress: string): TezosUnwrapApiBuilder {
+    this.minterContractAddress = minterContractAddress;
     return this;
   }
 
   public createFactory() {
     if(this.ethAccountAddress === undefined
         || this.tzAccountAddress === undefined
-        || this.quorumContractAddress === undefined
+        || this.minterContractAddress === undefined
         || this.tzLibrary === undefined
     ) {
       throw new Error("Missing context for Tezos Wrap Api initialization")
     }
 
     return new TezosUnwrapApiFactory(
-      this.quorumContractAddress,
+      this.minterContractAddress,
       this.ethAccountAddress,
       this.tzAccountAddress,
       this.tzLibrary
@@ -102,7 +111,7 @@ export class TezosUnwrapApiBuilder {
   }
 
   private readonly tzLibrary: TezosToolkit;
-  private quorumContractAddress: undefined | string;
+  private minterContractAddress: undefined | string;
   private ethAccountAddress: undefined | EthereumAddress;
   private tzAccountAddress: undefined | TezosAddress;
 }
