@@ -3,7 +3,8 @@ import React, {Dispatch, PropsWithChildren, useCallback, useMemo} from "react";
 import {NetworkType, RequestPermissionInput} from "@airgap/beacon-sdk";
 import {TezosToolkit} from '@taquito/taquito';
 import {BeaconWallet} from "@taquito/beacon-wallet";
-import {Tzip16Module} from "@taquito/tzip16";
+import {Handler, MetadataProvider, Tzip16Module} from "@taquito/tzip16";
+import {Tzip16HttpHandlerWithCorsSupport} from "./Tzip16HttpHandlerWithCorsSupport";
 
 export enum ConnectionStatus {
   UNINITIALIZED,
@@ -38,11 +39,17 @@ function reducer(state: State, {type, ...payload}: Action): State {
   }
 }
 
+function buildCustomizedTzip16Module() {
+  return new Tzip16Module(new MetadataProvider(new Map<string, Handler>([
+    ['https', new Tzip16HttpHandlerWithCorsSupport()]
+  ])));
+}
+
 function _activate(dispatch: Dispatch<Action>) {
   return (client: BeaconWallet) =>
     async (request: RequestPermissionInput) => {
       const library = new TezosToolkit(request.network?.rpcUrl || "");
-      library.addExtension(new Tzip16Module());
+      library.addExtension(buildCustomizedTzip16Module());
       await client.requestPermissions(request);
       library.setWalletProvider(client);
       const account = await client.getPKH();
