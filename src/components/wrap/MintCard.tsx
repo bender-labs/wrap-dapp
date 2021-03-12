@@ -14,8 +14,8 @@ import indexerApi, {IndexerWrapPayload} from "../../features/indexer/indexerApi"
 import {EthereumAddress, TezosAddress} from "../../features/ethereum/EthereumWrapApi";
 import {TokenMetadata} from "../../features/swap/token";
 import {formatAmount} from "../../features/ethereum/token";
-import {ethers} from "ethers";
 import {TezosToolkit} from "@taquito/taquito";
+import BigNumber from "bignumber.js";
 
 const useStyles = makeStyles((theme) => ({
   swapContainer: {
@@ -56,7 +56,7 @@ export function MintCard({ethAccount, tzAccount, tzLibrary}: Props) {
 
   const erc20PrimaryText = (amount: string, token: string) => {
     const {decimals, ethereumSymbol} = tokensByEthAddress[token.toLowerCase()];
-    return `${formatAmount(ethereumSymbol, ethers.BigNumber.from(amount), decimals)}`
+    return `${formatAmount(ethereumSymbol, new BigNumber(amount), decimals)}`
   };
 
   const erc20SecondaryText = (confirmations: number, confirmationsThreshold: number, signatureNumber: number) => {

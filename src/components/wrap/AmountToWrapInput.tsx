@@ -1,14 +1,14 @@
 import {InputAdornment, TextField} from "@material-ui/core";
-import {ethers} from "ethers";
 import React from "react";
-import {formatAmount} from "../../features/ethereum/token";
+import {formatAmount, formatUnits, parseUnits} from "../../features/ethereum/token";
+import BigNumber from "bignumber.js";
 
 type Props = {
-  balance: ethers.BigNumber;
+  balance: BigNumber;
   decimals: number;
   symbol: string;
-  onChange: (amount: ethers.BigNumber) => void;
-  amountToWrap: ethers.BigNumber
+  onChange: (amount: BigNumber) => void;
+  amountToWrap: BigNumber
 };
 
 export default function AmountToWrapInput({balance, amountToWrap, decimals, symbol, onChange}: Props) {
@@ -21,15 +21,15 @@ export default function AmountToWrapInput({balance, amountToWrap, decimals, symb
   const handleOnChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     event.preventDefault();
     const value = event.target.value === "" ? "0" : event.target.value;
-    if(value.includes(",")) return;
-    onChange(ethers.utils.parseUnits(value, decimals));
+    if (!/^\d*(\.\d+)?$/.test(value)) return;
+    onChange(parseUnits(value, decimals));
   }
 
   return (
     <TextField
       error={error}
       id="amount-to-wrap"
-      value={ethers.utils.formatUnits(amountToWrap, decimals)}
+      value={formatUnits(amountToWrap, decimals)}
       onChange={handleOnChange}
       helperText={helperText}
       aria-describedby="standard-weight-helper-text"

@@ -1,14 +1,14 @@
 import {Button, CircularProgress, makeStyles, Typography} from "@material-ui/core";
 import React from "react";
-import {ethers} from "ethers";
 import {formatAmount} from "../../features/ethereum/token";
 import {grey} from "@material-ui/core/colors";
+import BigNumber from "bignumber.js";
 
 type Props = {
-  currentAllowance: ethers.BigNumber;
-  balanceToWrap: ethers.BigNumber;
+  currentAllowance: BigNumber;
+  balanceToWrap: BigNumber;
   decimals: number;
-  onAuthorize: (allowance: ethers.BigNumber) => void;
+  onAuthorize: (allowance: BigNumber) => void;
   symbol: string;
   loading: boolean;
 };

@@ -24,10 +24,10 @@ const useStyles = makeStyles((theme) => ({
 
 export default function UnwrapCard({ethLibrary, ethAccount, tzAccount, tzLibrary}: Props) {
   const classes = useStyles();
-  const {fungibleTokens, ethereum: {custodianContractAddress}, tezos: {quorumContractAddress}} = useConfig();
+  const {fungibleTokens, tezos: {quorumContractAddress}} = useConfig();
   const tezosUnwrapApiFactory = TezosUnwrapApiBuilder
-    .withProvider(ethLibrary, tzLibrary)
-    .forCustodianContract(custodianContractAddress, quorumContractAddress)
+    .withProvider(tzLibrary)
+    .forCustodianContract(quorumContractAddress)
     .forAccount(ethAccount, tzAccount)
     .createFactory();
   const {status, amountToUnwrap, currentBalance, token, decimals, selectAmountToUnwrap, selectToken, launchWrap} = useUnwrap(tezosUnwrapApiFactory, fungibleTokens);
@@ -82,7 +82,7 @@ export default function UnwrapCard({ethLibrary, ethAccount, tzAccount, tzLibrary
                 onClick={launchWrap}
                 disabled={false}
               >
-                WRAP
+                UNWRAP
               </Button>
             </StepContent>
           </Step>

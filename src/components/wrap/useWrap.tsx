@@ -2,15 +2,16 @@ import {ethers} from "ethers";
 import {useCallback, useEffect, useReducer} from "react";
 import {EthereumWrapApi, EthereumWrapApiFactory} from "../../features/ethereum/EthereumWrapApi";
 import {TokenMetadata} from "../../features/swap/token";
+import BigNumber from "bignumber.js";
 
 type WrapState = {
   status: WrapStatus,
   token: string,
   decimals: number,
   contract: EthereumWrapApi | null,
-  currentBalance: ethers.BigNumber,
-  currentAllowance: ethers.BigNumber,
-  amountToWrap: ethers.BigNumber,
+  currentBalance: BigNumber,
+  currentAllowance: BigNumber,
+  amountToWrap: BigNumber,
 }
 
 export enum WrapStatus {
@@ -24,10 +25,10 @@ export enum WrapStatus {
 
 type Action =
   | { type: WrapStatus.TOKEN_SELECTED, payload: { token: string, decimals: number, contract: EthereumWrapApi } }
-  | { type: WrapStatus.USER_BALANCE_FETCHED, payload: { currentBalance: ethers.BigNumber, currentAllowance: ethers.BigNumber } }
-  | { type: WrapStatus.AMOUNT_TO_WRAP_SELECTED, payload: { amountToWrap: ethers.BigNumber } }
+  | { type: WrapStatus.USER_BALANCE_FETCHED, payload: { currentBalance: BigNumber, currentAllowance: BigNumber } }
+  | { type: WrapStatus.AMOUNT_TO_WRAP_SELECTED, payload: { amountToWrap: BigNumber } }
   | { type: WrapStatus.WAITING_FOR_ALLOWANCE_APPROVAL }
-  | { type: WrapStatus.READY_TO_WRAP, payload: { newCurrentAllowance: ethers.BigNumber } }
+  | { type: WrapStatus.READY_TO_WRAP, payload: { newCurrentAllowance: BigNumber } }
 
 function reducer(state: WrapState, action: Action): WrapState {
   switch (action.type) {
@@ -35,9 +36,9 @@ function reducer(state: WrapState, action: Action): WrapState {
       return {
         status: WrapStatus.TOKEN_SELECTED,
         ...action.payload,
-        currentBalance: ethers.BigNumber.from(0),
-        currentAllowance: ethers.BigNumber.from(0),
-        amountToWrap: ethers.BigNumber.from(0)
+        currentBalance: new BigNumber(0),
+        currentAllowance: new BigNumber(0),
+        amountToWrap: new BigNumber(0)
       };
     case WrapStatus.USER_BALANCE_FETCHED:
       return {
@@ -74,9 +75,9 @@ export function useWrap(contractFactory: EthereumWrapApiFactory, tokens: Record<
     token: "",
     decimals: 0,
     contract: null,
-    currentBalance: ethers.BigNumber.from(0),
-    currentAllowance: ethers.BigNumber.from(0),
-    amountToWrap: ethers.BigNumber.from(0),
+    currentBalance: new BigNumber(0),
+    currentAllowance: new BigNumber(0),
+    amountToWrap: new BigNumber(0),
   });
 
   const selectToken = useCallback((token: string) => {
@@ -85,7 +86,7 @@ export function useWrap(contractFactory: EthereumWrapApiFactory, tokens: Record<
     dispatch({type: WrapStatus.TOKEN_SELECTED, payload: {token, decimals, contract}});
   }, []);
 
-  const selectAmountToWrap = useCallback((amountToWrap: ethers.BigNumber) => {
+  const selectAmountToWrap = useCallback((amountToWrap: BigNumber) => {
     dispatch({
       type: WrapStatus.AMOUNT_TO_WRAP_SELECTED,
       payload: {amountToWrap}

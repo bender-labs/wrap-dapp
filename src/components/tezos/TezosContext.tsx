@@ -39,7 +39,7 @@ function reducer(state: State, {type, ...payload}: Action): State {
   }
 }
 
-function buildCustomizedTzip16Module() {
+function customizedTzip16Module() {
   return new Tzip16Module(new MetadataProvider(new Map<string, Handler>([
     ['https', new Tzip16HttpHandlerWithCorsSupport()]
   ])));
@@ -49,7 +49,7 @@ function _activate(dispatch: Dispatch<Action>) {
   return (client: BeaconWallet) =>
     async (request: RequestPermissionInput) => {
       const library = new TezosToolkit(request.network?.rpcUrl || "");
-      library.addExtension(buildCustomizedTzip16Module());
+      library.addExtension(customizedTzip16Module());
       await client.requestPermissions(request);
       library.setWalletProvider(client);
       const account = await client.getPKH();

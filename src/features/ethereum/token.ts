@@ -1,5 +1,13 @@
-import {ethers} from "ethers";
+import BigNumber from "bignumber.js";
 
-export function formatAmount(symbol: string, balance: ethers.BigNumber, decimals: number) {
-  return `${symbol} ${ethers.utils.formatUnits(balance, decimals)}`
+export function parseUnits(value: string, decimals: number) {
+  return new BigNumber(value).shiftedBy(decimals);
+}
+
+export function formatUnits(balance: BigNumber, decimals: number): string {
+  return balance.shiftedBy(-decimals).toFormat(decimals);
+}
+
+export function formatAmount(symbol: string, balance: BigNumber, decimals: number) {
+  return `${symbol} ${formatUnits(balance, decimals)}`
 }

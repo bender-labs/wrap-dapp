@@ -2,6 +2,7 @@ import {Web3Provider} from '@ethersproject/providers';
 import {ethers} from "ethers";
 import ERC20_ABI from "./erc20Abi";
 import CUSTODIAN_ABI from "./custodianContractAbi";
+import BigNumber from "bignumber.js";
 
 export type TezosAddress = string;
 export type EthereumAddress = string;
@@ -14,21 +15,23 @@ export class EthereumWrapApi {
     this.tzAccountAddress = tzAccountAddress;
   }
 
-  async balanceOf(): Promise<ethers.BigNumber> {
-    return this.erc20Contract.balanceOf(this.ethAccountAddress);
+  async balanceOf(): Promise<BigNumber> {
+    const balance = await this.erc20Contract.balanceOf(this.ethAccountAddress);
+    return new BigNumber(balance.toString());
   }
 
-  async allowanceOf(): Promise<ethers.BigNumber> {
-    return this.erc20Contract.allowance(this.ethAccountAddress, this.benderContractAddress());
+  async allowanceOf(): Promise<BigNumber> {
+    const balance = await this.erc20Contract.allowance(this.ethAccountAddress, this.benderContractAddress());
+    return new BigNumber(balance.toString());
   }
 
-  async approve(amount: ethers.BigNumber) {
-    return this.erc20Contract.approve(this.benderContractAddress(), amount);
+  async approve(amount: BigNumber) {
+    return this.erc20Contract.approve(this.benderContractAddress(), ethers.BigNumber.from(amount.toString()));
   }
 
-  async wrap(amount: ethers.BigNumber) {
-    return this.custodianContract.wrapERC20(this.erc20ContractAddress(), amount, this.tzAccountAddress, {
-      gasLimit: 60000
+  async wrap(amount: BigNumber) {
+    return this.custodianContract.wrapERC20(this.erc20ContractAddress(), ethers.BigNumber.from(amount.toString()), this.tzAccountAddress, {
+      gasLimit: 100000
     });
   }
 
