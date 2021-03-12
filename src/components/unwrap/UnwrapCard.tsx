@@ -3,11 +3,11 @@ import {Button, Card, CardContent, makeStyles, Step, StepContent, StepLabel, Ste
 import {useConfig} from "../config/ConfigContext";
 import {Web3Provider} from "@ethersproject/providers";
 import {TezosToolkit} from "@taquito/taquito";
-import {EthereumWrapApiBuilder} from "../../features/ethereum/EthereumWrapApi";
-import {useUnwrap, WrapStatus} from "./useUnwrap";
+import {useUnwrap, UnwrapStatus} from "./useUnwrap";
 import {SupportedBlockchain} from "../../features/wallet/blockchain";
 import TokenSelection from "../wrap/TokenSelection";
 import AmountToWrapInput from "../wrap/AmountToWrapInput";
+import {TezosUnwrapApiBuilder} from "../../features/tezos/TezosUnwrapApi";
 
 type Props = {
   ethLibrary: Web3Provider;
@@ -24,26 +24,26 @@ const useStyles = makeStyles((theme) => ({
 
 export default function UnwrapCard({ethLibrary, ethAccount, tzAccount, tzLibrary}: Props) {
   const classes = useStyles();
-  const {fungibleTokens, ethereum: {custodianContractAddress}} = useConfig();
-  const ethWrapApiFactory = EthereumWrapApiBuilder
-    .withProvider(ethLibrary)
-    .forCustodianContract(custodianContractAddress)
+  const {fungibleTokens, ethereum: {custodianContractAddress}, tezos: {quorumContractAddress}} = useConfig();
+  const tezosUnwrapApiFactory = TezosUnwrapApiBuilder
+    .withProvider(ethLibrary, tzLibrary)
+    .forCustodianContract(custodianContractAddress, quorumContractAddress)
     .forAccount(ethAccount, tzAccount)
     .createFactory();
-  const {status, amountToWrap, currentAllowance, currentBalance, token, decimals, launchAllowanceApproval, selectAmountToWrap, selectToken, launchWrap} = useUnwrap(ethWrapApiFactory, fungibleTokens);
+  const {status, amountToUnwrap, currentBalance, token, decimals, selectAmountToUnwrap, selectToken, launchWrap} = useUnwrap(tezosUnwrapApiFactory, fungibleTokens);
   const [step, setCurrentStep] = useState<number>(0);
   useEffect(() => {
     switch (status) {
-      case WrapStatus.UNINITIALIZED:
+      case UnwrapStatus.UNINITIALIZED:
         setCurrentStep(0);
         break;
-      case WrapStatus.TOKEN_SELECTED:
+      case UnwrapStatus.TOKEN_SELECTED:
         setCurrentStep(1);
         break;
-      case WrapStatus.AMOUNT_TO_WRAP_SELECTED:
+      case UnwrapStatus.AMOUNT_TO_WRAP_SELECTED:
         setCurrentStep(2);
         break;
-      case WrapStatus.READY_TO_WRAP:
+      case UnwrapStatus.READY_TO_UNWRAP:
         setCurrentStep(3);
         break;
     }
@@ -66,8 +66,8 @@ export default function UnwrapCard({ethLibrary, ethAccount, tzAccount, tzLibrary
               Select the token amount you wish to unwrap
             </StepLabel>
             <StepContent>
-              <AmountToWrapInput balance={currentBalance} decimals={decimals} symbol={fungibleTokens[token]?.tezosSymbol} onChange={selectAmountToWrap}
-                                 amountToWrap={amountToWrap}/>
+              <AmountToWrapInput balance={currentBalance} decimals={decimals} symbol={fungibleTokens[token]?.tezosSymbol} onChange={selectAmountToUnwrap}
+                                 amountToWrap={amountToUnwrap}/>
             </StepContent>
           </Step>
           <Step expanded={step > 2}>
