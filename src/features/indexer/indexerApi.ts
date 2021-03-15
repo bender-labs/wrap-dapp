@@ -25,6 +25,11 @@ export interface IndexerWrapPayload {
   erc721Wraps: Array<IndexerERC721Payload>
 }
 
+export interface IndexerUnwrapPayload {
+  erc20Unwraps: Array<IndexerERC20Payload>,
+  erc721Unwraps: Array<IndexerERC721Payload>
+}
+
 export interface IndexerConfigPayload {
   ethereumNetwork: string,
   ethereumNetworkId: string,
@@ -58,8 +63,12 @@ export default function indexerApi(baseURL: string) {
   const fetchPendingWrap: (ethereumAddress: EthereumAddress, tezosAddress: TezosAddress) => Promise<IndexerWrapPayload> =
     (ethereumAddress, tezosAddress) => axiosInstance.get("wraps", {params: {ethereumAddress, tezosAddress}}).then(({data}) => data);
 
+  const fetchPendingUnwrap: (ethereumAddress: EthereumAddress, tezosAddress: TezosAddress) => Promise<IndexerUnwrapPayload> =
+      (ethereumAddress, tezosAddress) => axiosInstance.get("unwraps", {params: {ethereumAddress, tezosAddress}}).then(({data}) => data);
+
   return ({
     fetchConfig,
-    fetchPendingWrap
+    fetchPendingWrap,
+    fetchPendingUnwrap
   })
 }

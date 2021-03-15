@@ -9,6 +9,7 @@ import WrapEmptyStateCard from "../components/wrap/WrapEmptyStateCard";
 import React, {useState} from "react";
 import {ConnectionStatus, useTezosContext} from "../components/tezos/TezosContext";
 import {MintCard} from "../components/wrap/MintCard";
+import {BurnCard} from "../components/unwrap/BurnCard";
 import UnwrapCard from "../components/unwrap/UnwrapCard";
 
 enum TabValues {
@@ -61,6 +62,9 @@ export default () => {
         ) : (<>
             <Grid item>
               <MintCard ethAccount={ethAccount} tzAccount={tzAccount} tzLibrary={tzLibrary}/>
+            </Grid>
+            <Grid item>
+              <BurnCard ethAccount={ethAccount} tzAccount={tzAccount} ethLibrary={ethLibrary} />
             </Grid>
             <Grid item container>
               <Paper className={classes.appContainer}>
