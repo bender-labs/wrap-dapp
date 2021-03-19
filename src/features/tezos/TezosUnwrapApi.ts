@@ -29,10 +29,10 @@ export class TezosUnwrapApi {
     await contract
         .methods
         .unwrap_erc20(
-            amount.toString(),
-            this.ethAccountAddress.toLowerCase().substring(2),
             this.erc20ContractAddress.toLowerCase().substring(2),
-            amount.div(100).toString()
+            amount.toString(),
+            amount.div(100).toString(),
+            this.ethAccountAddress.toLowerCase().substring(2),
         ).send();
   }
 
