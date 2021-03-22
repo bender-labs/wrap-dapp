@@ -57,9 +57,9 @@ export function BurnCard({ethAccount, tzAccount, ethLibrary}: Props) {
     return () => clearInterval(intervalId);
   }, []);
 
-  const erc20PrimaryText = (amount: string, token: string) => {
+  const erc20PrimaryText = (amount: string, token: string, destination: string) => {
     const {decimals, tezosSymbol} = tokensByEthAddress[token.toLowerCase()];
-    return `${formatAmount(tezosSymbol, new BigNumber(amount), decimals)}`
+    return `${formatAmount(tezosSymbol, new BigNumber(amount), decimals)} to ${destination}`
   };
 
   const erc20SecondaryText = (confirmations: number, confirmationsThreshold: number, signatureNumber: number) => {
@@ -98,7 +98,7 @@ export function BurnCard({ethAccount, tzAccount, ethLibrary}: Props) {
           {erc20Unwraps.map(((erc20, index) => (
             <ListItem key={index}>
               <ListItemText
-                primary={erc20PrimaryText(erc20.amount, erc20.token)}
+                primary={erc20PrimaryText(erc20.amount, erc20.token, erc20.destination)}
                 secondary={erc20SecondaryText(erc20.confirmations, erc20.confirmationsThreshold, Object.entries(erc20.signatures).length)}
               />
               <ListItemSecondaryAction>

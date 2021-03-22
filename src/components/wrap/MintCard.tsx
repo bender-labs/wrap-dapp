@@ -54,9 +54,9 @@ export function MintCard({ethAccount, tzAccount, tzLibrary}: Props) {
     return () => clearInterval(intervalId);
   }, []);
 
-  const erc20PrimaryText = (amount: string, token: string) => {
+  const erc20PrimaryText = (amount: string, token: string, destination: string) => {
     const {decimals, ethereumSymbol} = tokensByEthAddress[token.toLowerCase()];
-    return `${formatAmount(ethereumSymbol, new BigNumber(amount), decimals)}`
+    return `${formatAmount(ethereumSymbol, new BigNumber(amount), decimals)} to ${destination}`
   };
 
   const erc20SecondaryText = (confirmations: number, confirmationsThreshold: number, signatureNumber: number) => {
@@ -90,7 +90,7 @@ export function MintCard({ethAccount, tzAccount, tzLibrary}: Props) {
           {erc20Wraps.map(((erc20, index) => (
             <ListItem key={index}>
               <ListItemText
-                primary={erc20PrimaryText(erc20.amount, erc20.token)}
+                primary={erc20PrimaryText(erc20.amount, erc20.token, erc20.destination)}
                 secondary={erc20SecondaryText(erc20.confirmations, erc20.confirmationsThreshold, Object.entries(erc20.signatures).length)}
               />
               <ListItemSecondaryAction>
