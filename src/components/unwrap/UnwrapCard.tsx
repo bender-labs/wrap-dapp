@@ -8,6 +8,7 @@ import {SupportedBlockchain} from "../../features/wallet/blockchain";
 import TokenSelection from "../wrap/TokenSelection";
 import AmountToWrapInput from "../wrap/AmountToWrapInput";
 import {TezosUnwrapApiBuilder} from "../../features/tezos/TezosUnwrapApi";
+import UnwrapFees from "./UnwrapFees";
 
 type Props = {
   ethLibrary: Web3Provider;
@@ -67,8 +68,11 @@ export default function UnwrapCard({ethAccount, tzAccount, tzLibrary}: Props) {
               Select the token amount you wish to unwrap
             </StepLabel>
             <StepContent>
-              <AmountToWrapInput balance={currentBalance} decimals={decimals} symbol={fungibleTokens[token]?.tezosSymbol} onChange={selectAmountToUnwrap}
-                                 amountToWrap={amountToUnwrap}/>
+              <>
+                <AmountToWrapInput balance={currentBalance} decimals={decimals} symbol={fungibleTokens[token]?.tezosSymbol} onChange={selectAmountToUnwrap}
+                                   amountToWrap={amountToUnwrap}/>
+                <UnwrapFees fees={fees} decimals={decimals} symbol={token} amountToUnwrap={amountToUnwrap}/>
+              </>
             </StepContent>
           </Step>
           <Step expanded={step > 2}>

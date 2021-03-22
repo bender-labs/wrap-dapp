@@ -16,6 +16,8 @@ import {TokenMetadata} from "../../features/swap/token";
 import {formatAmount} from "../../features/ethereum/token";
 import {TezosToolkit} from "@taquito/taquito";
 import BigNumber from "bignumber.js";
+import {Fees} from "../../config";
+import {wrapFees} from "../../features/fees/fees";
 
 const useStyles = makeStyles((theme) => ({
   swapContainer: {
@@ -34,10 +36,11 @@ export function MintCard({ethAccount, tzAccount, tzLibrary}: Props) {
   const {
     indexerUrl,
     fungibleTokens,
+    fees,
     wrapSignatureThreshold,
     tezos: {quorumContractAddress, minterContractAddress}
   } = useConfig();
-  const [{erc20Wraps, erc721Wraps}, setPendingWrap] = useState<IndexerWrapPayload>({erc20Wraps: [], erc721Wraps: []});
+  const [{erc20Wraps}, setPendingWrap] = useState<IndexerWrapPayload>({erc20Wraps: [], erc721Wraps: []});
 
   const tokensByEthAddress = useMemo(() => Object.entries(fungibleTokens).reduce<Record<string, TokenMetadata>>((acc, [token, metadata]) => {
     acc[metadata.ethereumContractAddress] = metadata;
@@ -54,9 +57,11 @@ export function MintCard({ethAccount, tzAccount, tzLibrary}: Props) {
     return () => clearInterval(intervalId);
   }, []);
 
-  const erc20PrimaryText = (amount: string, token: string, destination: string) => {
+  const erc20PrimaryText = (rawAmount: string, token: string, destination: string, fees: Fees) => {
     const {decimals, ethereumSymbol} = tokensByEthAddress[token.toLowerCase()];
-    return `${formatAmount(ethereumSymbol, new BigNumber(amount), decimals)} to ${destination}`
+    const amount = new BigNumber(rawAmount);
+    const feesToPay = wrapFees(amount, fees);
+    return `${formatAmount(ethereumSymbol, amount.minus(feesToPay), decimals)} to ${destination}`
   };
 
   const erc20SecondaryText = (confirmations: number, confirmationsThreshold: number, signatureNumber: number) => {
@@ -90,7 +95,7 @@ export function MintCard({ethAccount, tzAccount, tzLibrary}: Props) {
           {erc20Wraps.map(((erc20, index) => (
             <ListItem key={index}>
               <ListItemText
-                primary={erc20PrimaryText(erc20.amount, erc20.token, erc20.destination)}
+                primary={erc20PrimaryText(erc20.amount, erc20.token, erc20.destination, fees)}
                 secondary={erc20SecondaryText(erc20.confirmations, erc20.confirmationsThreshold, Object.entries(erc20.signatures).length)}
               />
               <ListItemSecondaryAction>

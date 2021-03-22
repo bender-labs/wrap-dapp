@@ -9,7 +9,7 @@ import {TezosToolkit} from "@taquito/taquito";
 import {EthereumWrapApiBuilder} from "../../features/ethereum/EthereumWrapApi";
 import {useWrap, WrapStatus} from "./useWrap";
 import {SupportedBlockchain} from "../../features/wallet/blockchain";
-import FeesToPay from "./FeesToPay";
+import WrapFees from "./WrapFees";
 
 type Props = {
   ethLibrary: Web3Provider;
@@ -71,7 +71,7 @@ export default function SwapCard({ethLibrary, ethAccount, tzAccount, tzLibrary}:
               <>
                 <AmountToWrapInput balance={currentBalance} decimals={decimals} symbol={token} onChange={selectAmountToWrap}
                                    amountToWrap={amountToWrap}/>
-                <FeesToPay fees={fees} decimals={decimals} symbol={token} amountToWrap={amountToWrap}/>
+                <WrapFees fees={fees} decimals={decimals} symbol={token} amountToWrap={amountToWrap}/>
               </>
             </StepContent>
           </Step>

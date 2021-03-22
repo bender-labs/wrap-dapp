@@ -4,6 +4,7 @@ import {formatAmount} from "../../features/ethereum/token";
 import BigNumber from "bignumber.js";
 import {grey} from "@material-ui/core/colors";
 import {Fees} from "../../config";
+import {wrapFees} from "../../features/fees/fees";
 
 type Props = {
   fees: Fees;
@@ -20,11 +21,9 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-const calculateFees = (amountToWrap: BigNumber, fees: Fees) => amountToWrap.div(10000).multipliedBy(fees.erc20WrappingFees)
-
-export default function FeesToPay({fees, amountToWrap, decimals, symbol}: Props) {
+export default function WrapFees({fees, amountToWrap, decimals, symbol}: Props) {
   const classes = useStyles();
-  const currentFees = calculateFees(amountToWrap, fees);
+  const currentFees = wrapFees(amountToWrap, fees);
 
   return (
       <>
