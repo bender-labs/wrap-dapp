@@ -20,13 +20,20 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
+const calculateFees = (amountToWrap: BigNumber, fees: Fees) => amountToWrap.div(10000).multipliedBy(fees.erc20WrappingFees)
 
 export default function FeesToPay({fees, amountToWrap, decimals, symbol}: Props) {
   const classes = useStyles();
+  const currentFees = calculateFees(amountToWrap, fees);
 
   return (
-    <Typography variant="caption" className={classes.helperText}>
-        Fees: {formatAmount(symbol, amountToWrap.div(10000).multipliedBy(fees.erc20WrappingFees), decimals)}
-    </Typography>
+      <>
+        <Typography variant="caption" className={classes.helperText}>
+            Fees: {formatAmount(symbol, currentFees, decimals)}
+        </Typography>
+        <Typography variant="caption" className={classes.helperText}>
+            Amount you'll receive: {formatAmount(symbol, amountToWrap.minus(currentFees), decimals)}
+        </Typography>
+      </>
   )
 }
