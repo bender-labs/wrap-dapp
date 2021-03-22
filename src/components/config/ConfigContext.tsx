@@ -39,10 +39,13 @@ export function useEnvironmentSelectorContext() {
   return selector;
 }
 
+const getTimeFromRetryCounter = (counter: number) => (Math.pow(2, counter) - 1);
+
 export default function Provider({children}: PropsWithChildren<{}>) {
   const [environment, setEnvironment] = useState<Environment>(Environment.TESTNET);
   const [configStatus, setConfigStatus] = useState<ConfigStatus>(ConfigStatus.UNINITIALIZED);
   const [config, setConfig] = useState<ContextValue>();
+  const [retryTime, setRetryTime] = useState<number>(0);
 
   const environmentOptions = useMemo(() => ({
     setEnvironment,
@@ -56,11 +59,19 @@ export default function Provider({children}: PropsWithChildren<{}>) {
   }), []);
 
   useEffect(() => {
+    setConfigStatus(ConfigStatus.LOADING);
+    const localConfigKey = `config-${environment}`;
+    const localConfig = localStorage.getItem(localConfigKey);
+
+    if (localConfig != null) {
+      setConfig((JSON.parse(localConfig)));
+      setConfigStatus(ConfigStatus.LOADED);
+    }
+
     const loadConfig = async () => {
-      setConfigStatus(ConfigStatus.LOADING);
       const initConfig = initialConfig[environment];
       const indexerConfig = await indexerApi(initConfig.indexerUrl).fetchConfig();
-      setConfig({
+      const config = {
         environmentName: initConfig.environmentName,
         indexerUrl: initConfig.indexerUrl,
         ethereum: {
@@ -83,17 +94,31 @@ export default function Provider({children}: PropsWithChildren<{}>) {
           return acc;
         }, {}),
         fees: indexerConfig.fees
-      });
+      };
+      localStorage.setItem(localConfigKey, JSON.stringify(config));
+      setConfig(config);
       setConfigStatus(ConfigStatus.LOADED);
     };
-    loadConfig();
+
+    const loadingWithRetries = async (counter = 1) => {
+      try {
+        await loadConfig()
+      } catch (_) {
+        const retrySecond = getTimeFromRetryCounter(counter);
+        console.warn(`Error fetching indexer config, retry in ${retrySecond}`)
+        setRetryTime(retrySecond);
+        await setTimeout(() => loadingWithRetries(counter + 1), retrySecond * 1000);
+      }
+    };
+
+    loadingWithRetries();
   }, [environment]);
 
   return (
     <EnvironmentSelectorContext.Provider value={environmentOptions}>
       {configStatus !== ConfigStatus.LOADED
         ? (
-          <LoadingScreen/>
+          <LoadingScreen retryTime={retryTime}/>
         )
         : (
           <ConfigContext.Provider value={config}>

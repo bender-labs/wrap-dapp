@@ -61,7 +61,7 @@ export interface IndexerConfigPayload {
 export default function indexerApi(baseURL: string) {
   const axiosInstance = axios.create({
     baseURL,
-    timeout: 1000
+    timeout: 3000
   });
 
   const fetchConfig: (_: void) => Promise<IndexerConfigPayload> = () => axiosInstance.get("configuration").then(({data}) => data);

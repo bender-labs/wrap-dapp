@@ -10,23 +10,22 @@ import {Box, Container, CssBaseline} from "@material-ui/core";
 import AppBar from "./screens/AppBar";
 import Wrap from "./screens/Wrap";
 
-
 function App() {
   return (
     <ConfigProvider>
-      <Web3ReactProvider getLibrary={getEthLibrary}>
-        <TezosProvider getLibrary={getTezosLibrary}>
-          <SnackbarProvider autoHideDuration={6000}>
-            <CssBaseline/>
-            <Container maxWidth="md">
-              <AppBar/>
-              <Box mt={4}>
-                <Wrap/>
-              </Box>
-            </Container>
-          </SnackbarProvider>
-        </TezosProvider>
-      </Web3ReactProvider>
+        <Web3ReactProvider getLibrary={getEthLibrary}>
+          <TezosProvider getLibrary={getTezosLibrary}>
+            <SnackbarProvider autoHideDuration={6000}>
+              <CssBaseline/>
+              <Container maxWidth="md">
+                <AppBar/>
+                <Box mt={4}>
+                  <Wrap/>
+                </Box>
+              </Container>
+            </SnackbarProvider>
+          </TezosProvider>
+        </Web3ReactProvider>
     </ConfigProvider>
   );
 }
