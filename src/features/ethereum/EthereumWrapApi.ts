@@ -26,11 +26,11 @@ export class EthereumWrapApi {
   }
 
   async approve(amount: BigNumber) {
-    return this.erc20Contract.approve(this.benderContractAddress(), ethers.BigNumber.from(amount.toString()));
+    return this.erc20Contract.approve(this.benderContractAddress(), ethers.BigNumber.from(amount.toString(10)));
   }
 
   async wrap(amount: BigNumber) {
-    return this.custodianContract.wrapERC20(this.erc20ContractAddress(), ethers.BigNumber.from(amount.toString()), this.tzAccountAddress, {
+    return this.custodianContract.wrapERC20(this.erc20ContractAddress(), ethers.BigNumber.from(amount.toString(10)), this.tzAccountAddress, {
       gasLimit: 100000
     });
   }

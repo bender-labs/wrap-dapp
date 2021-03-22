@@ -1,4 +1,3 @@
-import {ethers} from "ethers";
 import {useCallback, useEffect, useReducer} from "react";
 import {EthereumWrapApi, EthereumWrapApiFactory} from "../../features/ethereum/EthereumWrapApi";
 import {TokenMetadata} from "../../features/swap/token";

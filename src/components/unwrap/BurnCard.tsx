@@ -40,7 +40,7 @@ export function BurnCard({ethAccount, tzAccount, ethLibrary}: Props) {
     unwrapSignatureThreshold,
     ethereum: {custodianContractAddress}
   } = useConfig();
-  const [{erc20Unwraps, erc721Unwraps}, setPendingUnwrap] = useState<IndexerUnwrapPayload>({erc20Unwraps: [], erc721Unwraps: []});
+  const [{erc20Unwraps}, setPendingUnwrap] = useState<IndexerUnwrapPayload>({erc20Unwraps: [], erc721Unwraps: []});
 
   const tokensByEthAddress = useMemo(() => Object.entries(fungibleTokens).reduce<Record<string, TokenMetadata>>((acc, [token, metadata]) => {
     acc[metadata.ethereumContractAddress] = metadata;
