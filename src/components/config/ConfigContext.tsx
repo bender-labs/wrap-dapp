@@ -81,7 +81,8 @@ export default function Provider({children}: PropsWithChildren<{}>) {
             token: e.ethereumSymbol
           };
           return acc;
-        }, {})
+        }, {}),
+        fees: indexerConfig.fees
       });
       setConfigStatus(ConfigStatus.LOADED);
     };

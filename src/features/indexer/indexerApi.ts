@@ -49,7 +49,13 @@ export interface IndexerConfigPayload {
     tezosTokenId: string | null,
     tezosSymbol: string,
     tezosName: string
-  }>
+  }>,
+  fees: {
+    erc20WrappingFees: number,
+    erc20UnwrappingFees: number,
+    erc721WrappingFees: number,
+    erc721UnwrappingFees: number
+  }
 }
 
 export default function indexerApi(baseURL: string) {

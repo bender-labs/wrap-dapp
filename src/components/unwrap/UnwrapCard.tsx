@@ -24,11 +24,12 @@ const useStyles = makeStyles((theme) => ({
 
 export default function UnwrapCard({ethAccount, tzAccount, tzLibrary}: Props) {
   const classes = useStyles();
-  const {fungibleTokens, tezos: {minterContractAddress}} = useConfig();
+  const {fees, fungibleTokens, tezos: {minterContractAddress}} = useConfig();
   const tezosUnwrapApiFactory = TezosUnwrapApiBuilder
     .withProvider(tzLibrary)
     .forMinterContract(minterContractAddress)
     .forAccount(ethAccount, tzAccount)
+    .forFees(fees)
     .createFactory();
   const {status, amountToUnwrap, currentBalance, token, decimals, selectAmountToUnwrap, selectToken, launchWrap} = useUnwrap(tezosUnwrapApiFactory, fungibleTokens);
   const [step, setCurrentStep] = useState<number>(0);

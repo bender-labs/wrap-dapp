@@ -1,6 +1,13 @@
 import {TokenMetadata} from "./features/swap/token";
 import {NetworkType} from "@airgap/beacon-sdk";
 
+export type Fees = {
+  erc20WrappingFees: number,
+  erc20UnwrappingFees: number,
+  erc721WrappingFees: number,
+  erc721UnwrappingFees: number
+}
+
 export interface InitialConfig {
   environmentName: string,
   indexerUrl: string,
@@ -34,7 +41,8 @@ export interface Config {
   },
   wrapSignatureThreshold: number,
   unwrapSignatureThreshold: number,
-  fungibleTokens: Record<string, TokenMetadata>
+  fungibleTokens: Record<string, TokenMetadata>,
+  fees: Fees,
 }
 
 export type EthereumConfig = Config["ethereum"];
