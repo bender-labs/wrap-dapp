@@ -9,6 +9,7 @@ import {TezosToolkit} from "@taquito/taquito";
 import {EthereumWrapApiBuilder} from "../../features/ethereum/EthereumWrapApi";
 import {useWrap, WrapStatus} from "./useWrap";
 import {SupportedBlockchain} from "../../features/wallet/blockchain";
+import FeesToPay from "./FeesToPay";
 
 type Props = {
   ethLibrary: Web3Provider;
@@ -25,7 +26,7 @@ const useStyles = makeStyles((theme) => ({
 
 export default function SwapCard({ethLibrary, ethAccount, tzAccount, tzLibrary}: Props) {
   const classes = useStyles();
-  const {fungibleTokens, ethereum: {custodianContractAddress}} = useConfig();
+  const {fungibleTokens, fees, ethereum: {custodianContractAddress}} = useConfig();
   const ethWrapApiFactory = EthereumWrapApiBuilder
     .withProvider(ethLibrary)
     .forCustodianContract(custodianContractAddress)
@@ -67,8 +68,11 @@ export default function SwapCard({ethLibrary, ethAccount, tzAccount, tzLibrary}:
               Select the token amount you wish to wrap
             </StepLabel>
             <StepContent>
-              <AmountToWrapInput balance={currentBalance} decimals={decimals} symbol={token} onChange={selectAmountToWrap}
-                                 amountToWrap={amountToWrap}/>
+              <>
+                <AmountToWrapInput balance={currentBalance} decimals={decimals} symbol={token} onChange={selectAmountToWrap}
+                                   amountToWrap={amountToWrap}/>
+                <FeesToPay fees={fees} decimals={decimals} symbol={token} amountToWrap={amountToWrap}/>
+              </>
             </StepContent>
           </Step>
           <Step expanded={step > 2}>

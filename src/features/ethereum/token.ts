@@ -9,5 +9,5 @@ export function formatUnits(balance: BigNumber, decimals: number): string {
 }
 
 export function formatAmount(symbol: string, balance: BigNumber, decimals: number) {
-  return `${symbol} ${formatUnits(balance, decimals)}`
+  return `${symbol} ${balance.shiftedBy(-decimals).toFormat()}`
 }
