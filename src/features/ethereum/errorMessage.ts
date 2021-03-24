@@ -2,7 +2,6 @@ import {
   NoEthereumProviderError,
   UserRejectedRequestError as UserRejectedRequestErrorInjected
 } from "@web3-react/injected-connector";
-import {UserRejectedRequestError as UserRejectedRequestErrorFrame} from "@web3-react/frame-connector";
 import {UserRejectedRequestError as UserRejectedRequestErrorWalletConnect} from '@web3-react/walletconnect-connector'
 import {UnsupportedChainIdError} from "@web3-react/core";
 
@@ -26,7 +25,6 @@ export default function errorMessage(error: Error): ErrorMessage {
       }
     case UserRejectedRequestErrorInjected:
     case UserRejectedRequestErrorWalletConnect:
-    case UserRejectedRequestErrorFrame:
       return {
         message: 'Please authorize this website to access your Ethereum account.',
         variant: 'warning'

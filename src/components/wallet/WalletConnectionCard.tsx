@@ -71,8 +71,7 @@ export default ({
                   size="small"
                   color="primary"
                   disabled={connectionStatus === ConnectionStatus.CONNECTING}
-                  onClick={() => handleSelectedProvider("injected")}
-                  //onClick={() => setOpen(true)}
+                  onClick={() => blockchain === SupportedBlockchain.Ethereum ? setOpen(true) : handleSelectedProvider("injected")}
                 >
                   Connect
                 </Button>

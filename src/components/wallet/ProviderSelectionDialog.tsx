@@ -1,4 +1,11 @@
-import {Dialog, DialogTitle, List, ListItem, ListItemText} from "@material-ui/core";
+import {
+    Dialog,
+    DialogContent,
+    DialogTitle,
+    List,
+    ListItem,
+    ListItemText
+} from "@material-ui/core";
 import {ProviderList} from "../../features/wallet/blockchain";
 
 type SimpleDialogProps = {
@@ -9,22 +16,22 @@ type SimpleDialogProps = {
   blockchain: string;
 }
 
-export default ({ onClose, onSelectedValue, open, providers, blockchain }: SimpleDialogProps) => {
+export default ({ onClose, onSelectedValue, open, providers }: SimpleDialogProps) => {
   return (
     <Dialog
       onClose={onClose}
       aria-labelledby="simple-dialog-title"
       open={open}>
-      <DialogTitle id="simple-dialog-title">
-        {`Select your ${blockchain} provider`}
-      </DialogTitle>
-      <List>
-        {providers.map(({name, key}) => (
-          <ListItem button onClick={() => onSelectedValue(key)} key={key}>
-            <ListItemText primary={name}/>
-          </ListItem>
-        ))}
-      </List>
+        <DialogTitle id="simple-dialog-title">Select your provider</DialogTitle>
+        <DialogContent>
+          <List>
+            {providers.map(({name, key}) => (
+              <ListItem button onClick={() => onSelectedValue(key)} key={key}>
+                <ListItemText primary={name}/>
+              </ListItem>
+            ))}
+          </List>
+        </DialogContent>
     </Dialog>
   );
 }

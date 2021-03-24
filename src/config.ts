@@ -14,7 +14,9 @@ export interface InitialConfig {
   ethereum: {
     rpcUrl: string,
     networkId: number,
-    networkName: string
+    networkName: string,
+    formaticApiKey: string,
+    portisDAppId: string,
   },
   tezos: {
     rpcUrl: string,
@@ -30,6 +32,8 @@ export interface Config {
     rpcUrl: string,
     networkId: number,
     networkName: string,
+    formaticApiKey: string,
+    portisDAppId: string,
     custodianContractAddress: string,
   },
   tezos: {
@@ -66,7 +70,9 @@ export const initialConfig: Record<string, InitialConfig> = {
     ethereum: {
       rpcUrl: process.env.REACT_APP_ETH_RPC_TESTNET || "",
       networkId: 4,
-      networkName: "Rinkeby"
+      networkName: "Rinkeby",
+      formaticApiKey: process.env.REACT_APP_FORTMATIC_API_KEY || "",
+      portisDAppId: process.env.REACT_APP_PORTIS_DAPP_ID || "",
     },
     tezos: {
       rpcUrl: process.env.REACT_APP_TZ_RPC_TESTNET || "",
