@@ -3,7 +3,7 @@ export enum SupportedBlockchain {
   Ethereum
 }
 
-export type ProviderList = Array<{name: string, key: string}>;
+export type ProviderList = Array<{name: string, key: string, icon:string}>;
 
 export function humanizeSupportedBlockchain(blockchain: SupportedBlockchain): string {
   switch (blockchain) {

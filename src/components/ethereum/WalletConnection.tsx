@@ -28,7 +28,7 @@ export default function WalletConnection({activate, active, account}: Props) {
 
   const providers: ProviderList =
     Object.entries(connectors)
-      .map<{ name: string, key: string }>(([key, value]) => ({name: value.name, key}));
+      .map<{ name: string, key: string, icon: string }>(([key, value]) => ({name: value.name, key, icon: value.iconName}));
 
   const onStartConnection = (key: string) => {
     dispatchConnectionAction({type: ConnectionActions.launchingConnection});

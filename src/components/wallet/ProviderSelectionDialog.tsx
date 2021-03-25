@@ -1,12 +1,18 @@
 import {
     Dialog,
-    DialogContent,
     DialogTitle,
     List,
     ListItem,
-    ListItemText
+    ListItemText, makeStyles
 } from "@material-ui/core";
 import {ProviderList} from "../../features/wallet/blockchain";
+
+const useStyles = makeStyles(() => ({
+    icon: {
+        width: 32,
+        height: 32,
+    }
+}));
 
 type SimpleDialogProps = {
   providers: ProviderList;
@@ -17,21 +23,21 @@ type SimpleDialogProps = {
 }
 
 export default ({ onClose, onSelectedValue, open, providers }: SimpleDialogProps) => {
+  const classes = useStyles();
   return (
     <Dialog
       onClose={onClose}
       aria-labelledby="simple-dialog-title"
       open={open}>
         <DialogTitle id="simple-dialog-title">Select your provider</DialogTitle>
-        <DialogContent>
-          <List>
-            {providers.map(({name, key}) => (
-              <ListItem button onClick={() => onSelectedValue(key)} key={key}>
-                <ListItemText primary={name}/>
-              </ListItem>
-            ))}
-          </List>
-        </DialogContent>
+        <List>
+          {providers.map(({name, key, icon}) => (
+            <ListItem button onClick={() => onSelectedValue(key)} key={key}>
+              <ListItemText primary={name}/>
+              <img className={classes.icon} alt={name} src={`/static/images/${icon}`} />
+            </ListItem>
+          ))}
+        </List>
     </Dialog>
   );
 }

@@ -49,7 +49,7 @@ export default function WalletConnection({account,activate,status} : Props) {
         blockchain={SupportedBlockchain.Tezos}
         blockchainIcon={<Icon />}
         connectionStatus={connectionStatus}
-        providers={[{name: "Beacon", key: "beacon"}]}
+        providers={[{name: "Beacon", key: "beacon", icon: ""}]}
         onSelectedProvider={handleConnection}
         networkName={(networkId == null) ? "Not connected" : networkName}
         account={account}

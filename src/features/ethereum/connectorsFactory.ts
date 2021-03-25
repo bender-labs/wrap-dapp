@@ -13,7 +13,8 @@ export default function connectorsFactory({rpcUrl, networkId, formaticApiKey, po
       name: isMetamask ? "Metamask" : "Browser Extension",
       connector: new InjectedConnector({
         supportedChainIds: [networkId]
-      })
+      }),
+      iconName: isMetamask ? "metamask.png" : "arrow-right.svg"
     },
     walletConnect: {
       name: "WalletConnect",
@@ -22,21 +23,24 @@ export default function connectorsFactory({rpcUrl, networkId, formaticApiKey, po
         qrcode: true,
         bridge: "https://bridge.walletconnect.org",
         pollingInterval: 15000
-      })
+      }),
+      iconName: "walletConnectIcon.svg"
     },
     fortmatic: {
       name: "Fortmatic",
       connector: new FortmaticConnector({
         apiKey: formaticApiKey,
         chainId: networkId
-      })
+      }),
+      iconName: "fortmaticIcon.png"
     },
     portis: {
       name: "Portis",
       connector: new PortisConnector({
         dAppId: portisDAppId,
         networks: [networkId]
-      })
+      }),
+      iconName: "portisIcon.png"
     }
   };
 }
