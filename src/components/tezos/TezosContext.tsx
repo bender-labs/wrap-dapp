@@ -91,11 +91,13 @@ export default function Provider({
   getLibrary,
   children,
 }: PropsWithChildren<Props>) {
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const wallet = useMemo(() => getLibrary(), []);
   const [state, dispatch] = React.useReducer(reducer, {
     status: ConnectionStatus.UNINITIALIZED,
     wallet: wallet,
   });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const activate = useCallback(_activate(dispatch)(wallet), []);
 
   return (

@@ -25,7 +25,7 @@ import { ethers } from 'ethers';
 import ERC20_ABI from '../../features/ethereum/erc20Abi';
 import CUSTODIAN_ABI from '../../features/ethereum/custodianContractAbi';
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(() => ({
   swapContainer: {
     flex: 1,
   },
@@ -53,7 +53,7 @@ export function BurnCard({ ethAccount, tzAccount, ethLibrary }: Props) {
   const tokensByEthAddress = useMemo(
     () =>
       Object.entries(fungibleTokens).reduce<Record<string, TokenMetadata>>(
-        (acc, [token, metadata]) => {
+        (acc, [, metadata]) => {
           acc[metadata.ethereumContractAddress] = metadata;
           return acc;
         },
@@ -73,6 +73,7 @@ export function BurnCard({ ethAccount, tzAccount, ethLibrary }: Props) {
     loadPendingUnwrap();
     const intervalId = setInterval(loadPendingUnwrap, 5000);
     return () => clearInterval(intervalId);
+    // eslint-disable-next-line
   }, []);
 
   const erc20PrimaryText = (

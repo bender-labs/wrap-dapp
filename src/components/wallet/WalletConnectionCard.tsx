@@ -1,21 +1,11 @@
 import React, { ReactNode, useState } from 'react';
-import {
-  Button,
-  Chip,
-  Grid,
-  makeStyles,
-  Paper,
-  Typography,
-} from '@material-ui/core';
+import { Button, Chip } from '@material-ui/core';
 import {
   humanizeSupportedBlockchain,
   ProviderList,
   SupportedBlockchain,
 } from '../../features/wallet/blockchain';
-import {
-  ConnectionStatus,
-  humanizeConnectionStatus,
-} from '../../features/wallet/connectionStatus';
+import { ConnectionStatus } from '../../features/wallet/connectionStatus';
 import ProviderSelectionDialog from './ProviderSelectionDialog';
 
 type Props = {
@@ -28,29 +18,14 @@ type Props = {
   account: string | null | undefined;
 };
 
-const useStyles = makeStyles((theme) => ({
-  root: {
-    padding: theme.spacing(2),
-    flexGrow: 1,
-  },
-  mainContent: {
-    flexGrow: 1,
-  },
-  cardContent: {
-    textAlign: 'center',
-  },
-}));
-
-export default ({
+const Render = ({
   blockchain,
   blockchainIcon,
   connectionStatus,
   providers,
   onSelectedProvider,
-  networkName,
   account,
 }: Props) => {
-  const classes = useStyles();
   const [isOpen, setOpen] = useState(false);
   const blockchainName = humanizeSupportedBlockchain(blockchain);
 
@@ -88,3 +63,4 @@ export default ({
     </React.Fragment>
   );
 };
+export default Render;

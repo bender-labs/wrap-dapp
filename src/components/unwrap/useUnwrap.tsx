@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useReducer } from 'react';
 import { TokenMetadata } from '../../features/swap/token';
 import {
-  TezosUnwrapApiFactory,
   TezosUnwrapApi,
+  TezosUnwrapApiFactory,
 } from '../../features/tezos/TezosUnwrapApi';
 import BigNumber from 'bignumber.js';
 
@@ -101,6 +101,7 @@ export function useUnwrap(
       type: UnwrapStatus.TOKEN_SELECTED,
       payload: { token, decimals, contract },
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const selectAmountToUnwrap = useCallback((amountToUnwrap: BigNumber) => {
@@ -119,6 +120,7 @@ export function useUnwrap(
     };
 
     startWrapping();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state.contract, state.amountToUnwrap]);
 
   useEffect(() => {
@@ -132,6 +134,7 @@ export function useUnwrap(
       }
     };
     loadMetadata();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state.token]);
 
   return {

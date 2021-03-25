@@ -1,38 +1,15 @@
-import {
-  Grid,
-  makeStyles,
-  Paper,
-  StepContent,
-  Tab,
-  Tabs,
-  Typography,
-} from '@material-ui/core';
-import ArrowForwardIcon from '@material-ui/icons/ArrowForward';
+import { Grid, makeStyles, Paper } from '@material-ui/core';
 import EthWalletConnection from '../components/ethereum/WalletConnection';
 import TezosWalletConnection from '../components/tezos/WalletConnection';
-import SwapCard from '../components/wrap/SwapCard';
 import { useWeb3React } from '@web3-react/core';
 import { Web3Provider } from '@ethersproject/providers';
-import WrapEmptyStateCard from '../components/wrap/WrapEmptyStateCard';
 import React, { useEffect, useState } from 'react';
-import {
-  ConnectionStatus,
-  useTezosContext,
-} from '../components/tezos/TezosContext';
-import { MintCard } from '../components/wrap/MintCard';
-import { BurnCard } from '../components/unwrap/BurnCard';
-import UnwrapCard from '../components/unwrap/UnwrapCard';
-import { grey } from '@material-ui/core/colors';
+import { useTezosContext } from '../components/tezos/TezosContext';
 import TokenSelection from '../components/wrap/TokenSelection';
 import { SupportedBlockchain } from '../features/wallet/blockchain';
 import { useConfig } from '../components/config/ConfigContext';
 import AmountToWrapInput from '../components/wrap/AmountToWrapInput';
 import BigNumber from 'bignumber.js';
-
-enum TabValues {
-  WRAP,
-  BURN,
-}
 
 const useStyles = makeStyles((theme) => ({
   swapContainer: {
@@ -41,18 +18,16 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default () => {
+const Render = () => {
   const classes = useStyles();
   const {
     activate: ethActivate,
     active: ethActive,
-    library: ethLibrary,
     account: ethAccount,
   } = useWeb3React<Web3Provider>();
   const {
     activate: tzActivate,
     status: tzConnectionStatus,
-    library: tzLibrary,
     account: tzAccount,
   } = useTezosContext();
   const { fungibleTokens } = useConfig();
@@ -101,3 +76,4 @@ export default () => {
     </Paper>
   );
 };
+export default Render;

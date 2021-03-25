@@ -1,4 +1,4 @@
-export default [
+const abi = [
   {
     constant: true,
     inputs: [],
@@ -220,3 +220,4 @@ export default [
     type: 'event',
   },
 ];
+export default abi;

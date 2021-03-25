@@ -1,4 +1,4 @@
-export default [
+const abi = [
   {
     inputs: [
       {
@@ -587,3 +587,4 @@ export default [
     type: 'function',
   },
 ];
+export default abi;

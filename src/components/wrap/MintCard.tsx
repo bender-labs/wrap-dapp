@@ -73,6 +73,7 @@ export function MintCard({ ethAccount, tzAccount, tzLibrary }: Props) {
     loadPendingWrap();
     const intervalId = setInterval(loadPendingWrap, 5000);
     return () => clearInterval(intervalId);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const erc20PrimaryText = (

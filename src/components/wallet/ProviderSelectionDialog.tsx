@@ -1,6 +1,5 @@
 import {
   Dialog,
-  DialogTitle,
   List,
   ListItem,
   ListItemText,
@@ -23,7 +22,7 @@ type SimpleDialogProps = {
   blockchain: string;
 };
 
-export default ({
+const Render = ({
   onClose,
   onSelectedValue,
   open,
@@ -53,3 +52,4 @@ export default ({
     </Dialog>
   );
 };
+export default Render;

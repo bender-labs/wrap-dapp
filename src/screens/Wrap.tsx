@@ -37,7 +37,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default () => {
+const Render = () => {
   const classes = useStyles();
   const {
     activate: ethActivate,
@@ -156,3 +156,4 @@ export default () => {
     </Grid>
   );
 };
+export default Render;

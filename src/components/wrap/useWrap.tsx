@@ -106,6 +106,7 @@ export function useWrap(
       type: WrapStatus.TOKEN_SELECTED,
       payload: { token, decimals, contract },
     });
+    // eslint-disable-next-line
   }, []);
 
   const selectAmountToWrap = useCallback((amountToWrap: BigNumber) => {
@@ -153,6 +154,7 @@ export function useWrap(
     };
 
     startWrapping();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state.contract, state.amountToWrap]);
 
   useEffect(() => {
@@ -167,6 +169,7 @@ export function useWrap(
       }
     };
     loadMetadata();
+    // eslint-disable-next-line
   }, [state.token]);
 
   return {

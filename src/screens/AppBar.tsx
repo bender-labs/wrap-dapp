@@ -25,7 +25,7 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
-export default () => {
+const Render = () => {
   const config = useConfig();
   const {
     setEnvironment,
@@ -91,3 +91,4 @@ export default () => {
     </AppBar>
   );
 };
+export default Render;

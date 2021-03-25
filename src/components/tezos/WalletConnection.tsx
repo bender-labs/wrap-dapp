@@ -1,5 +1,4 @@
 import React from 'react';
-import { makeStyles } from '@material-ui/core';
 import WalletConnectionCard from '../wallet/WalletConnectionCard';
 import { SupportedBlockchain } from '../../features/wallet/blockchain';
 import Icon from './Icon';
@@ -13,8 +12,6 @@ import { ConnectionStatus as TezosConnectionStatus } from '../tezos/TezosContext
 import { useSnackbar } from 'notistack';
 import { useTezosConfig } from '../config/ConfigContext';
 
-const useStyles = makeStyles((theme) => ({}));
-
 type Props = {
   account: undefined | string;
   activate: (args: RequestPermissionInput) => Promise<string>;
@@ -23,7 +20,6 @@ type Props = {
 
 export default function WalletConnection({ account, activate, status }: Props) {
   const { rpcUrl, networkId, networkName } = useTezosConfig();
-  const classes = useStyles();
 
   const { enqueueSnackbar } = useSnackbar();
   const [connectionStatus, dispatchConnectionAction] = React.useReducer(

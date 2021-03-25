@@ -1,9 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import {
   Button,
-  Card,
-  CardContent,
-  makeStyles,
   Step,
   StepContent,
   StepLabel,
@@ -27,19 +24,7 @@ type Props = {
   tzAccount: string;
 };
 
-const useStyles = makeStyles((theme) => ({
-  swapContainer: {
-    flex: 1,
-  },
-}));
-
-export default function SwapCard({
-  ethLibrary,
-  ethAccount,
-  tzAccount,
-  tzLibrary,
-}: Props) {
-  const classes = useStyles();
+export default function SwapCard({ ethLibrary, ethAccount, tzAccount }: Props) {
   const {
     fungibleTokens,
     fees,
