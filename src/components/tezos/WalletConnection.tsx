@@ -8,7 +8,7 @@ import {
   connectionStatusInitialState,
   connectionStatusReducer,
 } from '../../features/wallet/connectionStatus';
-import { ConnectionStatus as TezosConnectionStatus } from '../tezos/TezosContext';
+import { ConnectionStatus as TezosConnectionStatus } from './TezosContext';
 import { useSnackbar } from 'notistack';
 import { useTezosConfig } from '../../runtime/config/ConfigContext';
 

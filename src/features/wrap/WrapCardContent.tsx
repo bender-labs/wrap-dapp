@@ -25,7 +25,7 @@ export default function WrapCardContent(props: WrapCardContentProps) {
           amountToWrap={amountToWrap}
         />
       </Grid>
-      <Grid item xs={6} spacing={1}>
+      <Grid item xs={6}>
         <TokenSelection
           token={token}
           onTokenSelect={setToken}

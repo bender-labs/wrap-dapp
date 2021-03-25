@@ -44,7 +44,6 @@ const WalletConnectionCard = ({
     setOpen(false);
     onSelectedProvider(key);
   };
-
   return (
     <React.Fragment>
       {connectionStatus === ConnectionStatus.CONNECTED && account != null ? (
