@@ -18,8 +18,8 @@ function App() {
         <TezosProvider getLibrary={getTezosLibrary}>
           <SnackbarProvider autoHideDuration={6000}>
             <CssBaseline />
+            <AppBar />
             <Container maxWidth="md">
-              <AppBar />
               <Box mt={4}>
                 <Wrap />
                 <WrapScreen />

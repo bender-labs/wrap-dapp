@@ -27,7 +27,7 @@ enum TabValues {
   BURN,
 }
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(() => ({
   wrapIcon: {
     verticalAlign: 'middle',
     display: 'inline-flex',

@@ -17,7 +17,7 @@ import {
 import { Environment } from '../config';
 import SwapHorizIcon from '@material-ui/icons/SwapHoriz';
 
-const useStyles = makeStyles((theme: Theme) =>
+const useStyles = makeStyles(() =>
   createStyles({
     title: {
       flexGrow: 1,
@@ -50,7 +50,7 @@ const Render = () => {
     <AppBar position="static">
       <Toolbar>
         <Typography variant="h6" component="h1" className={classes.title}>
-          🤖 BenderLabs
+          🌮 $WRAP
         </Typography>
         <Button
           aria-label="Environment selector"
