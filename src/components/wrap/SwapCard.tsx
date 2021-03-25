@@ -52,8 +52,6 @@ export default function SwapCard({ethLibrary, ethAccount, tzAccount, tzLibrary}:
   }, [status])
 
   return (
-    <Card className={classes.swapContainer}>
-      <CardContent>
         <Stepper activeStep={step} orientation="vertical">
           <Step expanded={step > 0}>
             <StepLabel>
@@ -106,7 +104,5 @@ export default function SwapCard({ethLibrary, ethAccount, tzAccount, tzLibrary}:
             </StepContent>
           </Step>
         </Stepper>
-      </CardContent>
-    </Card>
   )
 }

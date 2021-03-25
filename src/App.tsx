@@ -9,6 +9,7 @@ import {SnackbarProvider} from "notistack";
 import {Box, Container, CssBaseline} from "@material-ui/core";
 import AppBar from "./screens/AppBar";
 import Wrap from "./screens/Wrap";
+import WrapScreen from "./screens/WrapScreen";
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
                 <AppBar/>
                 <Box mt={4}>
                   <Wrap/>
+                  <WrapScreen />
                 </Box>
               </Container>
             </SnackbarProvider>

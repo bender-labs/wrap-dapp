@@ -26,8 +26,7 @@ export default function LoadingScreen({retryTime}: Props) {
     const id = setInterval(() => {
       setTime(time => {
         if (time > 1) return time - 1;
-        if (time > 0) return 0;
-        return time;
+        else return 0;
       });
 
     }, 1000);

@@ -47,38 +47,24 @@ export default ({
 
   return (
     <React.Fragment>
-      <Paper className={classes.root}>
-        <Grid container justify="space-between" spacing={2} alignItems="center">
-          <Grid item>
-            {blockchainIcon}
-          </Grid>
-          <Grid item className={classes.mainContent}>
-            <Typography variant="subtitle1" display="block">{blockchainName}</Typography>
-            <Typography variant="caption"
-                        display="block">{humanizeConnectionStatus(connectionStatus, networkName)}</Typography>
-          </Grid>
-          <Grid item>
-            {connectionStatus === ConnectionStatus.CONNECTED && account != null
-              ? (
-                <Chip
-                  label={account}
-                  color="primary"
-                  variant="outlined"
-                />
-              ) : (
-                <Button
-                  variant="contained"
-                  size="small"
-                  color="primary"
-                  disabled={connectionStatus === ConnectionStatus.CONNECTING}
-                  onClick={() => blockchain === SupportedBlockchain.Ethereum ? setOpen(true) : handleSelectedProvider("injected")}
-                >
-                  Connect
-                </Button>
-              )}
-          </Grid>
-        </Grid>
-      </Paper>
+      {connectionStatus === ConnectionStatus.CONNECTED && account != null
+        ? (
+          <Chip
+            label={account}
+            color="primary"
+            variant="outlined"
+          />
+        ) : (
+          <Button
+            variant="outlined"
+            color="primary"
+            disabled={connectionStatus === ConnectionStatus.CONNECTING}
+            startIcon={blockchainIcon}
+            onClick={() => blockchain === SupportedBlockchain.Ethereum ? setOpen(true) : handleSelectedProvider("injected")}
+          >
+            Connect your wallet
+          </Button>
+        )}
       <ProviderSelectionDialog
         open={isOpen}
         onClose={() => setOpen(false)}
