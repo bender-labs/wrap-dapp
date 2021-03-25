@@ -1,5 +1,6 @@
 import {
   AppBar,
+  Box,
   Button,
   createStyles,
   Link,
@@ -9,7 +10,7 @@ import {
   Toolbar,
   Typography,
 } from '@material-ui/core';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import {
   useConfig,
   useEnvironmentSelectorContext,
@@ -17,6 +18,11 @@ import {
 import { Environment } from '../../config';
 import SwapHorizIcon from '@material-ui/icons/SwapHoriz';
 import logo from './logo.png';
+import EthWalletConnection from '../ethereum/WalletConnection';
+import { useWeb3React } from '@web3-react/core';
+import { Web3Provider } from '@ethersproject/providers';
+import { useTezosContext } from '../tezos/TezosContext';
+import TezosWalletConnection from '../tezos/WalletConnection';
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -29,6 +35,11 @@ const useStyles = makeStyles((theme) =>
     logo: {
       width: 50,
     },
+    wallets: {
+      '& > *': {
+        marginRight: theme.spacing(1),
+      },
+    },
   })
 );
 
@@ -38,6 +49,16 @@ const Render = () => {
     setEnvironment,
     environmentOptions,
   } = useEnvironmentSelectorContext();
+  const {
+    activate: ethActivate,
+    active: ethActive,
+    account: ethAccount,
+  } = useWeb3React<Web3Provider>();
+  const {
+    activate: tzActivate,
+    status: tzConnectionStatus,
+    account: tzAccount,
+  } = useTezosContext();
   const classes = useStyles();
   const [
     anchorEnvSelector,
@@ -62,12 +83,25 @@ const Render = () => {
             WRAP
           </Link>
         </Typography>
+        <Box className={classes.wallets}>
+          <TezosWalletConnection
+            account={tzAccount}
+            activate={tzActivate}
+            status={tzConnectionStatus}
+          />
+          <EthWalletConnection
+            account={ethAccount}
+            activate={ethActivate}
+            active={ethActive}
+          />
+        </Box>
         <Button
           aria-label="Environment selector"
           aria-controls="env-selector-appbar"
           aria-haspopup="true"
           onClick={openEnvSelector}
           color="inherit"
+          size="small"
           variant="outlined"
           endIcon={<SwapHorizIcon />}
         >

@@ -1,5 +1,5 @@
 import React, { ReactNode, useState } from 'react';
-import { Button, Chip } from '@material-ui/core';
+import { Button, Chip, makeStyles } from '@material-ui/core';
 import {
   humanizeSupportedBlockchain,
   ProviderList,
@@ -7,6 +7,16 @@ import {
 } from '../../features/wallet/blockchain';
 import { ConnectionStatus } from '../../features/wallet/connectionStatus';
 import ProviderSelectionDialog from './ProviderSelectionDialog';
+import { ellipsizeAddress } from '../../features/wallet/address';
+import EthereumIcon from '../ethereum/Icon';
+import TezosIcon from '../tezos/Icon';
+
+const useStyles = makeStyles((theme) => ({
+  chipWallet: {
+    color: 'rgba(0, 0, 0, 0.87)',
+    borderColor: 'rgba(0, 0, 0, 0.87)',
+  },
+}));
 
 type Props = {
   blockchain: SupportedBlockchain;
@@ -26,6 +36,7 @@ const Render = ({
   onSelectedProvider,
   account,
 }: Props) => {
+  const classes = useStyles();
   const [isOpen, setOpen] = useState(false);
   const blockchainName = humanizeSupportedBlockchain(blockchain);
 
@@ -37,11 +48,23 @@ const Render = ({
   return (
     <React.Fragment>
       {connectionStatus === ConnectionStatus.CONNECTED && account != null ? (
-        <Chip label={account} color="primary" variant="outlined" />
+        <Chip
+          icon={
+            blockchain === SupportedBlockchain.Ethereum ? (
+              <EthereumIcon className={classes.chipWallet} />
+            ) : (
+              <TezosIcon className={classes.chipWallet} />
+            )
+          }
+          label={ellipsizeAddress(account)}
+          variant="outlined"
+          className={classes.chipWallet}
+        />
       ) : (
         <Button
           variant="outlined"
-          color="primary"
+          size="small"
+          color="inherit"
           disabled={connectionStatus === ConnectionStatus.CONNECTING}
           startIcon={blockchainIcon}
           onClick={() =>
@@ -50,7 +73,7 @@ const Render = ({
               : handleSelectedProvider('injected')
           }
         >
-          Connect your wallet
+          Connect
         </Button>
       )}
       <ProviderSelectionDialog

@@ -7,8 +7,6 @@ import {
   Typography,
 } from '@material-ui/core';
 import ArrowForwardIcon from '@material-ui/icons/ArrowForward';
-import EthWalletConnection from '../components/ethereum/WalletConnection';
-import TezosWalletConnection from '../components/tezos/WalletConnection';
 import SwapCard from '../components/wrap/SwapCard';
 import { useWeb3React } from '@web3-react/core';
 import { Web3Provider } from '@ethersproject/providers';
@@ -40,13 +38,11 @@ const useStyles = makeStyles(() => ({
 const Render = () => {
   const classes = useStyles();
   const {
-    activate: ethActivate,
     active: ethActive,
     library: ethLibrary,
     account: ethAccount,
   } = useWeb3React<Web3Provider>();
   const {
-    activate: tzActivate,
     status: tzConnectionStatus,
     library: tzLibrary,
     account: tzAccount,
@@ -66,20 +62,6 @@ const Render = () => {
 
   return (
     <Grid container spacing={2} direction="column">
-      <Grid item>
-        <EthWalletConnection
-          account={ethAccount}
-          activate={ethActivate}
-          active={ethActive}
-        />
-      </Grid>
-      <Grid item>
-        <TezosWalletConnection
-          account={tzAccount}
-          activate={tzActivate}
-          status={tzConnectionStatus}
-        />
-      </Grid>
       {!ethActive ||
       ethLibrary == null ||
       ethAccount == null ||
