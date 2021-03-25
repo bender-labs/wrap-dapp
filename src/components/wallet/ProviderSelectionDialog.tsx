@@ -28,8 +28,9 @@ export default ({ onClose, onSelectedValue, open, providers }: SimpleDialogProps
     <Dialog
       onClose={onClose}
       aria-labelledby="simple-dialog-title"
-      open={open}>
-        <DialogTitle id="simple-dialog-title">Select your provider</DialogTitle>
+      open={open}
+      maxWidth={"xs"}
+      fullWidth={true}>
         <List>
           {providers.map(({name, key, icon}) => (
             <ListItem button onClick={() => onSelectedValue(key)} key={key}>
