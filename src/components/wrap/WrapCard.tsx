@@ -24,7 +24,7 @@ type Props = {
   tzAccount: string;
 };
 
-export default function SwapCard({ ethLibrary, ethAccount, tzAccount }: Props) {
+export default function WrapCard({ ethLibrary, ethAccount, tzAccount }: Props) {
   const {
     fungibleTokens,
     fees,

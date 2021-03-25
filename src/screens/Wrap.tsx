@@ -7,7 +7,7 @@ import {
   Typography,
 } from '@material-ui/core';
 import ArrowForwardIcon from '@material-ui/icons/ArrowForward';
-import SwapCard from '../components/wrap/SwapCard';
+import WrapCard from '../components/wrap/WrapCard';
 import { useWeb3React } from '@web3-react/core';
 import { Web3Provider } from '@ethersproject/providers';
 import WrapEmptyStateCard from '../components/wrap/WrapEmptyStateCard';
@@ -35,7 +35,7 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-const Render = () => {
+const Wrap = () => {
   const classes = useStyles();
   const {
     active: ethActive,
@@ -116,7 +116,7 @@ const Render = () => {
                 />
               </Tabs>
               {activeTab === TabValues.WRAP && (
-                <SwapCard
+                <WrapCard
                   tzAccount={tzAccount}
                   ethLibrary={ethLibrary}
                   ethAccount={ethAccount}
@@ -138,4 +138,4 @@ const Render = () => {
     </Grid>
   );
 };
-export default Render;
+export default Wrap;

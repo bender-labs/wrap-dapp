@@ -42,6 +42,7 @@ export default function AmountToWrapInput({
       onChange={handleOnChange}
       helperText={helperText}
       aria-describedby="standard-weight-helper-text"
+      fullWidth
       InputProps={{
         startAdornment: (
           <InputAdornment position="start">{symbol}</InputAdornment>

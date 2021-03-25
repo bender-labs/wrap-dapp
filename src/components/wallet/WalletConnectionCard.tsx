@@ -28,7 +28,7 @@ type Props = {
   account: string | null | undefined;
 };
 
-const Render = ({
+const WalletConnectionCard = ({
   blockchain,
   blockchainIcon,
   connectionStatus,
@@ -86,4 +86,4 @@ const Render = ({
     </React.Fragment>
   );
 };
-export default Render;
+export default WalletConnectionCard;

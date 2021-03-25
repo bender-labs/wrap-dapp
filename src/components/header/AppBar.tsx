@@ -73,6 +73,8 @@ const Render = () => {
     setEnvironment(env);
     closeEnvSelector();
   };
+  const preventDefault = (event: React.SyntheticEvent) =>
+    event.preventDefault();
 
   return (
     <AppBar position="static">
@@ -81,6 +83,9 @@ const Render = () => {
         <Typography variant="h6" component="h1" className={classes.title}>
           <Link color="inherit" href="/">
             WRAP
+          </Link>
+          <Link color="inherit" href="/" onClick={preventDefault}>
+            History
           </Link>
         </Typography>
         <Box className={classes.wallets}>

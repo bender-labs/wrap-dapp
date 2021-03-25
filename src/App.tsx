@@ -26,8 +26,8 @@ function App() {
               <AppBar />
               <Container maxWidth="md">
                 <Box mt={4}>
-                  <Wrap />
                   <WrapScreen />
+                  <Wrap />
                 </Box>
               </Container>
             </SnackbarProvider>

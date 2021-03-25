@@ -37,7 +37,7 @@ export default function TokenSelection({
   };
 
   return (
-    <FormControl>
+    <FormControl fullWidth>
       <Select
         value={token}
         onChange={handleTokenSelect}
