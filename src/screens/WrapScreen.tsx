@@ -7,7 +7,7 @@ import React, { useEffect, useState } from 'react';
 import { useTezosContext } from '../components/tezos/TezosContext';
 import TokenSelection from '../components/wrap/TokenSelection';
 import { SupportedBlockchain } from '../features/wallet/blockchain';
-import { useConfig } from '../components/config/ConfigContext';
+import { useConfig } from '../runtime/config/ConfigContext';
 import AmountToWrapInput from '../components/wrap/AmountToWrapInput';
 import BigNumber from 'bignumber.js';
 

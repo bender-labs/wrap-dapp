@@ -2,10 +2,10 @@ import {
   AppBar,
   Button,
   createStyles,
+  Link,
   makeStyles,
   Menu,
   MenuItem,
-  Theme,
   Toolbar,
   Typography,
 } from '@material-ui/core';
@@ -13,14 +13,21 @@ import { useState } from 'react';
 import {
   useConfig,
   useEnvironmentSelectorContext,
-} from '../components/config/ConfigContext';
-import { Environment } from '../config';
+} from '../../runtime/config/ConfigContext';
+import { Environment } from '../../config';
 import SwapHorizIcon from '@material-ui/icons/SwapHoriz';
+import logo from './logo.png';
 
-const useStyles = makeStyles(() =>
+const useStyles = makeStyles((theme) =>
   createStyles({
     title: {
       flexGrow: 1,
+      '& > *': {
+        marginLeft: theme.spacing(2),
+      },
+    },
+    logo: {
+      width: 50,
     },
   })
 );
@@ -49,8 +56,11 @@ const Render = () => {
   return (
     <AppBar position="static">
       <Toolbar>
+        <img src={logo} className={classes.logo} alt="Logo" />
         <Typography variant="h6" component="h1" className={classes.title}>
-          🌮 $WRAP
+          <Link color="inherit" href="/">
+            WRAP
+          </Link>
         </Typography>
         <Button
           aria-label="Environment selector"

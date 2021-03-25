@@ -9,7 +9,7 @@ import {
   makeStyles,
 } from '@material-ui/core';
 import React, { useEffect, useMemo, useState } from 'react';
-import { useConfig } from '../config/ConfigContext';
+import { useConfig } from '../../runtime/config/ConfigContext';
 import indexerApi, {
   IndexerWrapPayload,
 } from '../../features/indexer/indexerApi';

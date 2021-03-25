@@ -6,7 +6,7 @@ import {
   StepLabel,
   Stepper,
 } from '@material-ui/core';
-import { useConfig } from '../config/ConfigContext';
+import { useConfig } from '../../runtime/config/ConfigContext';
 import { Web3Provider } from '@ethersproject/providers';
 import AmountToWrapInput from './AmountToWrapInput';
 import AllowanceButton from './AllowanceButton';

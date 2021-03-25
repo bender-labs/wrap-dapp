@@ -1,14 +1,13 @@
 import { Grid, makeStyles, Paper, Typography } from '@material-ui/core';
 import SwapHorizontalCircleIcon from '@material-ui/icons/SwapHorizontalCircle';
 import React from 'react';
-import { grey } from '@material-ui/core/colors';
 
 const useStyles = makeStyles((theme) => ({
   swapContainer: {
     padding: theme.spacing(2),
     flexGrow: 1,
     flex: 1,
-    backgroundColor: grey[200],
+    backgroundColor: theme.palette.primary.main,
   },
   mainContent: {
     flexGrow: 1,

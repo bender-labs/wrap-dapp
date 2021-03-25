@@ -10,7 +10,7 @@ import {
 } from '../../features/wallet/connectionStatus';
 import { ConnectionStatus as TezosConnectionStatus } from '../tezos/TezosContext';
 import { useSnackbar } from 'notistack';
-import { useTezosConfig } from '../config/ConfigContext';
+import { useTezosConfig } from '../../runtime/config/ConfigContext';
 
 type Props = {
   account: undefined | string;
