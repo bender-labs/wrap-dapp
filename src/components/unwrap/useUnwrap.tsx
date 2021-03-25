@@ -1,30 +1,42 @@
-import {useCallback, useEffect, useReducer} from "react";
-import {TokenMetadata} from "../../features/swap/token";
-import {TezosUnwrapApiFactory, TezosUnwrapApi} from "../../features/tezos/TezosUnwrapApi";
-import BigNumber from "bignumber.js";
+import { useCallback, useEffect, useReducer } from 'react';
+import { TokenMetadata } from '../../features/swap/token';
+import {
+  TezosUnwrapApiFactory,
+  TezosUnwrapApi,
+} from '../../features/tezos/TezosUnwrapApi';
+import BigNumber from 'bignumber.js';
 
 type UnwrapState = {
-  status: UnwrapStatus,
-  token: string,
-  decimals: number,
-  contract: TezosUnwrapApi | null,
-  currentBalance: BigNumber,
-  amountToUnwrap: BigNumber,
-}
+  status: UnwrapStatus;
+  token: string;
+  decimals: number;
+  contract: TezosUnwrapApi | null;
+  currentBalance: BigNumber;
+  amountToUnwrap: BigNumber;
+};
 
 export enum UnwrapStatus {
   UNINITIALIZED,
   TOKEN_SELECTED,
   USER_BALANCE_FETCHED,
   AMOUNT_TO_WRAP_SELECTED,
-  READY_TO_UNWRAP
+  READY_TO_UNWRAP,
 }
 
 type Action =
-  | { type: UnwrapStatus.TOKEN_SELECTED, payload: { token: string, decimals: number, contract: TezosUnwrapApi } }
-  | { type: UnwrapStatus.USER_BALANCE_FETCHED, payload: { currentBalance: BigNumber } }
-  | { type: UnwrapStatus.AMOUNT_TO_WRAP_SELECTED, payload: { amountToUnwrap: BigNumber } }
-  | { type: UnwrapStatus.READY_TO_UNWRAP, payload: { } }
+  | {
+      type: UnwrapStatus.TOKEN_SELECTED;
+      payload: { token: string; decimals: number; contract: TezosUnwrapApi };
+    }
+  | {
+      type: UnwrapStatus.USER_BALANCE_FETCHED;
+      payload: { currentBalance: BigNumber };
+    }
+  | {
+      type: UnwrapStatus.AMOUNT_TO_WRAP_SELECTED;
+      payload: { amountToUnwrap: BigNumber };
+    }
+  | { type: UnwrapStatus.READY_TO_UNWRAP; payload: {} };
 
 function reducer(state: UnwrapState, action: Action): UnwrapState {
   switch (action.type) {
@@ -33,35 +45,40 @@ function reducer(state: UnwrapState, action: Action): UnwrapState {
         status: UnwrapStatus.TOKEN_SELECTED,
         ...action.payload,
         currentBalance: new BigNumber(0),
-        amountToUnwrap: new BigNumber(0)
+        amountToUnwrap: new BigNumber(0),
       };
     case UnwrapStatus.USER_BALANCE_FETCHED:
       return {
         ...state,
         status: UnwrapStatus.USER_BALANCE_FETCHED,
-        ...action.payload
+        ...action.payload,
       };
     case UnwrapStatus.AMOUNT_TO_WRAP_SELECTED:
-      const {amountToUnwrap} = action.payload;
+      const { amountToUnwrap } = action.payload;
       return {
         ...state,
         amountToUnwrap: amountToUnwrap,
-        status: amountToUnwrap.lte(state.currentBalance) ? UnwrapStatus.READY_TO_UNWRAP : UnwrapStatus.AMOUNT_TO_WRAP_SELECTED
+        status: amountToUnwrap.lte(state.currentBalance)
+          ? UnwrapStatus.READY_TO_UNWRAP
+          : UnwrapStatus.AMOUNT_TO_WRAP_SELECTED,
       };
     case UnwrapStatus.READY_TO_UNWRAP:
       return {
         ...state,
-        status: UnwrapStatus.READY_TO_UNWRAP
+        status: UnwrapStatus.READY_TO_UNWRAP,
       };
   }
 
   return state;
 }
 
-export function useUnwrap(contractFactory: TezosUnwrapApiFactory, tokens: Record<string, TokenMetadata>) {
+export function useUnwrap(
+  contractFactory: TezosUnwrapApiFactory,
+  tokens: Record<string, TokenMetadata>
+) {
   const [state, dispatch] = useReducer<typeof reducer>(reducer, {
     status: UnwrapStatus.UNINITIALIZED,
-    token: "",
+    token: '',
     decimals: 0,
     contract: null,
     currentBalance: new BigNumber(0),
@@ -69,20 +86,32 @@ export function useUnwrap(contractFactory: TezosUnwrapApiFactory, tokens: Record
   });
 
   const selectToken = useCallback((token: string) => {
-    const {decimals, ethereumContractAddress, tezosWrappingContract, tezosTokenId} = tokens[token];
-    const contract = contractFactory.forFa20(ethereumContractAddress, tezosWrappingContract, tezosTokenId);
-    dispatch({type: UnwrapStatus.TOKEN_SELECTED, payload: {token, decimals, contract}});
+    const {
+      decimals,
+      ethereumContractAddress,
+      tezosWrappingContract,
+      tezosTokenId,
+    } = tokens[token];
+    const contract = contractFactory.forFa20(
+      ethereumContractAddress,
+      tezosWrappingContract,
+      tezosTokenId
+    );
+    dispatch({
+      type: UnwrapStatus.TOKEN_SELECTED,
+      payload: { token, decimals, contract },
+    });
   }, []);
 
   const selectAmountToUnwrap = useCallback((amountToUnwrap: BigNumber) => {
     dispatch({
       type: UnwrapStatus.AMOUNT_TO_WRAP_SELECTED,
-      payload: {amountToUnwrap}
-    })
-  },[]);
+      payload: { amountToUnwrap },
+    });
+  }, []);
 
   const launchWrap = useCallback(() => {
-    const {contract, amountToUnwrap} = state;
+    const { contract, amountToUnwrap } = state;
     if (contract == null) return;
 
     const startWrapping = async () => {
@@ -96,12 +125,19 @@ export function useUnwrap(contractFactory: TezosUnwrapApiFactory, tokens: Record
     const loadMetadata = async () => {
       if (state.contract != null) {
         const currentBalance = await state.contract.balanceOf();
-        dispatch({type: UnwrapStatus.USER_BALANCE_FETCHED, payload: {currentBalance}})
+        dispatch({
+          type: UnwrapStatus.USER_BALANCE_FETCHED,
+          payload: { currentBalance },
+        });
       }
-    }
+    };
     loadMetadata();
-  }, [state.token])
+  }, [state.token]);
 
-
-  return {...state, selectToken, selectAmountToUnwrap: selectAmountToUnwrap, launchWrap}
+  return {
+    ...state,
+    selectToken,
+    selectAmountToUnwrap: selectAmountToUnwrap,
+    launchWrap,
+  };
 }

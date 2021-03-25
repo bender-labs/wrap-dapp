@@ -58,6 +58,7 @@
     ]
   },
   "devDependencies": {
-    "dotenv-cli": "^4.0.0"
+    "dotenv-cli": "^4.0.0",
+    "prettier": "2.2.1"
   }
 }

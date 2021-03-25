@@ -2,19 +2,22 @@ export enum ConnectionStatus {
   NOT_CONNECTED,
   CONNECTING,
   CONNECTED,
-  ERRORED
+  ERRORED,
 }
 
-export function humanizeConnectionStatus(status: ConnectionStatus, networkName?: string): string {
+export function humanizeConnectionStatus(
+  status: ConnectionStatus,
+  networkName?: string
+): string {
   switch (status) {
     case ConnectionStatus.NOT_CONNECTED:
-      return "please connect your wallet";
+      return 'please connect your wallet';
     case ConnectionStatus.CONNECTING:
-      return "connecting...";
+      return 'connecting...';
     case ConnectionStatus.CONNECTED:
       return `connected to ${networkName} network`;
     case ConnectionStatus.ERRORED:
-      return "error";
+      return 'error';
   }
 }
 
@@ -22,10 +25,13 @@ export enum ConnectionActions {
   launchingConnection,
   connectionSuccessful,
   connectionFailed,
-  stoppingConnection
+  stoppingConnection,
 }
 
-export const connectionStatusReducer = (state: ConnectionStatus, {type}: {type: ConnectionActions}): ConnectionStatus => {
+export const connectionStatusReducer = (
+  state: ConnectionStatus,
+  { type }: { type: ConnectionActions }
+): ConnectionStatus => {
   switch (type) {
     case ConnectionActions.launchingConnection:
       return ConnectionStatus.CONNECTING;
@@ -36,6 +42,7 @@ export const connectionStatusReducer = (state: ConnectionStatus, {type}: {type: 
     case ConnectionActions.stoppingConnection:
       return ConnectionStatus.NOT_CONNECTED;
   }
-}
+};
 
-export const connectionStatusInitialState = (activated: boolean) => activated ? ConnectionStatus.CONNECTED : ConnectionStatus.NOT_CONNECTED;
+export const connectionStatusInitialState = (activated: boolean) =>
+  activated ? ConnectionStatus.CONNECTED : ConnectionStatus.NOT_CONNECTED;

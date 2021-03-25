@@ -1,15 +1,17 @@
 export enum SupportedBlockchain {
   Tezos,
-  Ethereum
+  Ethereum,
 }
 
-export type ProviderList = Array<{name: string, key: string, icon:string}>;
+export type ProviderList = Array<{ name: string; key: string; icon: string }>;
 
-export function humanizeSupportedBlockchain(blockchain: SupportedBlockchain): string {
+export function humanizeSupportedBlockchain(
+  blockchain: SupportedBlockchain
+): string {
   switch (blockchain) {
     case SupportedBlockchain.Tezos:
-      return "Tezos";
+      return 'Tezos';
     case SupportedBlockchain.Ethereum:
-      return "Ethereum";
+      return 'Ethereum';
   }
 }

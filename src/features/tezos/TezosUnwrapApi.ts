@@ -1,13 +1,22 @@
-import {TezosToolkit} from "@taquito/taquito";
-import {tzip16} from "@taquito/tzip16";
-import BigNumber from "bignumber.js";
-import {Fees} from "../../config";
+import { TezosToolkit } from '@taquito/taquito';
+import { tzip16 } from '@taquito/tzip16';
+import BigNumber from 'bignumber.js';
+import { Fees } from '../../config';
 
 export type TezosAddress = string;
 export type EthereumAddress = string;
 
 export class TezosUnwrapApi {
-  constructor(erc20ContractAddress: EthereumAddress, tezosWrappingContract: string, tezosTokenId: number, minterContract: string, ethAccountAddress: EthereumAddress, tzAccountAddress: TezosAddress, tzToolkit: TezosToolkit, fees: Fees) {
+  constructor(
+    erc20ContractAddress: EthereumAddress,
+    tezosWrappingContract: string,
+    tezosTokenId: number,
+    minterContract: string,
+    ethAccountAddress: EthereumAddress,
+    tzAccountAddress: TezosAddress,
+    tzToolkit: TezosToolkit,
+    fees: Fees
+  ) {
     this.erc20ContractAddress = erc20ContractAddress;
     this.tezosWrappingContract = tezosWrappingContract;
     this.tezosTokenId = tezosTokenId;
@@ -19,23 +28,30 @@ export class TezosUnwrapApi {
   }
 
   async balanceOf(): Promise<BigNumber> {
-    const contract = await this.tzToolkit.contract
-        .at(this.tezosWrappingContract, tzip16);
+    const contract = await this.tzToolkit.contract.at(
+      this.tezosWrappingContract,
+      tzip16
+    );
     const views = await contract.tzip16().metadataViews();
-    return views['get_balance']().executeView(this.tzAccountAddress, this.tezosTokenId);
+    return views['get_balance']().executeView(
+      this.tzAccountAddress,
+      this.tezosTokenId
+    );
   }
 
   async unwrap(amount: BigNumber) {
     const contract = await this.tzToolkit.wallet.at(this.minterContract);
-    const totalFees = amount.div(10000).multipliedBy(this.fees.erc20UnwrappingFees);
-    await contract
-        .methods
-        .unwrap_erc20(
-            this.erc20ContractAddress.toLowerCase().substring(2),
-            amount.toString(10),
-            totalFees.toString(10),
-            this.ethAccountAddress.toLowerCase().substring(2),
-        ).send();
+    const totalFees = amount
+      .div(10000)
+      .multipliedBy(this.fees.erc20UnwrappingFees);
+    await contract.methods
+      .unwrap_erc20(
+        this.erc20ContractAddress.toLowerCase().substring(2),
+        amount.toString(10),
+        totalFees.toString(10),
+        this.ethAccountAddress.toLowerCase().substring(2)
+      )
+      .send();
   }
 
   private readonly ethAccountAddress: EthereumAddress;
@@ -49,8 +65,13 @@ export class TezosUnwrapApi {
 }
 
 export class TezosUnwrapApiFactory {
-
-  constructor(minterContract: string, ethAccountAddress: EthereumAddress, tzAccountAddress: TezosAddress, tzToolkit: TezosToolkit, fees: Fees) {
+  constructor(
+    minterContract: string,
+    ethAccountAddress: EthereumAddress,
+    tzAccountAddress: TezosAddress,
+    tzToolkit: TezosToolkit,
+    fees: Fees
+  ) {
     this.ethAccountAddress = ethAccountAddress;
     this.tezosAccountAddress = tzAccountAddress;
     this.minterContract = minterContract;
@@ -58,16 +79,20 @@ export class TezosUnwrapApiFactory {
     this.fees = fees;
   }
 
-  public forFa20(erc20ContractAddress: EthereumAddress, tezosWrappingContract: string, tezosTokenId: number): TezosUnwrapApi{
+  public forFa20(
+    erc20ContractAddress: EthereumAddress,
+    tezosWrappingContract: string,
+    tezosTokenId: number
+  ): TezosUnwrapApi {
     return new TezosUnwrapApi(
-        erc20ContractAddress,
-        tezosWrappingContract,
-        tezosTokenId,
-        this.minterContract,
-        this.ethAccountAddress,
-        this.tezosAccountAddress,
-        this.tzToolkit,
-        this.fees
+      erc20ContractAddress,
+      tezosWrappingContract,
+      tezosTokenId,
+      this.minterContract,
+      this.ethAccountAddress,
+      this.tezosAccountAddress,
+      this.tzToolkit,
+      this.fees
     );
   }
 
@@ -79,7 +104,6 @@ export class TezosUnwrapApiFactory {
 }
 
 export class TezosUnwrapApiBuilder {
-
   constructor(tzLibrary: TezosToolkit) {
     this.tzLibrary = tzLibrary;
   }
@@ -88,13 +112,18 @@ export class TezosUnwrapApiBuilder {
     return new TezosUnwrapApiBuilder(tzLibrary);
   }
 
-  public forAccount(ethAccountAddress: EthereumAddress, tzAccountAddress: TezosAddress): TezosUnwrapApiBuilder {
+  public forAccount(
+    ethAccountAddress: EthereumAddress,
+    tzAccountAddress: TezosAddress
+  ): TezosUnwrapApiBuilder {
     this.ethAccountAddress = ethAccountAddress;
     this.tzAccountAddress = tzAccountAddress;
-    return this
+    return this;
   }
 
-  public forMinterContract(minterContractAddress: string): TezosUnwrapApiBuilder {
+  public forMinterContract(
+    minterContractAddress: string
+  ): TezosUnwrapApiBuilder {
     this.minterContractAddress = minterContractAddress;
     return this;
   }
@@ -105,13 +134,14 @@ export class TezosUnwrapApiBuilder {
   }
 
   public createFactory() {
-    if(this.ethAccountAddress === undefined
-        || this.tzAccountAddress === undefined
-        || this.minterContractAddress === undefined
-        || this.tzLibrary === undefined
-        || this.fees === undefined
+    if (
+      this.ethAccountAddress === undefined ||
+      this.tzAccountAddress === undefined ||
+      this.minterContractAddress === undefined ||
+      this.tzLibrary === undefined ||
+      this.fees === undefined
     ) {
-      throw new Error("Missing context for Tezos Wrap Api initialization")
+      throw new Error('Missing context for Tezos Wrap Api initialization');
     }
 
     return new TezosUnwrapApiFactory(
@@ -120,7 +150,7 @@ export class TezosUnwrapApiBuilder {
       this.tzAccountAddress,
       this.tzLibrary,
       this.fees
-    )
+    );
   }
 
   private readonly tzLibrary: TezosToolkit;
