@@ -12,7 +12,7 @@ import EthereumIcon from '../ethereum/Icon';
 import TezosIcon from '../tezos/Icon';
 
 const useStyles = makeStyles((theme) => ({
-  chipWallet: {
+  wallet: {
     color: 'rgba(0, 0, 0, 0.87)',
     borderColor: 'rgba(0, 0, 0, 0.87)',
   },
@@ -39,7 +39,6 @@ const WalletConnectionCard = ({
   const classes = useStyles();
   const [isOpen, setOpen] = useState(false);
   const blockchainName = humanizeSupportedBlockchain(blockchain);
-
   const handleSelectedProvider = (key: string) => {
     setOpen(false);
     onSelectedProvider(key);
@@ -50,14 +49,14 @@ const WalletConnectionCard = ({
         <Chip
           icon={
             blockchain === SupportedBlockchain.Ethereum ? (
-              <EthereumIcon className={classes.chipWallet} />
+              <EthereumIcon className={classes.wallet} />
             ) : (
-              <TezosIcon className={classes.chipWallet} />
+              <TezosIcon className={classes.wallet} />
             )
           }
           label={ellipsizeAddress(account)}
           variant="outlined"
-          className={classes.chipWallet}
+          className={classes.wallet}
         />
       ) : (
         <Button

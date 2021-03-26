@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import WalletConnectionCard from '../wallet/WalletConnectionCard';
 import { SupportedBlockchain } from '../../features/wallet/blockchain';
 import Icon from './Icon';
@@ -26,6 +26,14 @@ export default function WalletConnection({ account, activate, status }: Props) {
     connectionStatusReducer,
     connectionStatusInitialState(status === TezosConnectionStatus.CONNECTED)
   );
+
+  useEffect(() => {
+    dispatchConnectionAction({
+      type: status
+        ? ConnectionActions.connectionSuccessful
+        : ConnectionActions.stoppingConnection,
+    });
+  }, [status]);
 
   const handleConnection = () => {
     dispatchConnectionAction({ type: ConnectionActions.launchingConnection });

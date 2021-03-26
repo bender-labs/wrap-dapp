@@ -55,10 +55,6 @@ const Wrap = () => {
   ) => {
     setActiveTab(newValue);
   };
-  if (tzLibrary != null) {
-    console.log('launch');
-    //mintErc20(tzLibrary);
-  }
 
   return (
     <Grid container spacing={2} direction="column">

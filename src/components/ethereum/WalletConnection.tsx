@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useSnackbar } from 'notistack';
 import errorMessage from '../../features/ethereum/errorMessage';
 import {
@@ -35,6 +35,14 @@ export default function WalletConnection({ activate, active, account }: Props) {
     connectionStatusReducer,
     connectionStatusInitialState(active)
   );
+
+  useEffect(() => {
+    dispatchConnectionAction({
+      type: active
+        ? ConnectionActions.connectionSuccessful
+        : ConnectionActions.stoppingConnection,
+    });
+  }, [active]);
 
   const providers: ProviderList = Object.entries(connectors).map<{
     name: string;

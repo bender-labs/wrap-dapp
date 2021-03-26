@@ -18,10 +18,10 @@ import {
 import { Environment } from '../../config';
 import SwapHorizIcon from '@material-ui/icons/SwapHoriz';
 import logo from './logo.png';
-import EthWalletConnection from '../ethereum/WalletConnection';
 import { useWeb3React } from '@web3-react/core';
 import { Web3Provider } from '@ethersproject/providers';
 import { useTezosContext } from '../tezos/TezosContext';
+import EthWalletConnection from '../ethereum/WalletConnection';
 import TezosWalletConnection from '../tezos/WalletConnection';
 
 const useStyles = makeStyles((theme) =>
