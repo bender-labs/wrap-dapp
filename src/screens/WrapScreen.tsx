@@ -17,6 +17,9 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: theme.palette.primary.main,
     color: theme.palette.primary.contrastText,
   },
+  cardHeaderAction: {
+    margin: 'auto',
+  },
 }));
 
 enum Tab {
@@ -38,6 +41,9 @@ const WrapScreen = () => {
       <CardHeader
         className={classes.title}
         title={tab === Tab.WRAP ? 'wrap' : 'unwrap'}
+        classes={{
+          action: classes.cardHeaderAction,
+        }}
         action={
           <Button variant="outlined" onClick={toggleSwap} color="inherit">
             {tab === Tab.WRAP ? 'unwrap' : 'wrap'}
