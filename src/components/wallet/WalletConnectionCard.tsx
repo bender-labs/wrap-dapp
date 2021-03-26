@@ -1,5 +1,5 @@
-import React, { ReactNode, useState } from 'react';
-import { Button, Chip, makeStyles } from '@material-ui/core';
+import React, { useState } from 'react';
+import { Button, Chip } from '@material-ui/core';
 import {
   humanizeSupportedBlockchain,
   ProviderList,
@@ -11,16 +11,15 @@ import { ellipsizeAddress } from '../../features/wallet/address';
 import EthereumIcon from '../ethereum/Icon';
 import TezosIcon from '../tezos/Icon';
 
-const useStyles = makeStyles((theme) => ({
-  wallet: {
-    color: 'rgba(0, 0, 0, 0.87)',
-    borderColor: 'rgba(0, 0, 0, 0.87)',
-  },
-}));
+const blockchainIcon = (blockchain: SupportedBlockchain) =>
+  blockchain === SupportedBlockchain.Ethereum ? (
+    <EthereumIcon />
+  ) : (
+    <TezosIcon />
+  );
 
 type Props = {
   blockchain: SupportedBlockchain;
-  blockchainIcon: ReactNode;
   connectionStatus: ConnectionStatus;
   providers: ProviderList;
   onSelectedProvider: (key: string) => void;
@@ -30,13 +29,11 @@ type Props = {
 
 const WalletConnectionCard = ({
   blockchain,
-  blockchainIcon,
   connectionStatus,
   providers,
   onSelectedProvider,
   account,
 }: Props) => {
-  const classes = useStyles();
   const [isOpen, setOpen] = useState(false);
   const blockchainName = humanizeSupportedBlockchain(blockchain);
   const handleSelectedProvider = (key: string) => {
@@ -47,16 +44,8 @@ const WalletConnectionCard = ({
     <React.Fragment>
       {connectionStatus === ConnectionStatus.CONNECTED && account != null ? (
         <Chip
-          icon={
-            blockchain === SupportedBlockchain.Ethereum ? (
-              <EthereumIcon className={classes.wallet} />
-            ) : (
-              <TezosIcon className={classes.wallet} />
-            )
-          }
+          icon={blockchainIcon(blockchain)}
           label={ellipsizeAddress(account)}
-          variant="outlined"
-          className={classes.wallet}
         />
       ) : (
         <Button
@@ -64,7 +53,7 @@ const WalletConnectionCard = ({
           size="small"
           color="inherit"
           disabled={connectionStatus === ConnectionStatus.CONNECTING}
-          startIcon={blockchainIcon}
+          startIcon={blockchainIcon(blockchain)}
           onClick={() =>
             blockchain === SupportedBlockchain.Ethereum
               ? setOpen(true)

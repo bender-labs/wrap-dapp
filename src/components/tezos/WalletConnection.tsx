@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react';
 import WalletConnectionCard from '../wallet/WalletConnectionCard';
 import { SupportedBlockchain } from '../../features/wallet/blockchain';
-import Icon from './Icon';
 import { RequestPermissionInput } from '@airgap/beacon-sdk';
 import {
   ConnectionActions,
@@ -57,7 +56,6 @@ export default function WalletConnection({ account, activate, status }: Props) {
     <React.Fragment>
       <WalletConnectionCard
         blockchain={SupportedBlockchain.Tezos}
-        blockchainIcon={<Icon />}
         connectionStatus={connectionStatus}
         providers={[{ name: 'Beacon', key: 'beacon', icon: '' }]}
         onSelectedProvider={handleConnection}

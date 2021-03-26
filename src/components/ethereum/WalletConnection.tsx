@@ -11,7 +11,7 @@ import {
   ProviderList,
   SupportedBlockchain,
 } from '../../features/wallet/blockchain';
-import Icon from './Icon';
+
 import { useEthereumConfig } from '../../runtime/config/ConfigContext';
 import connectorsFactory from '../../features/ethereum/connectorsFactory';
 import { AbstractConnector } from '@web3-react/abstract-connector';
@@ -73,7 +73,6 @@ export default function WalletConnection({ activate, active, account }: Props) {
     <React.Fragment>
       <WalletConnectionCard
         blockchain={SupportedBlockchain.Ethereum}
-        blockchainIcon={<Icon />}
         connectionStatus={connectionStatus}
         providers={providers}
         onSelectedProvider={onStartConnection}
