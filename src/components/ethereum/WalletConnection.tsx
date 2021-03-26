@@ -41,7 +41,7 @@ export default function WalletConnection({ activate, active, account }: Props) {
   );
 
   const triedEager = useEagerConnect(connectors.injected.connector);
-  useInactiveListener(connectors.injected.connector, !triedEager || !!active);
+  useInactiveListener(connectors.injected.connector, !triedEager || active);
 
   useEffect(() => {
     dispatchConnectionAction({

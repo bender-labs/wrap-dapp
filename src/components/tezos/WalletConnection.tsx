@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import WalletConnectionCard from '../wallet/WalletConnectionCard';
 import { SupportedBlockchain } from '../../features/wallet/blockchain';
 import { RequestPermissionInput } from '@airgap/beacon-sdk';
@@ -19,13 +19,13 @@ type Props = {
 
 export default function WalletConnection({ account, activate, status }: Props) {
   const { rpcUrl, networkId, networkName } = useTezosConfig();
+  const [mounted, setMounted] = useState(true);
 
   const { enqueueSnackbar } = useSnackbar();
   const [connectionStatus, dispatchConnectionAction] = React.useReducer(
     connectionStatusReducer,
     connectionStatusInitialState(status === TezosConnectionStatus.CONNECTED)
   );
-
   useEffect(() => {
     dispatchConnectionAction({
       type: status
@@ -33,6 +33,11 @@ export default function WalletConnection({ account, activate, status }: Props) {
         : ConnectionActions.stoppingConnection,
     });
   }, [status]);
+
+  useEffect(() => {
+    setMounted(true);
+    return () => setMounted(false);
+  }, []);
 
   const handleConnection = () => {
     dispatchConnectionAction({ type: ConnectionActions.launchingConnection });
@@ -43,9 +48,10 @@ export default function WalletConnection({ account, activate, status }: Props) {
       },
     })
       .then((_) => {
-        dispatchConnectionAction({
-          type: ConnectionActions.connectionSuccessful,
-        });
+        mounted &&
+          dispatchConnectionAction({
+            type: ConnectionActions.connectionSuccessful,
+          });
       })
       .catch((error) => {
         enqueueSnackbar(error, { variant: 'error' }); //@todo: humanize

@@ -85,7 +85,7 @@ export default function AllowanceButton({
         Current Allowance: {formatAmount(symbol, currentAllowance, decimals)}
       </Typography>
       <Typography variant="caption" className={classes.helperText}>
-        The bender contract will be allowed to spend{' '}
+        The locking contract will be allowed to spend{' '}
         {formatAmount(symbol, balanceToWrap, decimals)} on your behalf.
       </Typography>
     </div>
