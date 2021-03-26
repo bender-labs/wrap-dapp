@@ -6,34 +6,14 @@ import {
   StepLabel,
   Stepper,
 } from '@material-ui/core';
-import { useConfig } from '../../runtime/config/ConfigContext';
-import { Web3Provider } from '@ethersproject/providers';
-import AmountToWrapInput from './AmountToWrapInput';
-import AllowanceButton from './AllowanceButton';
-import TokenSelection from './TokenSelection';
-import { TezosToolkit } from '@taquito/taquito';
-import { EthereumWrapApiBuilder } from '../../features/ethereum/EthereumWrapApi';
-import { useWrap, WrapStatus } from './useWrap';
+import AmountToWrapInput from '../../features/wrap/components/AmountToWrapInput';
+import AllowanceButton from '../../features/wrap/components/AllowanceButton';
+import TokenSelection from '../../features/wrap/components/TokenSelection';
+import { useWrap, WrapStatus } from '../../features/wrap/hooks/useWrap';
 import { SupportedBlockchain } from '../../features/wallet/blockchain';
-import WrapFees from './WrapFees';
+import WrapFees from '../../features/wrap/components/WrapFees';
 
-type Props = {
-  ethLibrary: Web3Provider;
-  ethAccount: string;
-  tzLibrary: TezosToolkit;
-  tzAccount: string;
-};
-
-export default function WrapCard({ ethLibrary, ethAccount, tzAccount }: Props) {
-  const {
-    fungibleTokens,
-    fees,
-    ethereum: { custodianContractAddress },
-  } = useConfig();
-  const ethWrapApiFactory = EthereumWrapApiBuilder.withProvider(ethLibrary)
-    .forCustodianContract(custodianContractAddress)
-    .forAccount(ethAccount, tzAccount)
-    .createFactory();
+export default function WrapCard() {
   const {
     status,
     amountToWrap,
@@ -45,7 +25,9 @@ export default function WrapCard({ ethLibrary, ethAccount, tzAccount }: Props) {
     selectAmountToWrap,
     selectToken,
     launchWrap,
-  } = useWrap(ethWrapApiFactory, fungibleTokens);
+    fungibleTokens,
+    fees,
+  } = useWrap();
   const [step, setCurrentStep] = useState<number>(0);
   useEffect(() => {
     switch (status) {
@@ -87,6 +69,7 @@ export default function WrapCard({ ethLibrary, ethAccount, tzAccount }: Props) {
               symbol={token}
               onChange={selectAmountToWrap}
               amountToWrap={amountToWrap}
+              displayBalance={true}
             />
             <WrapFees
               fees={fees}

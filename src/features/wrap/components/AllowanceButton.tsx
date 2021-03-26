@@ -5,7 +5,7 @@ import {
   Typography,
 } from '@material-ui/core';
 import React from 'react';
-import { formatAmount } from '../../features/ethereum/token';
+import { formatAmount } from '../../ethereum/token';
 import { grey } from '@material-ui/core/colors';
 import BigNumber from 'bignumber.js';
 
@@ -13,7 +13,7 @@ type Props = {
   currentAllowance: BigNumber;
   balanceToWrap: BigNumber;
   decimals: number;
-  onAuthorize: (allowance: BigNumber) => void;
+  onAuthorize: () => void;
   symbol: string;
   loading: boolean;
 };
@@ -36,7 +36,6 @@ const useStyles = makeStyles((theme) => ({
   wrapper: {
     margin: theme.spacing(1),
     position: 'relative',
-    width: 'fit-content',
   },
 }));
 
@@ -63,17 +62,15 @@ export default function AllowanceButton({
 
   const handleOnClick = (event: React.MouseEvent<HTMLElement>) => {
     event.preventDefault();
-    onAuthorize(balanceToWrap);
+    onAuthorize();
   };
 
   return (
     <div>
-      <Typography variant="caption" className={classes.helperText}>
-        Current Allowance: {formatAmount(symbol, currentAllowance, decimals)}
-      </Typography>
       <div className={classes.wrapper}>
         <Button
           variant="outlined"
+          fullWidth
           disabled={disabled || loading}
           color={color as any}
           onClick={handleOnClick}
@@ -84,6 +81,9 @@ export default function AllowanceButton({
           <CircularProgress size={24} className={classes.buttonProgress} />
         )}
       </div>
+      <Typography variant="caption" className={classes.helperText}>
+        Current Allowance: {formatAmount(symbol, currentAllowance, decimals)}
+      </Typography>
       <Typography variant="caption" className={classes.helperText}>
         The bender contract will be allowed to spend{' '}
         {formatAmount(symbol, balanceToWrap, decimals)} on your behalf.

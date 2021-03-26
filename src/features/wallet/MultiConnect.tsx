@@ -1,4 +1,4 @@
-import { Box, Step, StepButton, Stepper } from '@material-ui/core';
+import { Step, StepButton, Stepper } from '@material-ui/core';
 import { useWeb3React } from '@web3-react/core';
 import { Web3Provider } from '@ethersproject/providers';
 import { useTezosContext } from '../../components/tezos/TezosContext';
@@ -29,27 +29,25 @@ export default function MultiConnect() {
   };
 
   return (
-    <Box>
-      <Stepper alternativeLabel activeStep={activeStep()}>
-        <Step>
-          <StepButton component={'div'}>
-            <TezosWalletConnection
-              account={tzAccount}
-              activate={tzActivate}
-              status={tzConnectionStatus}
-            />
-          </StepButton>
-        </Step>
-        <Step>
-          <StepButton component={'div'}>
-            <EthWalletConnection
-              account={ethAccount}
-              activate={ethActivate}
-              active={ethActive}
-            />
-          </StepButton>
-        </Step>
-      </Stepper>
-    </Box>
+    <Stepper alternativeLabel activeStep={activeStep()}>
+      <Step>
+        <StepButton component={'div'}>
+          <TezosWalletConnection
+            account={tzAccount}
+            activate={tzActivate}
+            status={tzConnectionStatus}
+          />
+        </StepButton>
+      </Step>
+      <Step>
+        <StepButton component={'div'}>
+          <EthWalletConnection
+            account={ethAccount}
+            activate={ethActivate}
+            active={ethActive}
+          />
+        </StepButton>
+      </Step>
+    </Stepper>
   );
 }

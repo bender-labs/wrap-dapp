@@ -1,10 +1,15 @@
 import { useCallback, useEffect, useReducer } from 'react';
 import {
   EthereumWrapApi,
+  EthereumWrapApiBuilder,
   EthereumWrapApiFactory,
-} from '../../features/ethereum/EthereumWrapApi';
-import { TokenMetadata } from '../../features/swap/token';
+} from '../../ethereum/EthereumWrapApi';
 import BigNumber from 'bignumber.js';
+import { useWeb3React } from '@web3-react/core';
+import { Web3Provider } from '@ethersproject/providers';
+import { useTezosContext } from '../../../components/tezos/TezosContext';
+import { TezosToolkit } from '@taquito/taquito';
+import { useConfig } from '../../../runtime/config/ConfigContext';
 
 type WrapState = {
   status: WrapStatus;
@@ -14,10 +19,14 @@ type WrapState = {
   currentBalance: BigNumber;
   currentAllowance: BigNumber;
   amountToWrap: BigNumber;
+  connected: boolean;
+  contractFactory?: EthereumWrapApiFactory;
+  custodianContractAddress: string;
 };
 
 export enum WrapStatus {
   UNINITIALIZED,
+  WALLETS_CHANGED,
   TOKEN_SELECTED,
   USER_BALANCE_FETCHED,
   AMOUNT_TO_WRAP_SELECTED,
@@ -28,11 +37,15 @@ export enum WrapStatus {
 type Action =
   | {
       type: WrapStatus.TOKEN_SELECTED;
-      payload: { token: string; decimals: number; contract: EthereumWrapApi };
+      payload: { token: string; decimals: number };
     }
   | {
       type: WrapStatus.USER_BALANCE_FETCHED;
-      payload: { currentBalance: BigNumber; currentAllowance: BigNumber };
+      payload: {
+        currentBalance: BigNumber;
+        currentAllowance: BigNumber;
+        contract: EthereumWrapApi;
+      };
     }
   | {
       type: WrapStatus.AMOUNT_TO_WRAP_SELECTED;
@@ -42,12 +55,22 @@ type Action =
   | {
       type: WrapStatus.READY_TO_WRAP;
       payload: { newCurrentAllowance: BigNumber };
+    }
+  | {
+      type: WrapStatus.WALLETS_CHANGED;
+      payload: Partial<{
+        tezosAccount: string;
+        tezosLibrary: TezosToolkit;
+        ethAccount: string;
+        ethLibrary: Web3Provider;
+      }>;
     };
 
 function reducer(state: WrapState, action: Action): WrapState {
   switch (action.type) {
     case WrapStatus.TOKEN_SELECTED:
       return {
+        ...state,
         status: WrapStatus.TOKEN_SELECTED,
         ...action.payload,
         currentBalance: new BigNumber(0),
@@ -80,34 +103,74 @@ function reducer(state: WrapState, action: Action): WrapState {
         status: WrapStatus.READY_TO_WRAP,
         currentAllowance: action.payload.newCurrentAllowance,
       };
+    case WrapStatus.WALLETS_CHANGED:
+      const { ethAccount, tezosAccount, ethLibrary } = action.payload;
+      const ethWrapApiFactory =
+        tezosAccount && ethAccount && ethLibrary
+          ? EthereumWrapApiBuilder.withProvider(ethLibrary)
+              .forCustodianContract(state.custodianContractAddress)
+              .forAccount(ethAccount, tezosAccount)
+              .createFactory()
+          : undefined;
+      return {
+        ...state,
+        contractFactory: ethWrapApiFactory,
+        connected: ethAccount !== undefined && tezosAccount !== undefined,
+      };
   }
 
   return state;
 }
 
-export function useWrap(
-  contractFactory: EthereumWrapApiFactory,
-  tokens: Record<string, TokenMetadata>
-) {
+export function useWrap() {
+  const {
+    fungibleTokens,
+    fees,
+    ethereum: { custodianContractAddress },
+  } = useConfig();
+
+  const {
+    library: ethLibrary,
+    account: ethAccount,
+  } = useWeb3React<Web3Provider>();
+
+  const { account: tzAccount, library: tezosLibrary } = useTezosContext();
+
   const [state, dispatch] = useReducer<typeof reducer>(reducer, {
     status: WrapStatus.UNINITIALIZED,
-    token: '',
+    token: Object.keys(fungibleTokens)[0] || '',
     decimals: 0,
     contract: null,
     currentBalance: new BigNumber(0),
     currentAllowance: new BigNumber(0),
     amountToWrap: new BigNumber(0),
+    connected: false,
+    custodianContractAddress,
   });
 
-  const selectToken = useCallback((token: string) => {
-    const { decimals, ethereumContractAddress } = tokens[token];
-    const contract = contractFactory.forErc20(ethereumContractAddress);
+  useEffect(() => {
     dispatch({
-      type: WrapStatus.TOKEN_SELECTED,
-      payload: { token, decimals, contract },
+      type: WrapStatus.WALLETS_CHANGED,
+      payload: {
+        ethLibrary,
+        ethAccount: ethAccount || undefined,
+        tezosAccount: tzAccount,
+        tezosLibrary: tezosLibrary || undefined,
+      },
     });
+  }, [ethLibrary, ethAccount, tzAccount, tezosLibrary]);
+
+  const selectToken = useCallback(
+    (token: string) => {
+      const { decimals } = fungibleTokens[token];
+      dispatch({
+        type: WrapStatus.TOKEN_SELECTED,
+        payload: { token, decimals },
+      });
+    },
     // eslint-disable-next-line
-  }, []);
+    [state.token, state.connected]
+  );
 
   const selectAmountToWrap = useCallback((amountToWrap: BigNumber) => {
     dispatch({
@@ -159,21 +222,27 @@ export function useWrap(
 
   useEffect(() => {
     const loadMetadata = async () => {
-      if (state.contract != null) {
-        const currentBalance = await state.contract.balanceOf();
-        const currentAllowance = await state.contract.allowanceOf();
-        dispatch({
-          type: WrapStatus.USER_BALANCE_FETCHED,
-          payload: { currentBalance, currentAllowance },
-        });
+      if (!state.token || !state.contractFactory) {
+        return;
       }
+      const contract = state.contractFactory.forErc20(
+        fungibleTokens[state.token].ethereumContractAddress
+      );
+      const currentBalance = await contract.balanceOf();
+      const currentAllowance = await contract.allowanceOf();
+      dispatch({
+        type: WrapStatus.USER_BALANCE_FETCHED,
+        payload: { currentBalance, currentAllowance, contract },
+      });
     };
     loadMetadata();
     // eslint-disable-next-line
-  }, [state.token]);
+  }, [state.token, state.contractFactory]);
 
   return {
     ...state,
+    fees,
+    fungibleTokens,
     selectToken,
     selectAmountToWrap,
     launchAllowanceApproval,

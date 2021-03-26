@@ -1,10 +1,6 @@
 import { InputAdornment, TextField } from '@material-ui/core';
 import React from 'react';
-import {
-  formatAmount,
-  formatUnits,
-  parseUnits,
-} from '../../features/ethereum/token';
+import { formatAmount, formatUnits, parseUnits } from '../../ethereum/token';
 import BigNumber from 'bignumber.js';
 
 type Props = {
@@ -13,6 +9,7 @@ type Props = {
   symbol: string;
   onChange: (amount: BigNumber) => void;
   amountToWrap: BigNumber;
+  displayBalance: boolean;
 };
 
 export default function AmountToWrapInput({
@@ -21,6 +18,7 @@ export default function AmountToWrapInput({
   decimals,
   symbol,
   onChange,
+  displayBalance,
 }: Props) {
   const error = amountToWrap.gt(balance);
   const helperText = amountToWrap.gt(balance)
@@ -40,7 +38,7 @@ export default function AmountToWrapInput({
       id="amount-to-wrap"
       value={formatUnits(amountToWrap, decimals)}
       onChange={handleOnChange}
-      helperText={helperText}
+      helperText={displayBalance ? helperText : ''}
       aria-describedby="standard-weight-helper-text"
       fullWidth
       InputProps={{

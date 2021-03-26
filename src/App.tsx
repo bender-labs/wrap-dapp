@@ -27,6 +27,8 @@ function App() {
               <Container maxWidth="md">
                 <Box mt={4}>
                   <WrapScreen />
+                </Box>
+                <Box mt={4}>
                   <Wrap />
                 </Box>
               </Container>

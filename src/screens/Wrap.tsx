@@ -111,14 +111,7 @@ const Wrap = () => {
                   }
                 />
               </Tabs>
-              {activeTab === TabValues.WRAP && (
-                <WrapCard
-                  tzAccount={tzAccount}
-                  ethLibrary={ethLibrary}
-                  ethAccount={ethAccount}
-                  tzLibrary={tzLibrary}
-                />
-              )}
+              {activeTab === TabValues.WRAP && <WrapCard />}
               {activeTab === TabValues.BURN && (
                 <UnwrapCard
                   tzAccount={tzAccount}

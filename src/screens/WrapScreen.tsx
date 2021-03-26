@@ -1,20 +1,21 @@
 import {
-  AppBar,
   Button,
+  Card,
+  CardContent,
+  CardHeader,
   makeStyles,
-  Paper,
-  Toolbar,
-  Typography,
 } from '@material-ui/core';
 import React, { useState } from 'react';
 import WrapCard from '../features/wrap/WrapCard';
 
 const useStyles = makeStyles((theme) => ({
-  swapContainer: {
-    flex: 1,
-  },
+  swapContainer: {},
   toolBarTitle: {
     flexGrow: 1,
+  },
+  title: {
+    backgroundColor: theme.palette.primary.main,
+    color: theme.palette.primary.contrastText,
   },
 }));
 
@@ -33,23 +34,18 @@ const WrapScreen = () => {
   };
 
   return (
-    <Paper className={classes.swapContainer}>
-      <AppBar position="static">
-        <Toolbar>
-          <Typography
-            component="h1"
-            variant="h6"
-            className={classes.toolBarTitle}
-          >
-            {tab === Tab.WRAP ? 'wrap' : 'unwrap'}
-          </Typography>
+    <Card variant={'elevation'}>
+      <CardHeader
+        className={classes.title}
+        title={tab === Tab.WRAP ? 'wrap' : 'unwrap'}
+        action={
           <Button variant="outlined" onClick={toggleSwap} color="inherit">
             {tab === Tab.WRAP ? 'unwrap' : 'wrap'}
           </Button>
-        </Toolbar>
-      </AppBar>
-      {tab === Tab.WRAP && <WrapCard />}
-    </Paper>
+        }
+      />
+      <CardContent>{tab === Tab.WRAP && <WrapCard />}</CardContent>
+    </Card>
   );
 };
 export default WrapScreen;

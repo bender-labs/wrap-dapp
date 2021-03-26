@@ -1,25 +1,59 @@
-import React, { useEffect } from 'react';
-import { useWeb3React } from '@web3-react/core';
-import { Web3Provider } from '@ethersproject/providers';
-import { useTezosContext } from '../../components/tezos/TezosContext';
-import { useConfig } from '../../runtime/config/ConfigContext';
-import WrapCardContent from './WrapCardContent';
+import React from 'react';
+import TokenAndAmountSelection from './components/TokenAndAmountSelection';
 import { Box } from '@material-ui/core';
 import MultiConnect from '../wallet/MultiConnect';
+import WrapActions from './components/WrapActions';
+import { useWrap } from './hooks/useWrap';
+import WrapFees from './components/WrapFees';
 
 export default function WrapCard() {
   const {
-    library: ethLibrary,
-    account: ethAccount,
-  } = useWeb3React<Web3Provider>();
-  const { account: tzAccount, library: tezosLibrary } = useTezosContext();
-  const { fungibleTokens } = useConfig();
+    status,
+    amountToWrap,
+    currentAllowance,
+    currentBalance,
+    token,
+    decimals,
+    launchAllowanceApproval,
+    selectAmountToWrap,
+    selectToken,
+    launchWrap,
+    connected,
+    fungibleTokens,
+    fees,
+  } = useWrap();
 
-  useEffect(() => {}, [fungibleTokens]);
   return (
     <Box>
-      <WrapCardContent tokens={fungibleTokens} />
-      <MultiConnect />
+      <TokenAndAmountSelection
+        tokens={fungibleTokens}
+        balance={currentBalance}
+        displayBalance={connected}
+        amount={amountToWrap}
+        onAmountChange={selectAmountToWrap}
+        token={token}
+        onTokenChange={selectToken}
+      />
+      <Box mt={2}>
+        <WrapFees
+          fees={fees}
+          decimals={decimals}
+          symbol={token}
+          amountToWrap={amountToWrap}
+        />
+      </Box>
+      {!connected && <MultiConnect />}
+      {connected && (
+        <WrapActions
+          amountToWrap={amountToWrap}
+          currentAllowance={currentAllowance}
+          token={token}
+          decimals={decimals}
+          status={status}
+          onAuthorize={launchAllowanceApproval}
+          onWrap={launchWrap}
+        />
+      )}
     </Box>
   );
 }

@@ -14,8 +14,8 @@ import { Web3Provider } from '@ethersproject/providers';
 import { TezosToolkit } from '@taquito/taquito';
 import { useUnwrap, UnwrapStatus } from './useUnwrap';
 import { SupportedBlockchain } from '../../features/wallet/blockchain';
-import TokenSelection from '../wrap/TokenSelection';
-import AmountToWrapInput from '../wrap/AmountToWrapInput';
+import TokenSelection from '../../features/wrap/components/TokenSelection';
+import AmountToWrapInput from '../../features/wrap/components/AmountToWrapInput';
 import { TezosUnwrapApiBuilder } from '../../features/tezos/TezosUnwrapApi';
 import UnwrapFees from './UnwrapFees';
 
@@ -98,6 +98,7 @@ export default function UnwrapCard({
                 <AmountToWrapInput
                   balance={currentBalance}
                   decimals={decimals}
+                  displayBalance={true}
                   symbol={fungibleTokens[token]?.tezosSymbol}
                   onChange={selectAmountToUnwrap}
                   amountToWrap={amountToUnwrap}
