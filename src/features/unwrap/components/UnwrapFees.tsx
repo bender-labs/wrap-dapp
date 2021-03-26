@@ -3,23 +3,23 @@ import React from 'react';
 import { formatAmount } from '../../ethereum/token';
 import BigNumber from 'bignumber.js';
 import { Fees } from '../../../config';
-import { wrapFees } from '../../fees/fees';
+import { unwrapFees } from '../../fees/fees';
 import ArrowForwardIosOutlinedIcon from '@material-ui/icons/ArrowForwardIosOutlined';
 
 type Props = {
   fees: Fees;
   decimals: number;
   symbol: string;
-  amountToWrap: BigNumber;
+  amountToUnwrap: BigNumber;
 };
 
-export default function WrapFees({
+export default function UnwrapFees({
   fees,
-  amountToWrap,
+  amountToUnwrap,
   decimals,
   symbol,
 }: Props) {
-  const currentFees = wrapFees(amountToWrap, fees);
+  const currentFees = unwrapFees(amountToUnwrap, fees);
 
   return (
     <Card variant={'outlined'}>
@@ -32,7 +32,7 @@ export default function WrapFees({
                   Amount
                 </Typography>
                 <Typography component="dd" variant="body2">
-                  {formatAmount(symbol, amountToWrap, decimals)}
+                  {formatAmount(symbol, amountToUnwrap, decimals)}
                 </Typography>
               </Grid>
             </Grid>
@@ -52,12 +52,12 @@ export default function WrapFees({
               </Grid>
               <Grid item>
                 <Typography component="dt" variant="caption">
-                  Wrapped amount
+                  Unwrapped amount
                 </Typography>
                 <Typography component="dd" variant="body2">
                   {formatAmount(
                     symbol,
-                    amountToWrap.minus(currentFees),
+                    amountToUnwrap.minus(currentFees),
                     decimals
                   )}
                 </Typography>

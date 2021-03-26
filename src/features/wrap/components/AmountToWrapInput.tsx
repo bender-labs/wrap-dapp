@@ -23,7 +23,7 @@ export default function AmountToWrapInput({
   const error = amountToWrap.gt(balance);
   const helperText = amountToWrap.gt(balance)
     ? `Insufficient Balance of ${formatAmount(symbol, balance, decimals)}`
-    : `Current balance: ${formatAmount(symbol, balance, decimals)}`;
+    : `balance: ${formatAmount(symbol, balance, decimals)}`;
 
   const handleOnChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     event.preventDefault();

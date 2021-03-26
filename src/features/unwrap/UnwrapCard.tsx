@@ -1,9 +1,9 @@
 import React from 'react';
 import TokenAndAmountSelection from '../wrap/components/TokenAndAmountSelection';
 import { Box } from '@material-ui/core';
-import { useUnwrap } from '../../components/unwrap/useUnwrap';
+import { useUnwrap } from './hooks/useUnwrap';
 import { SupportedBlockchain } from '../wallet/blockchain';
-import UnwrapFees from '../../components/unwrap/UnwrapFees';
+import UnwrapFees from './components/UnwrapFees';
 import MultiConnect from '../wallet/MultiConnect';
 import UnwrapActions from './components/UnwrapActions';
 

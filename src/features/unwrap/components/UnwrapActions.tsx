@@ -1,6 +1,6 @@
-import { Button } from '@material-ui/core';
+import { Box, Button } from '@material-ui/core';
 import React from 'react';
-import { UnwrapStatus } from '../../../components/unwrap/useUnwrap';
+import { UnwrapStatus } from '../hooks/useUnwrap';
 
 export type UnwrapActionsProp = {
   onUnwrap: () => void;
@@ -9,13 +9,15 @@ export type UnwrapActionsProp = {
 
 export default function UnwrapActions({ status, onUnwrap }: UnwrapActionsProp) {
   return (
-    <Button
-      variant="contained"
-      color="primary"
-      onClick={onUnwrap}
-      disabled={status !== UnwrapStatus.READY_TO_UNWRAP}
-    >
-      UNWRAP
-    </Button>
+    <Box mt={2} textAlign={'center'}>
+      <Button
+        variant="contained"
+        color="primary"
+        onClick={onUnwrap}
+        disabled={status !== UnwrapStatus.READY_TO_UNWRAP}
+      >
+        UNWRAP
+      </Button>
+    </Box>
   );
 }

@@ -3,14 +3,14 @@ import {
   TezosUnwrapApi,
   TezosUnwrapApiBuilder,
   TezosUnwrapApiFactory,
-} from '../../features/tezos/TezosUnwrapApi';
+} from '../../tezos/TezosUnwrapApi';
 import BigNumber from 'bignumber.js';
-import { useConfig } from '../../runtime/config/ConfigContext';
+import { useConfig } from '../../../runtime/config/ConfigContext';
 import { useWeb3React } from '@web3-react/core';
 import { Web3Provider } from '@ethersproject/providers';
-import { useTezosContext } from '../tezos/TezosContext';
+import { useTezosContext } from '../../../components/tezos/TezosContext';
 import { TezosToolkit } from '@taquito/taquito';
-import { Fees } from '../../config';
+import { Fees } from '../../../config';
 
 type UnwrapState = {
   status: UnwrapStatus;
