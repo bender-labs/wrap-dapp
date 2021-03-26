@@ -9,22 +9,11 @@ import {
   StepLabel,
   Stepper,
 } from '@material-ui/core';
-import { useConfig } from '../../runtime/config/ConfigContext';
-import { Web3Provider } from '@ethersproject/providers';
-import { TezosToolkit } from '@taquito/taquito';
-import { useUnwrap, UnwrapStatus } from './useUnwrap';
+import { UnwrapStatus, useUnwrap } from './useUnwrap';
 import { SupportedBlockchain } from '../../features/wallet/blockchain';
 import TokenSelection from '../../features/wrap/components/TokenSelection';
 import AmountToWrapInput from '../../features/wrap/components/AmountToWrapInput';
-import { TezosUnwrapApiBuilder } from '../../features/tezos/TezosUnwrapApi';
 import UnwrapFees from './UnwrapFees';
-
-type Props = {
-  ethLibrary: Web3Provider;
-  ethAccount: string;
-  tzLibrary: TezosToolkit;
-  tzAccount: string;
-};
 
 const useStyles = makeStyles((theme) => ({
   swapContainer: {
@@ -32,22 +21,9 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function UnwrapCard({
-  ethAccount,
-  tzAccount,
-  tzLibrary,
-}: Props) {
+export default function UnwrapCard() {
   const classes = useStyles();
-  const {
-    fees,
-    fungibleTokens,
-    tezos: { minterContractAddress },
-  } = useConfig();
-  const tezosUnwrapApiFactory = TezosUnwrapApiBuilder.withProvider(tzLibrary)
-    .forMinterContract(minterContractAddress)
-    .forAccount(ethAccount, tzAccount)
-    .forFees(fees)
-    .createFactory();
+
   const {
     status,
     amountToUnwrap,
@@ -57,7 +33,9 @@ export default function UnwrapCard({
     selectAmountToUnwrap,
     selectToken,
     launchWrap,
-  } = useUnwrap(tezosUnwrapApiFactory, fungibleTokens);
+    fungibleTokens,
+    fees,
+  } = useUnwrap();
   const [step, setCurrentStep] = useState<number>(0);
   useEffect(() => {
     switch (status) {

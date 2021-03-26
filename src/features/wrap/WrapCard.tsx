@@ -5,6 +5,7 @@ import MultiConnect from '../wallet/MultiConnect';
 import WrapActions from './components/WrapActions';
 import { useWrap } from './hooks/useWrap';
 import WrapFees from './components/WrapFees';
+import { SupportedBlockchain } from '../wallet/blockchain';
 
 export default function WrapCard() {
   const {
@@ -33,11 +34,12 @@ export default function WrapCard() {
         onAmountChange={selectAmountToWrap}
         token={token}
         onTokenChange={selectToken}
+        blockchainTarget={SupportedBlockchain.Ethereum}
       />
       <Box mt={2}>
         <WrapFees
           fees={fees}
-          decimals={decimals}
+          decimals={fungibleTokens[token].decimals}
           symbol={token}
           amountToWrap={amountToWrap}
         />

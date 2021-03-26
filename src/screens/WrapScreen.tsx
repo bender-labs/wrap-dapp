@@ -7,6 +7,7 @@ import {
 } from '@material-ui/core';
 import React, { useState } from 'react';
 import WrapCard from '../features/wrap/WrapCard';
+import UnwrapCard from '../features/unwrap/UnwrapCard';
 
 const useStyles = makeStyles((theme) => ({
   swapContainer: {},
@@ -50,7 +51,10 @@ const WrapScreen = () => {
           </Button>
         }
       />
-      <CardContent>{tab === Tab.WRAP && <WrapCard />}</CardContent>
+      <CardContent>
+        {tab === Tab.WRAP && <WrapCard />}
+        {tab === Tab.UNWRAP && <UnwrapCard />}
+      </CardContent>
     </Card>
   );
 };

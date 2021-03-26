@@ -6,7 +6,7 @@ import TokenSelection from './TokenSelection';
 import { SupportedBlockchain } from '../../wallet/blockchain';
 import { TokenMetadata } from '../../swap/token';
 
-export type WrapCardContentProps = {
+export type TokenAndAmountSelectionProps = {
   tokens: Record<string, TokenMetadata>;
   displayBalance: boolean;
   amount: BigNumber;
@@ -14,6 +14,7 @@ export type WrapCardContentProps = {
   token: string;
   onTokenChange: (v: string) => void;
   balance: BigNumber;
+  blockchainTarget: SupportedBlockchain;
 };
 
 export default function TokenAndAmountSelection({
@@ -24,7 +25,8 @@ export default function TokenAndAmountSelection({
   onAmountChange,
   token,
   onTokenChange,
-}: WrapCardContentProps) {
+  blockchainTarget,
+}: TokenAndAmountSelectionProps) {
   return (
     <Card variant={'outlined'}>
       <CardContent>
@@ -32,8 +34,12 @@ export default function TokenAndAmountSelection({
           <Grid item xs={6}>
             <AmountToWrapInput
               balance={balance}
-              decimals={18}
-              symbol={token}
+              decimals={tokens[token]?.decimals}
+              symbol={
+                blockchainTarget === SupportedBlockchain.Tezos
+                  ? tokens[token]?.tezosSymbol
+                  : tokens[token]?.ethereumSymbol
+              }
               onChange={onAmountChange}
               amountToWrap={amount}
               displayBalance={displayBalance}
@@ -44,7 +50,7 @@ export default function TokenAndAmountSelection({
               token={token}
               onTokenSelect={onTokenChange}
               tokens={tokens}
-              blockchainTarget={SupportedBlockchain.Ethereum}
+              blockchainTarget={blockchainTarget}
             />
           </Grid>
         </Grid>
