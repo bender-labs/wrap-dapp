@@ -40,12 +40,14 @@ const WalletConnectionCard = ({
     setOpen(false);
     onSelectedProvider(key);
   };
+  const handleClick = () => {};
   return (
     <React.Fragment>
       {connectionStatus === ConnectionStatus.CONNECTED && account != null ? (
         <Chip
           icon={blockchainIcon(blockchain)}
           label={ellipsizeAddress(account)}
+          onClick={handleClick}
         />
       ) : (
         <Button
