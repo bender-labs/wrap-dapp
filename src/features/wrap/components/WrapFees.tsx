@@ -10,7 +10,7 @@ import { formatAmount } from '../../ethereum/token';
 import BigNumber from 'bignumber.js';
 import { Fees } from '../../../config';
 import { wrapFees } from '../../fees/fees';
-import ArrowForwardIcon from '@material-ui/icons/ArrowForward';
+import ForwardOutlinedIcon from '@material-ui/icons/ForwardOutlined';
 
 type Props = {
   fees: Fees;
@@ -45,7 +45,7 @@ export default function WrapFees({
             </Typography>
           </Grid>
           <Grid item xs={2}>
-            <ArrowForwardIcon />
+            <ForwardOutlinedIcon />
           </Grid>
           <Grid item xs={5}>
             <Typography variant="caption" className={classes.helperText}>

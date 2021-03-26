@@ -24,7 +24,7 @@ function App() {
             <SnackbarProvider autoHideDuration={6000}>
               <CssBaseline />
               <AppBar />
-              <Container maxWidth="md">
+              <Container maxWidth="sm">
                 <Box mt={4}>
                   <WrapScreen />
                 </Box>
