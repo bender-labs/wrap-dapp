@@ -11,7 +11,6 @@ export interface ErrorMessage {
 }
 
 export default function errorMessage(error: Error): ErrorMessage {
-  console.error(error);
   switch (error.constructor) {
     case NoEthereumProviderError:
       return {
@@ -31,14 +30,9 @@ export default function errorMessage(error: Error): ErrorMessage {
           'Please authorize this website to access your Ethereum account.',
         variant: 'warning',
       };
-    case Error:
-      return {
-        message: error.message,
-        variant: 'error',
-      };
     default:
       return {
-        message: `Unknown error ${error.name}: ${error.message}`,
+        message: error.message,
         variant: 'error',
       };
   }

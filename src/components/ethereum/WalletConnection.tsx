@@ -15,6 +15,10 @@ import {
 import { useEthereumConfig } from '../../runtime/config/ConfigContext';
 import connectorsFactory from '../../features/ethereum/connectorsFactory';
 import { AbstractConnector } from '@web3-react/abstract-connector';
+import {
+  useEagerConnect,
+  useInactiveListener,
+} from '../../features/ethereum/hooks/hooks';
 
 type Props = {
   activate: (
@@ -35,6 +39,9 @@ export default function WalletConnection({ activate, active, account }: Props) {
     connectionStatusReducer,
     connectionStatusInitialState(active)
   );
+
+  const triedEager = useEagerConnect(connectors.injected.connector);
+  useInactiveListener(connectors.injected.connector, !triedEager || !!active);
 
   useEffect(() => {
     dispatchConnectionAction({
