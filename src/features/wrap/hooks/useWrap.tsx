@@ -14,7 +14,6 @@ import { useConfig } from '../../../runtime/config/ConfigContext';
 type WrapState = {
   status: WrapStatus;
   token: string;
-  decimals: number;
   contract: EthereumWrapApi | null;
   currentBalance: BigNumber;
   currentAllowance: BigNumber;
@@ -37,7 +36,7 @@ export enum WrapStatus {
 type Action =
   | {
       type: WrapStatus.TOKEN_SELECTED;
-      payload: { token: string; decimals: number };
+      payload: { token: string };
     }
   | {
       type: WrapStatus.USER_BALANCE_FETCHED;
@@ -139,7 +138,6 @@ export function useWrap() {
   const [state, dispatch] = useReducer<typeof reducer>(reducer, {
     status: WrapStatus.UNINITIALIZED,
     token: Object.keys(fungibleTokens)[0] || '',
-    decimals: 0,
     contract: null,
     currentBalance: new BigNumber(0),
     currentAllowance: new BigNumber(0),
@@ -160,17 +158,12 @@ export function useWrap() {
     });
   }, [ethLibrary, ethAccount, tzAccount, tezosLibrary]);
 
-  const selectToken = useCallback(
-    (token: string) => {
-      const { decimals } = fungibleTokens[token];
-      dispatch({
-        type: WrapStatus.TOKEN_SELECTED,
-        payload: { token, decimals },
-      });
-    },
-    // eslint-disable-next-line
-    [state.token, state.connected]
-  );
+  const selectToken = useCallback((token: string) => {
+    dispatch({
+      type: WrapStatus.TOKEN_SELECTED,
+      payload: { token },
+    });
+  }, []);
 
   const selectAmountToWrap = useCallback((amountToWrap: BigNumber) => {
     dispatch({

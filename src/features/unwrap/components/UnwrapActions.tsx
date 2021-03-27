@@ -14,6 +14,7 @@ export default function UnwrapActions({ status, onUnwrap }: UnwrapActionsProp) {
         variant="contained"
         color="primary"
         onClick={onUnwrap}
+        fullWidth
         disabled={status !== UnwrapStatus.READY_TO_UNWRAP}
       >
         UNWRAP

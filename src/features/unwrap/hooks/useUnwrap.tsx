@@ -15,7 +15,6 @@ import { Fees } from '../../../config';
 type UnwrapState = {
   status: UnwrapStatus;
   token: string;
-  decimals: number;
   contract: TezosUnwrapApi | null;
   currentBalance: BigNumber;
   amountToUnwrap: BigNumber;
@@ -37,7 +36,7 @@ export enum UnwrapStatus {
 type Action =
   | {
       type: UnwrapStatus.TOKEN_SELECTED;
-      payload: { token: string; decimals: number };
+      payload: { token: string };
     }
   | {
       type: UnwrapStatus.USER_BALANCE_FETCHED;
@@ -138,7 +137,6 @@ export function useUnwrap() {
     status: UnwrapStatus.UNINITIALIZED,
     token: Object.keys(fungibleTokens)[0] || '',
     connected: false,
-    decimals: 0,
     contract: null,
     minterContractAddress,
     currentBalance: new BigNumber(0),
@@ -146,18 +144,13 @@ export function useUnwrap() {
     fees,
   });
 
-  const selectToken = useCallback(
-    (token: string) => {
-      const { decimals } = fungibleTokens[token];
-
-      dispatch({
-        type: UnwrapStatus.TOKEN_SELECTED,
-        payload: { token, decimals },
-      });
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    },
-    [state.token, state.connected]
-  );
+  const selectToken = useCallback((token: string) => {
+    dispatch({
+      type: UnwrapStatus.TOKEN_SELECTED,
+      payload: { token },
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const selectAmountToUnwrap = useCallback((amountToUnwrap: BigNumber) => {
     dispatch({

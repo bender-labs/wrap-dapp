@@ -14,7 +14,6 @@ export default function WrapCard() {
     currentAllowance,
     currentBalance,
     token,
-    decimals,
     launchAllowanceApproval,
     selectAmountToWrap,
     selectToken,
@@ -50,7 +49,7 @@ export default function WrapCard() {
           amountToWrap={amountToWrap}
           currentAllowance={currentAllowance}
           token={token}
-          decimals={decimals}
+          decimals={fungibleTokens[token].decimals}
           status={status}
           onAuthorize={launchAllowanceApproval}
           onWrap={launchWrap}
