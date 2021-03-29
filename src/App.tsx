@@ -1,18 +1,23 @@
 import React from 'react';
-import { Web3ReactProvider } from '@web3-react/core';
+import {Web3ReactProvider} from '@web3-react/core';
 import './App.css';
-import { getLibrary as getEthLibrary } from './features/ethereum/web3React';
-import { getLibrary as getTezosLibrary } from './features/tezos/beacon';
+import {getLibrary as getEthLibrary} from './features/ethereum/web3React';
+import {getLibrary as getTezosLibrary} from './features/tezos/beacon';
 import TezosProvider from './components/tezos/TezosContext';
 import ConfigProvider from './runtime/config/ConfigContext';
-import { SnackbarProvider } from 'notistack';
-import { Box, Container, createMuiTheme, CssBaseline } from '@material-ui/core';
+import {SnackbarProvider} from 'notistack';
+import {Box, Container, createMuiTheme, CssBaseline} from '@material-ui/core';
 import AppBar from './components/header/AppBar';
-import Wrap from './screens/Wrap';
 import WrapScreen from './screens/WrapScreen';
-import { ThemeProvider } from '@material-ui/core/styles';
-import { themeOptions } from './runtime/theme/theme';
-import { RecoilRoot } from 'recoil';
+import {ThemeProvider} from '@material-ui/core/styles';
+import {themeOptions} from './runtime/theme/theme';
+import {RecoilRoot} from 'recoil';
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+} from "react-router-dom";
+import HistoryScreen from "./screens/HistoryScreen";
 
 const theme = createMuiTheme(themeOptions);
 
@@ -23,18 +28,24 @@ function App() {
         <TezosProvider getLibrary={getTezosLibrary}>
           <ThemeProvider theme={theme}>
             <RecoilRoot>
-              <SnackbarProvider autoHideDuration={6000}>
-                <CssBaseline />
-                <AppBar />
-                <Container maxWidth="sm">
-                  <Box mt={4}>
-                    <WrapScreen />
-                  </Box>
-                  <Box mt={4}>
-                    <Wrap />
-                  </Box>
-                </Container>
-              </SnackbarProvider>
+              <Router>
+                <SnackbarProvider autoHideDuration={6000}>
+                  <CssBaseline/>
+                  <AppBar/>
+                  <Container maxWidth="sm">
+                    <Switch>
+                      <Route path="/history">
+                        <HistoryScreen/>
+                      </Route>
+                      <Route path="/">
+                        <Box mt={4}>
+                          <WrapScreen/>
+                        </Box>
+                      </Route>
+                    </Switch>
+                  </Container>
+                </SnackbarProvider>
+              </Router>
             </RecoilRoot>
           </ThemeProvider>
         </TezosProvider>
