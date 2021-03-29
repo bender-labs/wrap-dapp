@@ -1,7 +1,7 @@
 import React, { PropsWithChildren, useEffect, useMemo, useState } from 'react';
 import { Config, ConfigStatus, Environment, initialConfig } from '../../config';
 import LoadingScreen from '../../screens/LoadingScreen';
-import indexerApi from '../../features/indexer/indexerApi';
+import IndexerApi from '../../features/indexer/indexerApi';
 import { Token } from '../../features/swap/token';
 
 type ContextValue = undefined | Config;
@@ -49,6 +49,11 @@ export function useEnvironmentSelectorContext() {
   return selector;
 }
 
+export function useIndexerApi() {
+  const { indexerUrl } = useConfig();
+  return useMemo(() => new IndexerApi(indexerUrl), [indexerUrl]);
+}
+
 const getTimeFromRetryCounter = (counter: number) => Math.pow(2, counter) - 1;
 
 export default function Provider({ children }: PropsWithChildren<{}>) {
@@ -88,11 +93,12 @@ export default function Provider({ children }: PropsWithChildren<{}>) {
       setConfigStatus(ConfigStatus.LOADED);
     }
 
+    const initConfig = initialConfig[environment];
+    const indexerApi = new IndexerApi(initConfig.indexerUrl);
+
     const loadConfig = async () => {
       const initConfig = initialConfig[environment];
-      const indexerConfig = await indexerApi(
-        initConfig.indexerUrl
-      ).fetchConfig();
+      const indexerConfig = await indexerApi.fetchConfig();
       const config = {
         environmentName: initConfig.environmentName,
         indexerUrl: initConfig.indexerUrl,

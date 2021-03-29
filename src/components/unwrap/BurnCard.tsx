@@ -9,10 +9,8 @@ import {
   makeStyles,
 } from '@material-ui/core';
 import React, { useEffect, useMemo, useState } from 'react';
-import { useConfig } from '../../runtime/config/ConfigContext';
-import indexerApi, {
-  IndexerUnwrapPayload,
-} from '../../features/indexer/indexerApi';
+import { useConfig, useIndexerApi } from '../../runtime/config/ConfigContext';
+import { IndexerUnwrapPayload } from '../../features/indexer/indexerApi';
 import {
   EthereumAddress,
   TezosAddress,
@@ -40,11 +38,11 @@ type Props = {
 export function BurnCard({ ethAccount, tzAccount, ethLibrary }: Props) {
   const classes = useStyles();
   const {
-    indexerUrl,
     fungibleTokens,
     unwrapSignatureThreshold,
     ethereum: { custodianContractAddress },
   } = useConfig();
+  const indexerApi = useIndexerApi();
   const [{ erc20Unwraps }, setPendingUnwrap] = useState<IndexerUnwrapPayload>({
     erc20Unwraps: [],
     erc721Unwraps: [],
@@ -64,7 +62,7 @@ export function BurnCard({ ethAccount, tzAccount, ethLibrary }: Props) {
 
   useEffect(() => {
     const loadPendingUnwrap = async () => {
-      const pendingUnwrap = await indexerApi(indexerUrl).fetchPendingUnwrap(
+      const pendingUnwrap = await indexerApi.fetchPendingUnwrap(
         ethAccount,
         tzAccount
       );
@@ -146,6 +144,7 @@ export function BurnCard({ ethAccount, tzAccount, ethLibrary }: Props) {
     id: string
   ) => (event: React.MouseEvent) => {
     event.preventDefault();
+    // noinspection JSIgnoredPromiseFromCall
     burnFa20(signatures, amount, owner, ethErc20ContractAddress, id);
   };
 

@@ -9,10 +9,8 @@ import {
   makeStyles,
 } from '@material-ui/core';
 import React, { useEffect, useMemo, useState } from 'react';
-import { useConfig } from '../../runtime/config/ConfigContext';
-import indexerApi, {
-  IndexerWrapPayload,
-} from '../../features/indexer/indexerApi';
+import { useConfig, useIndexerApi } from '../../runtime/config/ConfigContext';
+import { IndexerWrapPayload } from '../../features/indexer/indexerApi';
 import {
   EthereumAddress,
   TezosAddress,
@@ -24,7 +22,7 @@ import BigNumber from 'bignumber.js';
 import { Fees } from '../../config';
 import { wrapFees } from '../../features/fees/fees';
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(() => ({
   swapContainer: {
     flex: 1,
   },
@@ -39,7 +37,6 @@ type Props = {
 export function MintCard({ ethAccount, tzAccount, tzLibrary }: Props) {
   const classes = useStyles();
   const {
-    indexerUrl,
     fungibleTokens,
     fees,
     wrapSignatureThreshold,
@@ -49,11 +46,12 @@ export function MintCard({ ethAccount, tzAccount, tzLibrary }: Props) {
     erc20Wraps: [],
     erc721Wraps: [],
   });
+  const indexerApi = useIndexerApi();
 
   const tokensByEthAddress = useMemo(
     () =>
       Object.entries(fungibleTokens).reduce<Record<string, TokenMetadata>>(
-        (acc, [token, metadata]) => {
+        (acc, [, metadata]) => {
           acc[metadata.ethereumContractAddress] = metadata;
           return acc;
         },
@@ -64,12 +62,13 @@ export function MintCard({ ethAccount, tzAccount, tzLibrary }: Props) {
 
   useEffect(() => {
     const loadPendingWrap = async () => {
-      const pendingWrap = await indexerApi(indexerUrl).fetchPendingWrap(
+      const pendingWrap = await indexerApi.fetchPendingWrap(
         ethAccount,
         tzAccount
       );
       setPendingWrap(pendingWrap);
     };
+    // noinspection JSIgnoredPromiseFromCall
     loadPendingWrap();
     const intervalId = setInterval(loadPendingWrap, 5000);
     return () => clearInterval(intervalId);
@@ -143,6 +142,7 @@ export function MintCard({ ethAccount, tzAccount, tzLibrary }: Props) {
     id: string
   ) => (event: React.MouseEvent) => {
     event.preventDefault();
+    // noinspection JSIgnoredPromiseFromCall
     mintErc20(signatures, amount, owner, ethErc20ContractAddress, id);
   };
 

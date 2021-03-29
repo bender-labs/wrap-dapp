@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios, { AxiosInstance } from 'axios';
 import { EthereumAddress, TezosAddress } from '../ethereum/EthereumWrapApi';
 
 interface IndexerTokenPayload {
@@ -58,34 +58,32 @@ export interface IndexerConfigPayload {
   };
 }
 
-export default function indexerApi(baseURL: string) {
-  const axiosInstance = axios.create({
-    baseURL,
-    timeout: 3000,
-  });
+export default class IndexerApi {
+  private client: AxiosInstance;
 
-  const fetchConfig: (_: void) => Promise<IndexerConfigPayload> = () =>
-    axiosInstance.get('configuration').then(({ data }) => data);
+  constructor(baseURL: string) {
+    this.client = axios.create({ baseURL, timeout: 3000 });
+  }
 
-  const fetchPendingWrap: (
+  public fetchConfig(_: void): Promise<IndexerConfigPayload> {
+    return this.client.get('configuration').then(({ data }) => data);
+  }
+
+  public fetchPendingWrap(
     ethereumAddress: EthereumAddress,
     tezosAddress: TezosAddress
-  ) => Promise<IndexerWrapPayload> = (ethereumAddress, tezosAddress) =>
-    axiosInstance
+  ): Promise<IndexerWrapPayload> {
+    return this.client
       .get('wraps', { params: { ethereumAddress, tezosAddress } })
       .then(({ data }) => data);
+  }
 
-  const fetchPendingUnwrap: (
+  public fetchPendingUnwrap(
     ethereumAddress: EthereumAddress,
     tezosAddress: TezosAddress
-  ) => Promise<IndexerUnwrapPayload> = (ethereumAddress, tezosAddress) =>
-    axiosInstance
+  ): Promise<IndexerUnwrapPayload> {
+    return this.client
       .get('unwraps', { params: { ethereumAddress, tezosAddress } })
       .then(({ data }) => data);
-
-  return {
-    fetchConfig,
-    fetchPendingWrap,
-    fetchPendingUnwrap,
-  };
+  }
 }
