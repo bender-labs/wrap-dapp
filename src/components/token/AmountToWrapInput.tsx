@@ -1,6 +1,10 @@
 import { InputAdornment, TextField } from '@material-ui/core';
 import React from 'react';
-import { formatAmount, formatUnits, parseUnits } from '../../ethereum/token';
+import {
+  formatAmount,
+  formatUnits,
+  parseUnits,
+} from '../../features/ethereum/token';
 import BigNumber from 'bignumber.js';
 
 type Props = {

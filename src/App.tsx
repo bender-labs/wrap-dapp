@@ -12,6 +12,7 @@ import Wrap from './screens/Wrap';
 import WrapScreen from './screens/WrapScreen';
 import { ThemeProvider } from '@material-ui/core/styles';
 import { themeOptions } from './runtime/theme/theme';
+import { RecoilRoot } from 'recoil';
 
 const theme = createMuiTheme(themeOptions);
 
@@ -21,18 +22,20 @@ function App() {
       <Web3ReactProvider getLibrary={getEthLibrary}>
         <TezosProvider getLibrary={getTezosLibrary}>
           <ThemeProvider theme={theme}>
-            <SnackbarProvider autoHideDuration={6000}>
-              <CssBaseline />
-              <AppBar />
-              <Container maxWidth="sm">
-                <Box mt={4}>
-                  <WrapScreen />
-                </Box>
-                <Box mt={4}>
-                  <Wrap />
-                </Box>
-              </Container>
-            </SnackbarProvider>
+            <RecoilRoot>
+              <SnackbarProvider autoHideDuration={6000}>
+                <CssBaseline />
+                <AppBar />
+                <Container maxWidth="sm">
+                  <Box mt={4}>
+                    <WrapScreen />
+                  </Box>
+                  <Box mt={4}>
+                    <Wrap />
+                  </Box>
+                </Container>
+              </SnackbarProvider>
+            </RecoilRoot>
           </ThemeProvider>
         </TezosProvider>
       </Web3ReactProvider>

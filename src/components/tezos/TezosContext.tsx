@@ -87,7 +87,7 @@ type Props = {
   getLibrary: () => BeaconWallet;
 };
 
-export default function Provider({
+export default function TezosProvider({
   getLibrary,
   children,
 }: PropsWithChildren<Props>) {

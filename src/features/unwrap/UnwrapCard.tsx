@@ -1,5 +1,5 @@
 import React from 'react';
-import TokenAndAmountSelection from '../wrap/components/TokenAndAmountSelection';
+import TokenAndAmountSelection from '../../components/token/TokenAndAmountSelection';
 import { Box } from '@material-ui/core';
 import { useUnwrap } from './hooks/useUnwrap';
 import { SupportedBlockchain } from '../wallet/blockchain';

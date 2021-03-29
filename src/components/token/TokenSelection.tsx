@@ -5,8 +5,8 @@ import {
   Select,
 } from '@material-ui/core';
 import React from 'react';
-import { TokenMetadata } from '../../swap/token';
-import { SupportedBlockchain } from '../../wallet/blockchain';
+import { TokenMetadata } from '../../features/swap/token';
+import { SupportedBlockchain } from '../../features/wallet/blockchain';
 
 type Props = {
   token: string;

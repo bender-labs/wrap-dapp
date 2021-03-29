@@ -1,5 +1,5 @@
 import React from 'react';
-import TokenAndAmountSelection from './components/TokenAndAmountSelection';
+import TokenAndAmountSelection from '../../components/token/TokenAndAmountSelection';
 import { Box } from '@material-ui/core';
 import MultiConnect from '../wallet/MultiConnect';
 import WrapActions from './components/WrapActions';

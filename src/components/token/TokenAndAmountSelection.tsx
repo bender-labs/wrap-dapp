@@ -3,8 +3,8 @@ import { Card, CardContent, Grid } from '@material-ui/core';
 import AmountToWrapInput from './AmountToWrapInput';
 import BigNumber from 'bignumber.js';
 import TokenSelection from './TokenSelection';
-import { SupportedBlockchain } from '../../wallet/blockchain';
-import { TokenMetadata } from '../../swap/token';
+import { SupportedBlockchain } from '../../features/wallet/blockchain';
+import { TokenMetadata } from '../../features/swap/token';
 
 export type TokenAndAmountSelectionProps = {
   tokens: Record<string, TokenMetadata>;
