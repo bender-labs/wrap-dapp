@@ -9,6 +9,8 @@ import {SnackbarProvider} from 'notistack';
 import {Box, Container, createMuiTheme, CssBaseline} from '@material-ui/core';
 import AppBar from './components/header/AppBar';
 import WrapScreen from './screens/WrapScreen';
+import HistoryScreen from "./screens/HistoryScreen";
+import Wrap from "./screens/Wrap";
 import {ThemeProvider} from '@material-ui/core/styles';
 import {themeOptions} from './runtime/theme/theme';
 import {RecoilRoot} from 'recoil';
@@ -17,7 +19,6 @@ import {
   Switch,
   Route,
 } from "react-router-dom";
-import HistoryScreen from "./screens/HistoryScreen";
 
 const theme = createMuiTheme(themeOptions);
 
@@ -40,6 +41,9 @@ function App() {
                       <Route path="/">
                         <Box mt={4}>
                           <WrapScreen/>
+                        </Box>
+                        <Box mt={4}>
+                          <Wrap/>
                         </Box>
                       </Route>
                     </Switch>
