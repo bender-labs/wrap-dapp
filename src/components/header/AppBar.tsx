@@ -11,6 +11,7 @@ import {
   Typography,
 } from '@material-ui/core';
 import React, { useState } from 'react';
+import { Link as RouterLink, LinkProps as RouterLinkProps } from 'react-router-dom';
 import {
   useConfig,
   useEnvironmentSelectorContext,
@@ -73,19 +74,17 @@ const Render = () => {
     setEnvironment(env);
     closeEnvSelector();
   };
-  const preventDefault = (event: React.SyntheticEvent) =>
-    event.preventDefault();
 
   return (
     <AppBar position="static">
       <Toolbar>
         <img src={logo} className={classes.logo} alt="Logo" />
         <Typography variant="h6" component="h1" className={classes.title}>
-          <Link color="inherit" href="/">
+          <Link component={RouterLink} color="inherit" to="/">
             WRAP
           </Link>
-          <Link color="inherit" href="/" onClick={preventDefault}>
-            History
+          <Link component={RouterLink} color="inherit" to="/history">
+            HISTORY
           </Link>
         </Typography>
         <Box className={classes.wallets}>
