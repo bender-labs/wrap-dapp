@@ -1,22 +1,24 @@
 import { Step, StepButton, Stepper } from '@material-ui/core';
-import { useWeb3React } from '@web3-react/core';
-import { Web3Provider } from '@ethersproject/providers';
-import { useTezosContext } from '../../components/tezos/TezosContext';
 import TezosWalletConnection from '../../components/tezos/WalletConnection';
 import EthWalletConnection from '../../components/ethereum/WalletConnection';
 import React from 'react';
+import { useWalletContext } from '../../runtime/wallet/WalletContext';
 
 export default function MultiConnect() {
   const {
-    activate: ethActivate,
-    active: ethActive,
-    account: ethAccount,
-  } = useWeb3React<Web3Provider>();
-  const {
-    activate: tzActivate,
-    status: tzConnectionStatus,
-    account: tzAccount,
-  } = useTezosContext();
+    ethereum: {
+      activate: ethActivate,
+      deactivate: ethDeactivate,
+      account: ethAccount,
+      connectors: ethConnectors,
+      status: ethConnectionStatus,
+    },
+    tezos: {
+      activate: tzActivate,
+      status: tzConnectionStatus,
+      account: tzAccount,
+    },
+  } = useWalletContext();
 
   const activeStep = () => {
     if (tzAccount && ethAccount) {
@@ -34,8 +36,8 @@ export default function MultiConnect() {
         <StepButton component={'div'}>
           <TezosWalletConnection
             account={tzAccount}
-            activate={tzActivate}
-            status={tzConnectionStatus}
+            activate={tzActivate!}
+            connectionStatus={tzConnectionStatus}
           />
         </StepButton>
       </Step>
@@ -44,7 +46,9 @@ export default function MultiConnect() {
           <EthWalletConnection
             account={ethAccount}
             activate={ethActivate}
-            active={ethActive}
+            deactivate={ethDeactivate}
+            connectors={ethConnectors}
+            connectionStatus={ethConnectionStatus}
           />
         </StepButton>
       </Step>

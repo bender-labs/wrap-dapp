@@ -3,16 +3,29 @@ import { WalletConnectConnector } from '@web3-react/walletconnect-connector';
 import { FortmaticConnector } from '@web3-react/fortmatic-connector';
 import { PortisConnector } from '@web3-react/portis-connector';
 import { EthereumConfig } from '../../config';
+import { AbstractConnector } from '@web3-react/abstract-connector';
 
-declare const window: any;
+export type EthConnector = {
+  name: string;
+  connector: AbstractConnector;
+  iconName: string;
+};
+
+export type EthConnectors = {
+  injected: EthConnector;
+  walletConnect: EthConnector;
+  fortmatic: EthConnector;
+  portis: EthConnector;
+};
 
 export default function connectorsFactory({
   rpcUrl,
   networkId,
   formaticApiKey,
   portisDAppId,
-}: EthereumConfig) {
-  const isMetamask = window.ethereum && window.ethereum.isMetaMask;
+}: EthereumConfig): EthConnectors {
+  const { ethereum } = window as any;
+  const isMetamask = ethereum && ethereum.isMetaMask;
   return {
     injected: {
       name: isMetamask ? 'Metamask' : 'Browser Extension',

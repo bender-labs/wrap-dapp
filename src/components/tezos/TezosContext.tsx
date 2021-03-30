@@ -11,13 +11,13 @@ import { BeaconWallet } from '@taquito/beacon-wallet';
 import { Handler, MetadataProvider, Tzip16Module } from '@taquito/tzip16';
 import { Tzip16HttpHandlerWithCorsSupport } from './Tzip16HttpHandlerWithCorsSupport';
 
-export enum ConnectionStatus {
+export enum TezosConnectionStatus {
   UNINITIALIZED,
   CONNECTED,
 }
 
 type State = {
-  status: ConnectionStatus;
+  status: TezosConnectionStatus;
   wallet: BeaconWallet;
   library?: TezosToolkit;
   account?: string;
@@ -46,7 +46,7 @@ function reducer(state: State, { type, ...payload }: Action): State {
       return {
         ...state,
         network,
-        status: ConnectionStatus.CONNECTED,
+        status: TezosConnectionStatus.CONNECTED,
         account,
         library,
       };
@@ -94,7 +94,7 @@ export default function TezosProvider({
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const wallet = useMemo(() => getLibrary(), []);
   const [state, dispatch] = React.useReducer(reducer, {
-    status: ConnectionStatus.UNINITIALIZED,
+    status: TezosConnectionStatus.UNINITIALIZED,
     wallet: wallet,
   });
   // eslint-disable-next-line react-hooks/exhaustive-deps

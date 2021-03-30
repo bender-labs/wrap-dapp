@@ -1,48 +1,33 @@
 import { Grid } from '@material-ui/core';
-import { useWeb3React } from '@web3-react/core';
-import { Web3Provider } from '@ethersproject/providers';
 import React from 'react';
-import {
-  ConnectionStatus,
-  useTezosContext,
-} from '../components/tezos/TezosContext';
 import { MintCard } from '../components/wrap/MintCard';
 import { BurnCard } from '../components/unwrap/BurnCard';
+import { useWalletContext } from '../runtime/wallet/WalletContext';
 
 const Wrap = () => {
   const {
-    active: ethActive,
-    library: ethLibrary,
-    account: ethAccount,
-  } = useWeb3React<Web3Provider>();
-  const {
-    status: tzConnectionStatus,
-    library: tzLibrary,
-    account: tzAccount,
-  } = useTezosContext();
+    fullySetup,
+    ethereum: { library: ethLibrary, account: ethAccount },
+    tezos: { account: tzAccount, library: tzLibrary },
+  } = useWalletContext();
 
   return (
     <Grid container spacing={2} direction="column">
-      {!ethActive ||
-      ethLibrary == null ||
-      ethAccount == null ||
-      tzConnectionStatus === ConnectionStatus.UNINITIALIZED ||
-      tzAccount == null ||
-      tzLibrary == null ? (
+      {!fullySetup ? (
         <React.Fragment />
       ) : (
         <>
           <Grid item>
             <MintCard
-              ethAccount={ethAccount}
-              tzAccount={tzAccount}
-              tzLibrary={tzLibrary}
+              ethAccount={ethAccount!}
+              tzAccount={tzAccount!}
+              tzLibrary={tzLibrary!}
             />
           </Grid>
           <Grid item>
             <BurnCard
-              ethAccount={ethAccount}
-              tzAccount={tzAccount}
+              ethAccount={ethAccount!}
+              tzAccount={tzAccount!}
               ethLibrary={ethLibrary}
             />
           </Grid>

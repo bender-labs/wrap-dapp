@@ -11,7 +11,7 @@ import {
   Typography,
 } from '@material-ui/core';
 import React, { useState } from 'react';
-import { Link as RouterLink, LinkProps as RouterLinkProps } from 'react-router-dom';
+import { Link as RouterLink } from 'react-router-dom';
 import {
   useConfig,
   useEnvironmentSelectorContext,
@@ -19,11 +19,9 @@ import {
 import { Environment } from '../../config';
 import SwapHorizIcon from '@material-ui/icons/SwapHoriz';
 import logo from './logo.png';
-import { useWeb3React } from '@web3-react/core';
-import { Web3Provider } from '@ethersproject/providers';
-import { useTezosContext } from '../tezos/TezosContext';
 import EthWalletConnection from '../ethereum/WalletConnection';
 import TezosWalletConnection from '../tezos/WalletConnection';
+import { useWalletContext } from '../../runtime/wallet/WalletContext';
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -51,15 +49,19 @@ const Render = () => {
     environmentOptions,
   } = useEnvironmentSelectorContext();
   const {
-    activate: ethActivate,
-    active: ethActive,
-    account: ethAccount,
-  } = useWeb3React<Web3Provider>();
-  const {
-    activate: tzActivate,
-    status: tzConnectionStatus,
-    account: tzAccount,
-  } = useTezosContext();
+    ethereum: {
+      activate: ethActivate,
+      deactivate: ethDeactivate,
+      account: ethAccount,
+      connectors,
+      status: ethConnectionStatus,
+    },
+    tezos: {
+      activate: tzActivate,
+      status: tzConnectionStatus,
+      account: tzAccount,
+    },
+  } = useWalletContext();
   const classes = useStyles();
   const [
     anchorEnvSelector,
@@ -91,12 +93,14 @@ const Render = () => {
           <TezosWalletConnection
             account={tzAccount}
             activate={tzActivate}
-            status={tzConnectionStatus}
+            connectionStatus={tzConnectionStatus}
           />
           <EthWalletConnection
             account={ethAccount}
             activate={ethActivate}
-            active={ethActive}
+            deactivate={ethDeactivate}
+            connectors={connectors}
+            connectionStatus={ethConnectionStatus}
           />
         </Box>
         <Button

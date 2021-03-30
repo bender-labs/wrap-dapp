@@ -6,11 +6,10 @@ import {
 } from '../../tezos/TezosUnwrapApi';
 import BigNumber from 'bignumber.js';
 import { useConfig } from '../../../runtime/config/ConfigContext';
-import { useWeb3React } from '@web3-react/core';
 import { Web3Provider } from '@ethersproject/providers';
-import { useTezosContext } from '../../../components/tezos/TezosContext';
 import { TezosToolkit } from '@taquito/taquito';
 import { Fees } from '../../../config';
+import { useWalletContext } from '../../../runtime/wallet/WalletContext';
 
 type UnwrapState = {
   status: UnwrapStatus;
@@ -115,11 +114,9 @@ export function useUnwrap() {
   } = useConfig();
 
   const {
-    library: ethLibrary,
-    account: ethAccount,
-  } = useWeb3React<Web3Provider>();
-
-  const { account: tzAccount, library: tezosLibrary } = useTezosContext();
+    ethereum: { library: ethLibrary, account: ethAccount },
+    tezos: { account: tzAccount, library: tezosLibrary },
+  } = useWalletContext();
 
   useEffect(() => {
     dispatch({

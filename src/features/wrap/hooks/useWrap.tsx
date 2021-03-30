@@ -5,11 +5,10 @@ import {
   EthereumWrapApiFactory,
 } from '../../ethereum/EthereumWrapApi';
 import BigNumber from 'bignumber.js';
-import { useWeb3React } from '@web3-react/core';
 import { Web3Provider } from '@ethersproject/providers';
-import { useTezosContext } from '../../../components/tezos/TezosContext';
 import { TezosToolkit } from '@taquito/taquito';
 import { useConfig } from '../../../runtime/config/ConfigContext';
+import { useWalletContext } from '../../../runtime/wallet/WalletContext';
 
 type WrapState = {
   status: WrapStatus;
@@ -129,11 +128,9 @@ export function useWrap() {
   } = useConfig();
 
   const {
-    library: ethLibrary,
-    account: ethAccount,
-  } = useWeb3React<Web3Provider>();
-
-  const { account: tzAccount, library: tezosLibrary } = useTezosContext();
+    ethereum: { library: ethLibrary, account: ethAccount },
+    tezos: { account: tzAccount, library: tezosLibrary },
+  } = useWalletContext();
 
   const [state, dispatch] = useReducer<typeof reducer>(reducer, {
     status: WrapStatus.UNINITIALIZED,

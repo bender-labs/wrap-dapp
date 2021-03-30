@@ -1,56 +1,30 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useSnackbar } from 'notistack';
 import errorMessage from '../../features/ethereum/errorMessage';
-import {
-  ConnectionActions,
-  connectionStatusInitialState,
-  connectionStatusReducer,
-} from '../../features/wallet/connectionStatus';
 import WalletConnectionCard from '../wallet/WalletConnectionCard';
 import {
   ProviderList,
   SupportedBlockchain,
 } from '../../features/wallet/blockchain';
-
-import { useEthereumConfig } from '../../runtime/config/ConfigContext';
-import connectorsFactory from '../../features/ethereum/connectorsFactory';
-import { AbstractConnector } from '@web3-react/abstract-connector';
-import {
-  useEagerConnect,
-  useInactiveListener,
-} from '../../features/ethereum/hooks/hooks';
+import { EthConnectors } from '../../features/ethereum/connectorsFactory';
+import { ConnectionStatus } from '../../features/wallet/connectionStatus';
 
 type Props = {
-  activate: (
-    connector: AbstractConnector,
-    onError?: ((error: Error) => void) | undefined,
-    throwErrors?: boolean | undefined
-  ) => Promise<void>;
-  active: boolean;
+  activate: (connectorKey: string) => Promise<void>;
+  deactivate: () => void;
   account: string | null | undefined;
+  connectors: EthConnectors;
+  connectionStatus: ConnectionStatus;
 };
 
-export default function WalletConnection({ activate, active, account }: Props) {
-  let ethereumConfig = useEthereumConfig();
-  const connectors = connectorsFactory(ethereumConfig);
-
+export default function WalletConnection({
+  activate,
+  deactivate,
+  account,
+  connectors,
+  connectionStatus,
+}: Props) {
   const { enqueueSnackbar } = useSnackbar();
-  const [connectionStatus, dispatchConnectionAction] = React.useReducer(
-    connectionStatusReducer,
-    connectionStatusInitialState(active)
-  );
-
-  const triedEager = useEagerConnect(connectors.injected.connector);
-  useInactiveListener(connectors.injected.connector, !triedEager || active);
-
-  useEffect(() => {
-    dispatchConnectionAction({
-      type: active
-        ? ConnectionActions.connectionSuccessful
-        : ConnectionActions.stoppingConnection,
-    });
-  }, [active]);
-
   const providers: ProviderList = Object.entries(connectors).map<{
     name: string;
     key: string;
@@ -58,22 +32,14 @@ export default function WalletConnection({ activate, active, account }: Props) {
   }>(([key, value]) => ({ name: value.name, key, icon: value.iconName }));
 
   const onStartConnection = (key: string) => {
-    dispatchConnectionAction({ type: ConnectionActions.launchingConnection });
-    activate(
-      connectors[key as keyof typeof connectors].connector,
-      (_) => null,
-      true
-    )
-      .then(() =>
-        dispatchConnectionAction({
-          type: ConnectionActions.connectionSuccessful,
-        })
-      )
-      .catch((error) => {
-        const { message, variant } = errorMessage(error);
-        dispatchConnectionAction({ type: ConnectionActions.connectionFailed });
-        enqueueSnackbar(message, { variant });
-      });
+    activate(key).catch((error) => {
+      const { message, variant } = errorMessage(error);
+      enqueueSnackbar(message, { variant });
+    });
+  };
+
+  const onDisconnect = () => {
+    deactivate();
   };
 
   return (
@@ -83,7 +49,7 @@ export default function WalletConnection({ activate, active, account }: Props) {
         connectionStatus={connectionStatus}
         providers={providers}
         onSelectedProvider={onStartConnection}
-        networkName={ethereumConfig.networkName}
+        onDisconnection={onDisconnect}
         account={account}
       />
     </React.Fragment>

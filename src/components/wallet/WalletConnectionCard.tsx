@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Button, Chip } from '@material-ui/core';
+import { Button, Chip, makeStyles } from '@material-ui/core';
 import {
   humanizeSupportedBlockchain,
   ProviderList,
@@ -10,6 +10,15 @@ import ProviderSelectionDialog from './ProviderSelectionDialog';
 import { ellipsizeAddress } from '../../features/wallet/address';
 import EthereumIcon from '../ethereum/Icon';
 import TezosIcon from '../tezos/Icon';
+
+const useStyles = makeStyles(() => ({
+  disabledConnectionButton: {
+    '&.Mui-disabled': {
+      borderColor: '#616161',
+      color: '#616161',
+    },
+  },
+}));
 
 const blockchainIcon = (blockchain: SupportedBlockchain) =>
   blockchain === SupportedBlockchain.Ethereum ? (
@@ -23,7 +32,7 @@ type Props = {
   connectionStatus: ConnectionStatus;
   providers: ProviderList;
   onSelectedProvider: (key: string) => void;
-  networkName: string;
+  onDisconnection: () => void;
   account: string | null | undefined;
 };
 
@@ -32,15 +41,24 @@ const WalletConnectionCard = ({
   connectionStatus,
   providers,
   onSelectedProvider,
+  onDisconnection,
   account,
 }: Props) => {
+  const classes = useStyles();
   const [isOpen, setOpen] = useState(false);
   const blockchainName = humanizeSupportedBlockchain(blockchain);
   const handleSelectedProvider = (key: string) => {
     setOpen(false);
     onSelectedProvider(key);
   };
-  const handleClick = () => {};
+  const handleDisconnection = () => {
+    setOpen(false);
+    onDisconnection();
+  };
+  const handleClick = () =>
+    blockchain === SupportedBlockchain.Ethereum
+      ? setOpen(true)
+      : handleSelectedProvider('injected');
   return (
     <React.Fragment>
       {connectionStatus === ConnectionStatus.CONNECTED && account != null ? (
@@ -54,13 +72,10 @@ const WalletConnectionCard = ({
           variant="outlined"
           size="small"
           color="inherit"
+          classes={{ disabled: classes.disabledConnectionButton }}
           disabled={connectionStatus === ConnectionStatus.CONNECTING}
           startIcon={blockchainIcon(blockchain)}
-          onClick={() =>
-            blockchain === SupportedBlockchain.Ethereum
-              ? setOpen(true)
-              : handleSelectedProvider('injected')
-          }
+          onClick={handleClick}
         >
           Connect
         </Button>
@@ -69,8 +84,10 @@ const WalletConnectionCard = ({
         open={isOpen}
         onClose={() => setOpen(false)}
         onSelectedValue={handleSelectedProvider}
+        onDisconnection={handleDisconnection}
         providers={providers}
         blockchain={blockchainName}
+        connectionStatus={connectionStatus}
       />
     </React.Fragment>
   );
