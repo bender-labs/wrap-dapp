@@ -40,8 +40,8 @@ export class EthereumWrapApi {
     );
   }
 
-  async wrap(amount: BigNumber) {
-    return this.custodianContract.wrapERC20(
+  async wrap(amount: BigNumber): Promise<string> {
+    const response = await this.custodianContract.wrapERC20(
       this.erc20ContractAddress(),
       ethers.BigNumber.from(amount.toString(10)),
       this.tzAccountAddress,
@@ -49,6 +49,8 @@ export class EthereumWrapApi {
         gasLimit: 100000,
       }
     );
+    const receipt = await response.wait();
+    return receipt.transactionHash;
   }
 
   private benderContractAddress() {

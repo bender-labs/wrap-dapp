@@ -25,7 +25,7 @@ type ContextValue =
         library?: any;
         activate: (connectorKey: string) => Promise<void>;
         deactivate: () => void;
-        account: string | null | undefined;
+        account?: string;
         status: ConnectionStatus;
         connectors: EthConnectors;
       };
@@ -33,7 +33,7 @@ type ContextValue =
         library?: TezosToolkit;
         activate: () => Promise<void>;
         status: ConnectionStatus;
-        account: string | undefined;
+        account?: string;
       };
     };
 
@@ -117,7 +117,6 @@ export default function Provider({ children }: PropsWithChildren<{}>) {
   const [wallet, setWallet] = useState<ContextValue>({
     fullySetup: false,
     ethereum: {
-      account: null,
       activate: activateEthConnection,
       deactivate: deactivateEthConnection,
       connectors,
@@ -153,7 +152,7 @@ export default function Provider({ children }: PropsWithChildren<{}>) {
         library: ethLibrary,
         activate: prevState!.ethereum.activate,
         deactivate: prevState!.ethereum.deactivate,
-        account: ethAccount,
+        account: ethAccount!,
         connectors: prevState!.ethereum.connectors,
         status: ethConnectionStatus,
       },

@@ -1,21 +1,21 @@
 import React from 'react';
+import { Web3ReactProvider } from '@web3-react/core';
 import './App.css';
+import { getLibrary as getEthLibrary } from './features/ethereum/web3React';
+import { getLibrary as getTezosLibrary } from './features/tezos/beacon';
+import TezosProvider from './components/tezos/TezosContext';
 import ConfigProvider from './runtime/config/ConfigContext';
 import WalletProvider from './runtime/wallet/WalletContext';
 import { SnackbarProvider } from 'notistack';
 import { Box, Container, createMuiTheme, CssBaseline } from '@material-ui/core';
-import AppBar from './components/header/AppBar';
 import WrapScreen from './screens/WrapScreen';
 import HistoryScreen from './screens/HistoryScreen';
 import Wrap from './screens/Wrap';
 import { ThemeProvider } from '@material-ui/core/styles';
 import { themeOptions } from './runtime/theme/theme';
 import { RecoilRoot } from 'recoil';
-import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
-import { getLibrary as getEthLibrary } from './features/ethereum/web3React';
-import TezosProvider from './components/tezos/TezosContext';
-import { getLibrary as getTezosLibrary } from './features/tezos/beacon';
-import { Web3ReactProvider } from '@web3-react/core';
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import AppBar from './components/header/AppBar';
 
 const theme = createMuiTheme(themeOptions);
 

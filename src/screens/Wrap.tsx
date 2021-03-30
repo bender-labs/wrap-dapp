@@ -1,6 +1,5 @@
 import { Grid } from '@material-ui/core';
 import React from 'react';
-import { MintCard } from '../components/wrap/MintCard';
 import { BurnCard } from '../components/unwrap/BurnCard';
 import { useWalletContext } from '../runtime/wallet/WalletContext';
 
@@ -17,13 +16,6 @@ const Wrap = () => {
         <React.Fragment />
       ) : (
         <>
-          <Grid item>
-            <MintCard
-              ethAccount={ethAccount!}
-              tzAccount={tzAccount!}
-              tzLibrary={tzLibrary!}
-            />
-          </Grid>
           <Grid item>
             <BurnCard
               ethAccount={ethAccount!}

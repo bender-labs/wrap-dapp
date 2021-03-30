@@ -1,5 +1,5 @@
-import React from "react";
+import React from 'react';
 
-export default () => {
-  return <h1>History</h1>
+export default function HistoryScreen() {
+  return <h1>History</h1>;
 }

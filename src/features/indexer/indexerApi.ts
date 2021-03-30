@@ -12,7 +12,7 @@ interface IndexerTokenPayload {
   confirmationsThreshold: number;
 }
 
-interface IndexerERC20Payload extends IndexerTokenPayload {
+export interface IndexerERC20Payload extends IndexerTokenPayload {
   amount: string;
 }
 
@@ -70,8 +70,8 @@ export default class IndexerApi {
   }
 
   public fetchPendingWrap(
-    ethereumAddress: EthereumAddress,
-    tezosAddress: TezosAddress
+    ethereumAddress?: EthereumAddress,
+    tezosAddress?: TezosAddress
   ): Promise<IndexerWrapPayload> {
     return this.client
       .get('wraps', { params: { ethereumAddress, tezosAddress } })

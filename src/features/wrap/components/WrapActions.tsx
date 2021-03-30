@@ -1,8 +1,9 @@
 import { Button, Step, StepButton, Stepper } from '@material-ui/core';
-import React from 'react';
+import React, { useState } from 'react';
 import AllowanceButton from './AllowanceButton';
 import BigNumber from 'bignumber.js';
 import { WrapStatus } from '../hooks/useWrap';
+import LoadableButton from '../../../components/button/LoadableButton';
 
 export type WrapActionsProp = {
   currentAllowance: BigNumber;
@@ -23,11 +24,19 @@ export default function WrapActions({
   token,
   onWrap,
 }: WrapActionsProp) {
+  const [loading, setLoading] = useState(false);
+
   const activeStep = () => {
     if (status === WrapStatus.READY_TO_WRAP) {
       return 1;
     }
     return 0;
+  };
+
+  const wrapAndWait = async () => {
+    setLoading(true);
+    await onWrap();
+    setLoading(false);
   };
 
   return (
@@ -46,14 +55,14 @@ export default function WrapActions({
       </Step>
       <Step>
         <StepButton component="div">
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={onWrap}
+          <LoadableButton
+            loading={loading}
+            variant={'contained'}
+            onClick={wrapAndWait}
             disabled={status !== WrapStatus.READY_TO_WRAP}
-          >
-            WRAP
-          </Button>
+            text={'WRAP'}
+            color={'primary'}
+          />
         </StepButton>
       </Step>
     </Stepper>

@@ -9,6 +9,12 @@ import { Web3Provider } from '@ethersproject/providers';
 import { TezosToolkit } from '@taquito/taquito';
 import { useConfig } from '../../../runtime/config/ConfigContext';
 import { useWalletContext } from '../../../runtime/wallet/WalletContext';
+import {
+  Operation,
+  OperationType,
+  StatusType,
+} from '../../operations/state/types';
+import { wrapFees } from '../../fees/fees';
 
 type WrapState = {
   status: WrapStatus;
@@ -195,18 +201,29 @@ export function useWrap() {
       refreshCurrentAllowance();
     };
 
-    startAllowanceProcess();
+    return startAllowanceProcess();
   }, [state]);
 
   const launchWrap = useCallback(() => {
     const { contract, amountToWrap } = state;
-    if (contract == null) return;
+    if (contract == null) return Promise.reject('Not ready');
 
     const startWrapping = async () => {
-      await contract.wrap(amountToWrap);
+      const transactionHash = await contract.wrap(amountToWrap);
+      const op: Operation = {
+        transactionHash,
+        source: ethAccount || '',
+        destination: tzAccount || '',
+        status: { type: StatusType.NEW },
+        type: OperationType.WRAP,
+        amount: amountToWrap,
+        token: state.token,
+        fees: wrapFees(amountToWrap, fees),
+      };
+      return op;
     };
 
-    startWrapping();
+    return startWrapping();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state.contract, state.amountToWrap]);
 
