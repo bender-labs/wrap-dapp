@@ -71,11 +71,18 @@ export default function Provider({ children }: PropsWithChildren<{}>) {
         type: networkId,
         rpcUrl,
       },
-    }).then((_) => {
-      tzDispatchConnectionAction({
-        type: ConnectionActions.connectionSuccessful,
+    })
+      .then((_) => {
+        tzDispatchConnectionAction({
+          type: ConnectionActions.connectionSuccessful,
+        });
+      })
+      .catch((error) => {
+        tzDispatchConnectionAction({
+          type: ConnectionActions.connectionFailed,
+        });
+        throw error;
       });
-    });
   };
 
   const activateEthConnection = (key: string) => {
@@ -96,6 +103,7 @@ export default function Provider({ children }: PropsWithChildren<{}>) {
         ethDispatchConnectionAction({
           type: ConnectionActions.connectionFailed,
         });
+        throw error;
       });
   };
 

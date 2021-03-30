@@ -19,7 +19,7 @@ export default function WalletConnection({
 
   const handleConnection = () => {
     activate().catch((error) => {
-      enqueueSnackbar(error, { variant: 'error' }); //@todo: humanize
+      enqueueSnackbar(error.description, { variant: 'error' });
     });
   };
 
