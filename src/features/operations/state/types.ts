@@ -1,10 +1,4 @@
-import {
-  IndexerERC20Payload,
-  IndexerWrapPayload,
-} from '../../indexer/indexerApi';
 import BigNumber from 'bignumber.js';
-import { wrapFees } from '../../fees/fees';
-import { Fees } from '../../../config';
 
 export enum OperationType {
   WRAP,
@@ -16,6 +10,7 @@ export enum StatusType {
   WAITING_FOR_CONFIRMATIONS = 'WAITING_CONFIRMATIONS',
   WAITING_FOR_SIGNATURES = 'WAITING_SIGNATURES',
   READY = 'READY',
+  DONE = 'DONE',
 }
 
 export interface New {
@@ -41,11 +36,17 @@ export interface Ready {
   signatures: Record<string, string>;
 }
 
+export interface Done {
+  type: StatusType.DONE;
+  id: string;
+}
+
 export type OperationStatus =
   | New
   | WaitingForConfirmations
   | WaitingForSignatures
-  | Ready;
+  | Ready
+  | Done;
 
 export interface BaseOperation {
   type: OperationType;
@@ -68,45 +69,3 @@ export interface UnwrapOperation extends BaseOperation {
 }
 
 export type Operation = WrapOperation | UnwrapOperation;
-
-const operationStatus = (p: IndexerERC20Payload): OperationStatus => {
-  if (p.confirmations < p.confirmationsThreshold) {
-    return {
-      type: StatusType.WAITING_FOR_CONFIRMATIONS,
-      id: p.id,
-      confirmations: p.confirmations,
-      confirmationsThreshold: p.confirmationsThreshold,
-    };
-  }
-  if (Object.keys(p.signatures).length < 1) {
-    return {
-      type: StatusType.WAITING_FOR_SIGNATURES,
-      id: p.id,
-      signatures: p.signatures,
-    };
-  }
-  return {
-    type: StatusType.READY,
-    id: p.id,
-    signatures: p.signatures,
-  };
-};
-
-export const toOperations = (
-  fees: Fees,
-  payload: IndexerWrapPayload
-): Operation[] => {
-  return payload.erc20Wraps.map((w) => {
-    const amount = new BigNumber(w.amount);
-    return {
-      status: operationStatus(w),
-      type: OperationType.WRAP,
-      amount: amount,
-      transactionHash: w.transactionHash,
-      source: w.source,
-      destination: w.destination,
-      token: w.token,
-      fees: wrapFees(amount, fees),
-    };
-  });
-};

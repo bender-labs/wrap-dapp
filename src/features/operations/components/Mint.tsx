@@ -10,12 +10,14 @@ import React, { useMemo, useState } from 'react';
 import { formatAmount } from '../../ethereum/token';
 import { ellipsizeAddress } from '../../wallet/address';
 import LoadableButton from '../../../components/button/LoadableButton';
+import TezosConnectionButton from '../../tezos/components/TezosConnectionButton';
 
 export type MintProps = {
   operation: WrapOperation;
   fungibleTokens: Record<string, TokenMetadata>;
   requiredSignatures: number;
   onMint: () => Promise<void>;
+  connected: boolean;
 };
 
 export default function Mint({
@@ -23,6 +25,7 @@ export default function Mint({
   fungibleTokens,
   requiredSignatures,
   onMint,
+  connected,
 }: MintProps) {
   const [loading, setLoading] = useState(false);
 
@@ -38,7 +41,7 @@ export default function Mint({
     [fungibleTokens]
   );
 
-  const erc20PrimaryText = () => {
+  const primaryText = () => {
     const { decimals, ethereumSymbol } = tokensByEthAddress[
       operation.token.toLowerCase()
     ];
@@ -49,7 +52,7 @@ export default function Mint({
     )} to ${ellipsizeAddress(operation.destination)}`;
   };
 
-  const erc20SecondaryText = () => {
+  const secondaryText = () => {
     switch (operation.status.type) {
       case StatusType.NEW:
         return 'Waiting for operation to be included';
@@ -82,20 +85,20 @@ export default function Mint({
   };
   return (
     <ListItem>
-      <ListItemText
-        primary={erc20PrimaryText()}
-        secondary={erc20SecondaryText()}
-      />
+      <ListItemText primary={primaryText()} secondary={secondaryText()} />
       <ListItemSecondaryAction>
-        <LoadableButton
-          loading={loading}
-          onClick={handleMint}
-          disabled={disabled}
-          text={'MINT'}
-          color={'primary'}
-          variant={'outlined'}
-          size={'small'}
-        />
+        {connected && (
+          <LoadableButton
+            loading={loading}
+            onClick={handleMint}
+            disabled={disabled}
+            text={'MINT'}
+            color={'primary'}
+            variant={'outlined'}
+            size={'small'}
+          />
+        )}
+        {!connected && <TezosConnectionButton />}
       </ListItemSecondaryAction>
     </ListItem>
   );

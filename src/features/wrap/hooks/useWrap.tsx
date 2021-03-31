@@ -204,7 +204,7 @@ export function useWrap() {
     return startAllowanceProcess();
   }, [state]);
 
-  const launchWrap = useCallback(() => {
+  const launchWrap = () => {
     const { contract, amountToWrap } = state;
     if (contract == null) return Promise.reject('Not ready');
 
@@ -212,12 +212,12 @@ export function useWrap() {
       const transactionHash = await contract.wrap(amountToWrap);
       const op: Operation = {
         transactionHash,
-        source: ethAccount || '',
-        destination: tzAccount || '',
+        source: ethAccount!,
+        destination: tzAccount!,
         status: { type: StatusType.NEW },
         type: OperationType.WRAP,
         amount: amountToWrap,
-        token: state.token,
+        token: fungibleTokens[state.token].ethereumContractAddress,
         fees: wrapFees(amountToWrap, fees),
       };
       return op;
@@ -225,7 +225,7 @@ export function useWrap() {
 
     return startWrapping();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [state.contract, state.amountToWrap]);
+  };
 
   useEffect(() => {
     const loadMetadata = async () => {

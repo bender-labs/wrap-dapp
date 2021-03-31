@@ -1,5 +1,5 @@
 import { atom, selector, useRecoilState, useSetRecoilState } from 'recoil';
-import { Operation, StatusType, toOperations, WrapOperation } from './types';
+import { Operation, StatusType, WrapOperation } from './types';
 import { useSnackbar } from 'notistack';
 import { useEffect } from 'react';
 import {
@@ -7,6 +7,7 @@ import {
   useIndexerApi,
 } from '../../../runtime/config/ConfigContext';
 import { useWalletContext } from '../../../runtime/wallet/WalletContext';
+import { markAsDone, merge, toOperations } from './operation';
 
 export const OperationStateKey = 'OPERATIONS_STATE';
 export const OperationsCountKey = 'OPERATIONS_COUNT';
@@ -30,7 +31,8 @@ export function usePendingOperationsActions() {
     enqueueSnackbar('Assets locked. Waiting for confirmations.', {
       variant: 'info',
     });
-    setOperations((operations) => [o, ...operations]);
+
+    setOperations((operations) => [...operations, o]);
   };
 
   const mintErc20 = async (op: WrapOperation): Promise<string> => {
@@ -52,8 +54,13 @@ export function usePendingOperationsActions() {
         mintSignatures
       )
       .send();
-    enqueueSnackbar('Minting operation sent', { variant: 'info' });
     await result.receipt();
+    enqueueSnackbar('Minting operation sent', { variant: 'info' });
+    setOperations((curr) =>
+      curr.map((v) =>
+        v.transactionHash === op.transactionHash ? markAsDone(op) : v
+      )
+    );
     return result.opHash;
   };
 
@@ -73,7 +80,7 @@ export const useOperationsPolling = () => {
 
   const [operations, setOperations] = useRecoilState(operationsState);
 
-  const { fees } = useConfig();
+  const { fees, wrapSignatureThreshold } = useConfig();
 
   const {
     ethereum: { account: ethAccount },
@@ -89,7 +96,14 @@ export const useOperationsPolling = () => {
         ethAccount,
         tzAccount
       );
-      setOperations(toOperations(fees, pendingWrap));
+      setOperations((ops) => {
+        const fromIndexer = toOperations(
+          fees,
+          wrapSignatureThreshold,
+          pendingWrap
+        );
+        return merge(ops, fromIndexer);
+      });
     };
     // noinspection JSIgnoredPromiseFromCall
     loadPendingWrap();

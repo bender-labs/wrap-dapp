@@ -5,16 +5,24 @@ import {
   usePendingOperationsActions,
 } from '../state/pendingOperations';
 import { useConfig } from '../../../runtime/config/ConfigContext';
-import { Operation, OperationType } from '../state/types';
+import { Operation, OperationType, StatusType } from '../state/types';
 import Mint from './Mint';
 import { useRecoilValue } from 'recoil';
+import { useWalletContext } from '../../../runtime/wallet/WalletContext';
+import { ConnectionStatus } from '../../wallet/connectionStatus';
 
 export default function OperationList() {
   const operations = useRecoilValue(operationsState);
+  const {
+    tezos: { status },
+  } = useWalletContext();
   const { mintErc20 } = usePendingOperationsActions();
   const { fungibleTokens, wrapSignatureThreshold } = useConfig();
 
-  const renderOp = (op: Operation) => {
+  const renderOp = (op: Operation, isLast: boolean) => {
+    if (op.status.type === StatusType.DONE) {
+      return;
+    }
     switch (op.type) {
       case OperationType.WRAP:
         return (
@@ -22,14 +30,19 @@ export default function OperationList() {
             <Mint
               fungibleTokens={fungibleTokens}
               operation={op}
+              connected={status === ConnectionStatus.CONNECTED}
               requiredSignatures={wrapSignatureThreshold}
               onMint={() => mintErc20(op).then(() => {})}
             />
-            <Divider />
+            {!isLast && <Divider />}
           </React.Fragment>
         );
     }
   };
 
-  return <List>{operations.map(renderOp)}</List>;
+  return (
+    <List>
+      {operations.map((op, i) => renderOp(op, i === operations.length - 1))}
+    </List>
+  );
 }
