@@ -49,6 +49,7 @@ export interface IndexerConfigPayload {
     tezosTokenId: string | null;
     tezosSymbol: string;
     tezosName: string;
+    thumbnailUri: string | null;
   }>;
   fees: {
     erc20WrappingFees: number;
@@ -66,7 +67,7 @@ export default class IndexerApi {
   }
 
   public fetchConfig(_: void): Promise<IndexerConfigPayload> {
-    return this.client.get('configuration').then(({ data }) => data);
+    return this.client.get('/configuration').then(({ data }) => data);
   }
 
   public fetchPendingWrap(
@@ -74,7 +75,7 @@ export default class IndexerApi {
     tezosAddress?: TezosAddress
   ): Promise<IndexerWrapPayload> {
     return this.client
-      .get('wraps', { params: { ethereumAddress, tezosAddress } })
+      .get('/wraps/pending', { params: { ethereumAddress, tezosAddress } })
       .then(({ data }) => data);
   }
 
@@ -83,7 +84,7 @@ export default class IndexerApi {
     tezosAddress: TezosAddress
   ): Promise<IndexerUnwrapPayload> {
     return this.client
-      .get('unwraps', { params: { ethereumAddress, tezosAddress } })
+      .get('/unwraps/pending', { params: { ethereumAddress, tezosAddress } })
       .then(({ data }) => data);
   }
 }
