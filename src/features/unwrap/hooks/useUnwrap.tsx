@@ -10,6 +10,12 @@ import { Web3Provider } from '@ethersproject/providers';
 import { TezosToolkit } from '@taquito/taquito';
 import { Fees } from '../../../config';
 import { useWalletContext } from '../../../runtime/wallet/WalletContext';
+import {
+  OperationType,
+  StatusType,
+  UnwrapErc20Operation,
+} from '../../operations/state/types';
+import { unwrapFees } from '../../fees/fees';
 
 type UnwrapState = {
   status: UnwrapStatus;
@@ -156,17 +162,28 @@ export function useUnwrap() {
     });
   }, []);
 
-  const launchWrap = useCallback(() => {
+  const launchUnwrap = () => {
     const { contract, amountToUnwrap } = state;
-    if (contract == null) return;
+    if (contract == null) return Promise.reject('Not ready');
 
-    const startWrapping = async () => {
-      await contract.unwrap(amountToUnwrap);
+    const startUnwrapping = async () => {
+      const operationHash = await contract.unwrap(amountToUnwrap);
+      const op: UnwrapErc20Operation = {
+        operationHash,
+        hash: operationHash,
+        source: ethAccount!,
+        destination: tzAccount!,
+        status: { type: StatusType.NEW },
+        type: OperationType.UNWRAP,
+        amount: amountToUnwrap,
+        token: fungibleTokens[state.token].ethereumContractAddress,
+        fees: unwrapFees(amountToUnwrap, fees),
+      };
+      return op;
     };
 
-    startWrapping();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [state.contract, state.amountToUnwrap]);
+    return startUnwrapping();
+  };
 
   useEffect(() => {
     const loadMetadata = async () => {
@@ -197,7 +214,7 @@ export function useUnwrap() {
     ...state,
     selectToken,
     selectAmountToUnwrap: selectAmountToUnwrap,
-    launchWrap,
+    launchUnwrap,
     fungibleTokens,
     fees,
   };

@@ -10,7 +10,6 @@ import { SnackbarProvider } from 'notistack';
 import { Box, Container, createMuiTheme, CssBaseline } from '@material-ui/core';
 import WrapScreen from './screens/WrapScreen';
 import HistoryScreen from './screens/HistoryScreen';
-import Wrap from './screens/Wrap';
 import { ThemeProvider } from '@material-ui/core/styles';
 import { themeOptions } from './runtime/theme/theme';
 import { RecoilRoot } from 'recoil';
@@ -39,9 +38,6 @@ function App() {
                         <Route path="/">
                           <Box mt={4}>
                             <WrapScreen />
-                          </Box>
-                          <Box mt={4}>
-                            <Wrap />
                           </Box>
                         </Route>
                       </Switch>

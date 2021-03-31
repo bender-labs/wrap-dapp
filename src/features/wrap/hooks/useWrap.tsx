@@ -212,6 +212,7 @@ export function useWrap() {
       const transactionHash = await contract.wrap(amountToWrap);
       const op: Operation = {
         transactionHash,
+        hash: transactionHash,
         source: ethAccount!,
         destination: tzAccount!,
         status: { type: StatusType.NEW },

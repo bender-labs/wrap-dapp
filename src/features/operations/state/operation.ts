@@ -1,10 +1,11 @@
 import {
   IndexerERC20Payload,
+  IndexerUnwrapPayload,
   IndexerWrapPayload,
 } from '../../indexer/indexerApi';
 import { Fees } from '../../../config';
 import BigNumber from 'bignumber.js';
-import { wrapFees } from '../../fees/fees';
+import { unwrapFees, wrapFees } from '../../fees/fees';
 import { Operation, OperationStatus, OperationType, StatusType } from './types';
 
 const toOperationStatus = (
@@ -37,9 +38,7 @@ export const merge = (current: Operation[], indexer: Operation[]) =>
   current.length === 0
     ? indexer
     : current.reduce<Operation[]>((acc, op) => {
-        const maybeSame = indexer.find(
-          (v) => v.transactionHash === op.transactionHash
-        );
+        const maybeSame = indexer.find((v) => v.hash === op.hash);
         if (!maybeSame && op.status.type === StatusType.NEW) {
           return [...acc, op];
         }
@@ -64,7 +63,7 @@ export const markAsDone = (op: Operation): Operation => {
   }
 };
 
-export const toOperations = (
+export const wrapsToOperations = (
   fees: Fees,
   signaturesThreshold: number,
   payload: IndexerWrapPayload
@@ -75,11 +74,33 @@ export const toOperations = (
       status: toOperationStatus(w, signaturesThreshold),
       type: OperationType.WRAP,
       amount: amount,
-      transactionHash: w.transactionHash,
+      transactionHash: w.transactionHash!,
+      hash: w.transactionHash!,
       source: w.source,
       destination: w.destination,
       token: w.token,
       fees: wrapFees(amount, fees),
+    };
+  });
+};
+
+export const unwrapToOperations = (
+  fees: Fees,
+  signaturesThreshold: number,
+  payload: IndexerUnwrapPayload
+): Operation[] => {
+  return payload.erc20Unwraps.map((w) => {
+    const amount = new BigNumber(w.amount);
+    return {
+      status: toOperationStatus(w, signaturesThreshold),
+      type: OperationType.UNWRAP,
+      amount: amount,
+      operationHash: w.operationHash!,
+      hash: w.operationHash!,
+      source: w.source,
+      destination: w.destination,
+      token: w.token,
+      fees: unwrapFees(amount, fees),
     };
   });
 };

@@ -1,4 +1,4 @@
-import { Button, Step, StepButton, Stepper } from '@material-ui/core';
+import { Step, StepButton, Stepper } from '@material-ui/core';
 import React, { useState } from 'react';
 import AllowanceButton from './AllowanceButton';
 import BigNumber from 'bignumber.js';

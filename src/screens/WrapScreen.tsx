@@ -1,12 +1,4 @@
-import {
-  Badge,
-  Card,
-  CardContent,
-  makeStyles,
-  Paper,
-  Tab,
-  Tabs,
-} from '@material-ui/core';
+import { Badge, makeStyles, Paper, Tab, Tabs } from '@material-ui/core';
 import React, { useState } from 'react';
 import WrapCard from '../features/wrap/WrapCard';
 import UnwrapCard from '../features/unwrap/UnwrapCard';

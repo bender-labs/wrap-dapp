@@ -44,7 +44,7 @@ export class TezosUnwrapApi {
     const totalFees = amount
       .div(10000)
       .multipliedBy(this.fees.erc20UnwrappingFees);
-    await contract.methods
+    const result = await contract.methods
       .unwrap_erc20(
         this.erc20ContractAddress.toLowerCase().substring(2),
         amount.toString(10),
@@ -52,6 +52,7 @@ export class TezosUnwrapApi {
         this.ethAccountAddress.toLowerCase().substring(2)
       )
       .send();
+    return result.opHash;
   }
 
   private readonly ethAccountAddress: EthereumAddress;

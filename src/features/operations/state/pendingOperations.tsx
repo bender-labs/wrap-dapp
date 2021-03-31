@@ -1,5 +1,11 @@
 import { atom, selector, useRecoilState, useSetRecoilState } from 'recoil';
-import { Operation, StatusType, WrapOperation } from './types';
+import {
+  Operation,
+  OperationType,
+  StatusType,
+  UnwrapErc20Operation,
+  WrapErc20Operation,
+} from './types';
 import { useSnackbar } from 'notistack';
 import { useEffect } from 'react';
 import {
@@ -7,35 +13,50 @@ import {
   useIndexerApi,
 } from '../../../runtime/config/ConfigContext';
 import { useWalletContext } from '../../../runtime/wallet/WalletContext';
-import { markAsDone, merge, toOperations } from './operation';
+import {
+  markAsDone,
+  merge,
+  unwrapToOperations,
+  wrapsToOperations,
+} from './operation';
+import { ethers } from 'ethers';
+import CUSTODIAN_ABI from '../../ethereum/custodianContractAbi';
+import ERC20_ABI from '../../ethereum/erc20Abi';
 
 export const OperationStateKey = 'OPERATIONS_STATE';
 export const OperationsCountKey = 'OPERATIONS_COUNT';
 
-export const operationsState = atom<Operation[]>({
-  key: OperationStateKey,
-  default: [],
-});
+export const operationsState = atom<{ mints: Operation[]; burns: Operation[] }>(
+  {
+    key: OperationStateKey,
+    default: { mints: [], burns: [] },
+  }
+);
 
 export function usePendingOperationsActions() {
   const { enqueueSnackbar } = useSnackbar();
   const {
     tezos: { library: tzLibrary },
+    ethereum: { library: ethLibrary },
   } = useWalletContext();
   const {
     tezos: { quorumContractAddress, minterContractAddress },
+    ethereum: { custodianContractAddress },
   } = useConfig();
   let setOperations = useSetRecoilState(operationsState);
 
   const addOperation = (o: Operation) => {
-    enqueueSnackbar('Assets locked. Waiting for confirmations.', {
-      variant: 'info',
+    setOperations((p) => {
+      switch (o.type) {
+        case OperationType.WRAP:
+          return { ...p, mints: [...p.mints, o] };
+        case OperationType.UNWRAP:
+          return { ...p, burns: [...p.burns, o] };
+      }
     });
-
-    setOperations((operations) => [...operations, o]);
   };
 
-  const mintErc20 = async (op: WrapOperation): Promise<string> => {
+  const mintErc20 = async (op: WrapErc20Operation): Promise<string> => {
     const contract = await tzLibrary!.wallet.at(quorumContractAddress);
     if (op.status.type !== StatusType.READY) {
       return Promise.reject('Not ready');
@@ -56,22 +77,63 @@ export function usePendingOperationsActions() {
       .send();
     await result.receipt();
     enqueueSnackbar('Minting operation sent', { variant: 'info' });
-    setOperations((curr) =>
-      curr.map((v) =>
-        v.transactionHash === op.transactionHash ? markAsDone(op) : v
-      )
-    );
+    setOperations((curr) => {
+      const mints = curr.mints.map((v) =>
+        v.hash === op.hash ? markAsDone(op) : v
+      );
+      return { ...curr, mints };
+    });
     return result.opHash;
   };
 
-  return { addOperation, mintErc20 };
+  const buildFullSignature = (signatures: Record<string, string>) => {
+    const orderedSigners = Object.keys(signatures).sort();
+    return orderedSigners.reduce(
+      (previousValue, currentValue) =>
+        previousValue + signatures[currentValue].replace('0x', ''),
+      '0x'
+    );
+  };
+
+  const unlockErc20 = async (op: UnwrapErc20Operation): Promise<string> => {
+    if (op.status.type !== StatusType.READY) {
+      return Promise.reject('Operation is not ready');
+    }
+    const custodianContract = new ethers.Contract(
+      custodianContractAddress,
+      new ethers.utils.Interface(CUSTODIAN_ABI),
+      ethLibrary.getSigner()
+    );
+    const erc20Interface = new ethers.utils.Interface(ERC20_ABI);
+    const data = erc20Interface.encodeFunctionData('transfer', [
+      op.destination,
+      op.amount.toFixed(),
+    ]);
+    const result = await custodianContract.execTransaction(
+      op.token,
+      0,
+      data,
+      op.status.id,
+      buildFullSignature(op.status.signatures)
+    );
+    await result.wait();
+    setOperations((curr) => {
+      const burns = curr.burns.map((v) =>
+        v.hash === op.hash ? markAsDone(op) : v
+      );
+      return { ...curr, burns };
+    });
+    return result.blockHash;
+  };
+
+  return { addOperation, mintErc20, unlockErc20 };
 }
 
 export const pendingOperationsCount = selector({
   key: OperationsCountKey,
   get: ({ get }) => {
     const operations = get(operationsState);
-    return operations.length;
+    return operations.mints.length + operations.burns.length;
   },
 });
 
@@ -92,17 +154,27 @@ export const useOperationsPolling = () => {
       if (!ethAccount && !tzAccount) {
         return;
       }
-      const pendingWrap = await indexerApi.fetchPendingWrap(
-        ethAccount,
-        tzAccount
-      );
-      setOperations((ops) => {
-        const fromIndexer = toOperations(
+
+      const [pendingWrap, pendingUnwrap] = await Promise.all([
+        indexerApi.fetchPendingWrap(ethAccount, tzAccount),
+        indexerApi.fetchPendingUnwrap(ethAccount, tzAccount),
+      ]);
+
+      setOperations(({ mints, burns }) => {
+        const mintsFromIndexer = wrapsToOperations(
           fees,
           wrapSignatureThreshold,
           pendingWrap
         );
-        return merge(ops, fromIndexer);
+        const burnsFromIndexer = unwrapToOperations(
+          fees,
+          wrapSignatureThreshold,
+          pendingUnwrap
+        );
+        return {
+          mints: merge(mints, mintsFromIndexer),
+          burns: merge(burns, burnsFromIndexer),
+        };
       });
     };
     // noinspection JSIgnoredPromiseFromCall

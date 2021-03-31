@@ -51,21 +51,23 @@ export type OperationStatus =
 export interface BaseOperation {
   type: OperationType;
   status: OperationStatus;
-  transactionHash: string;
+  hash: string;
   source: string;
   destination: string;
   token: string;
   fees: BigNumber;
 }
 
-export interface WrapOperation extends BaseOperation {
+export interface WrapErc20Operation extends BaseOperation {
   type: OperationType.WRAP;
   amount: BigNumber;
+  transactionHash: string;
 }
 
-export interface UnwrapOperation extends BaseOperation {
+export interface UnwrapErc20Operation extends BaseOperation {
   type: OperationType.UNWRAP;
-  tokenId: string;
+  amount: BigNumber;
+  operationHash: string;
 }
 
-export type Operation = WrapOperation | UnwrapOperation;
+export type Operation = WrapErc20Operation | UnwrapErc20Operation;

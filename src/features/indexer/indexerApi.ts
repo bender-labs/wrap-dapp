@@ -6,7 +6,8 @@ interface IndexerTokenPayload {
   source: string;
   destination: string;
   token: string;
-  transactionHash: string;
+  transactionHash?: string;
+  operationHash?: string;
   signatures: Record<string, string>;
   confirmations: number;
   confirmationsThreshold: number;
@@ -80,8 +81,8 @@ export default class IndexerApi {
   }
 
   public fetchPendingUnwrap(
-    ethereumAddress: EthereumAddress,
-    tezosAddress: TezosAddress
+    ethereumAddress?: EthereumAddress,
+    tezosAddress?: TezosAddress
   ): Promise<IndexerUnwrapPayload> {
     return this.client
       .get('/unwraps/pending', { params: { ethereumAddress, tezosAddress } })

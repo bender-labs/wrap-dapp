@@ -6,6 +6,7 @@ import { SupportedBlockchain } from '../wallet/blockchain';
 import UnwrapFees from './components/UnwrapFees';
 import MultiConnect from '../wallet/MultiConnect';
 import UnwrapActions from './components/UnwrapActions';
+import { usePendingOperationsActions } from '../operations/state/pendingOperations';
 
 export default function UnwrapCard() {
   const {
@@ -15,11 +16,19 @@ export default function UnwrapCard() {
     token,
     selectAmountToUnwrap,
     selectToken,
-    launchWrap,
+    launchUnwrap,
     fungibleTokens,
     fees,
     connected,
   } = useUnwrap();
+
+  const { addOperation } = usePendingOperationsActions();
+
+  const doUnwrap = async () => {
+    const op = await launchUnwrap();
+    addOperation(op);
+  };
+
   return (
     <Card>
       <CardContent>
@@ -42,7 +51,7 @@ export default function UnwrapCard() {
           />
         </Box>
         {!connected && <MultiConnect />}
-        {connected && <UnwrapActions status={status} onUnwrap={launchWrap} />}
+        {connected && <UnwrapActions status={status} onUnwrap={doUnwrap} />}
       </CardContent>
     </Card>
   );

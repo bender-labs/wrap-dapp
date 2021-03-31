@@ -1,32 +1,32 @@
-import { StatusType, WrapErc20Operation } from '../state/types';
-import { TokenMetadata } from '../../swap/token';
 import {
   ListItem,
   ListItemSecondaryAction,
   ListItemText,
   Typography,
 } from '@material-ui/core';
+import LoadableButton from '../../../components/button/LoadableButton';
 import React, { useMemo, useState } from 'react';
+import { StatusType, UnwrapErc20Operation } from '../state/types';
+import { TokenMetadata } from '../../swap/token';
 import { formatAmount } from '../../ethereum/token';
 import { ellipsizeAddress } from '../../wallet/address';
-import LoadableButton from '../../../components/button/LoadableButton';
-import TezosConnectionButton from '../../tezos/components/TezosConnectionButton';
+import EthereumConnectionButton from '../../ethereum/components/EthereumConnectionButton';
 
-export type MintProps = {
-  operation: WrapErc20Operation;
+export type BurnProps = {
+  operation: UnwrapErc20Operation;
   fungibleTokens: Record<string, TokenMetadata>;
   requiredSignatures: number;
-  onMint: () => Promise<void>;
+  onBurn: () => Promise<void>;
   connected: boolean;
 };
 
-export default function Mint({
+export default function Burn({
   operation,
   fungibleTokens,
   requiredSignatures,
-  onMint,
+  onBurn,
   connected,
-}: MintProps) {
+}: BurnProps) {
   const [loading, setLoading] = useState(false);
 
   const tokensByEthAddress = useMemo(
@@ -45,7 +45,7 @@ export default function Mint({
     const { decimals, ethereumSymbol } = tokensByEthAddress[
       operation.token.toLowerCase()
     ];
-    return `mint ${formatAmount(
+    return `unlock ${formatAmount(
       ethereumSymbol,
       operation.amount.minus(operation.fees),
       decimals
@@ -72,15 +72,15 @@ export default function Mint({
           </React.Fragment>
         );
       case StatusType.READY:
-        return 'Ready to mint';
+        return 'Ready to unlock';
     }
   };
 
   const disabled = operation.status.type !== StatusType.READY;
 
-  const handleMint = async () => {
+  const handleBurn = async () => {
     setLoading(true);
-    await onMint();
+    await onBurn();
     setLoading(false);
   };
 
@@ -91,15 +91,15 @@ export default function Mint({
         {connected && (
           <LoadableButton
             loading={loading}
-            onClick={handleMint}
+            onClick={handleBurn}
             disabled={disabled}
-            text={'MINT'}
+            text={'UNLOCK'}
             color={'primary'}
             variant={'outlined'}
             size={'small'}
           />
         )}
-        {!connected && <TezosConnectionButton />}
+        {!connected && <EthereumConnectionButton />}
       </ListItemSecondaryAction>
     </ListItem>
   );
