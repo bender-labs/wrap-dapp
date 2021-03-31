@@ -6,6 +6,7 @@ export default function TezosConnectionButton() {
   const {
     tezos: {
       activate: tzActivate,
+      deactivate: tzDeactivate,
       status: tzConnectionStatus,
       account: tzAccount,
     },
@@ -14,6 +15,7 @@ export default function TezosConnectionButton() {
     <TezosWalletConnection
       account={tzAccount}
       activate={tzActivate}
+      deactivate={tzDeactivate}
       connectionStatus={tzConnectionStatus}
     />
   );

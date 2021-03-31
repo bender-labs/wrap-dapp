@@ -26,29 +26,44 @@ type State = {
 
 enum ActionType {
   CONNECTED,
+  DISCONNECTED = 1,
 }
 
-type Action = {
-  type: ActionType.CONNECTED;
-  network: NetworkType;
-  account: string;
-  library: TezosToolkit;
-};
+type Action =
+  | {
+      type: ActionType.CONNECTED;
+      payload: {
+        network: NetworkType;
+        account: string;
+        library: TezosToolkit;
+      };
+    }
+  | {
+      type: ActionType.DISCONNECTED;
+    };
 
 type Effects = {
   activate: (request: RequestPermissionInput) => Promise<string>;
+  reactivate: (request: RequestPermissionInput) => Promise<string>;
+  deactivate: () => Promise<void>;
 };
 
-function reducer(state: State, { type, ...payload }: Action): State {
-  switch (type) {
+function reducer(state: State, action: Action): State {
+  switch (action.type) {
     case ActionType.CONNECTED: {
-      const { network, account, library } = payload;
+      const { network, account, library } = action.payload;
       return {
         ...state,
         network,
         status: TezosConnectionStatus.CONNECTED,
         account,
         library,
+      };
+    }
+    case ActionType.DISCONNECTED: {
+      return {
+        status: TezosConnectionStatus.UNINITIALIZED,
+        wallet: state.wallet,
       };
     }
   }
@@ -73,11 +88,41 @@ function _activate(dispatch: Dispatch<Action>) {
     const account = await client.getPKH();
     dispatch({
       type: ActionType.CONNECTED,
-      network: request.network?.type!,
-      account,
-      library,
+      payload: {
+        network: request.network?.type!,
+        account,
+        library,
+      },
     });
     return account;
+  };
+}
+
+function _reactivate(dispatch: Dispatch<Action>) {
+  return (client: BeaconWallet) => async (request: RequestPermissionInput) => {
+    const library = new TezosToolkit(request.network?.rpcUrl || '');
+    library.addExtension(customizedTzip16Module());
+    library.setWalletProvider(client);
+    const account = await client.getPKH();
+    dispatch({
+      type: ActionType.CONNECTED,
+      payload: {
+        network: request.network?.type!,
+        account,
+        library,
+      },
+    });
+    return account;
+  };
+}
+
+function _deactivate(dispatch: Dispatch<Action>) {
+  return (client: BeaconWallet) => async () => {
+    return client.clearActiveAccount().then(() => {
+      dispatch({
+        type: ActionType.DISCONNECTED,
+      });
+    });
   };
 }
 
@@ -99,9 +144,14 @@ export default function TezosProvider({
   });
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const activate = useCallback(_activate(dispatch)(wallet), []);
-
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const deactivate = useCallback(_deactivate(dispatch)(wallet), []);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const reactivate = useCallback(_reactivate(dispatch)(wallet), []);
   return (
-    <TezosContext.Provider value={{ ...state, activate }}>
+    <TezosContext.Provider
+      value={{ ...state, activate, deactivate, reactivate }}
+    >
       {children}
     </TezosContext.Provider>
   );

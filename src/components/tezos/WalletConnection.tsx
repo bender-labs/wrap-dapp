@@ -8,17 +8,25 @@ type Props = {
   account: undefined | string;
   connectionStatus: ConnectionStatus;
   activate: () => Promise<void>;
+  deactivate: () => Promise<void>;
 };
 
 export default function WalletConnection({
   account,
   connectionStatus,
   activate,
+  deactivate,
 }: Props) {
   const { enqueueSnackbar } = useSnackbar();
 
   const handleConnection = () => {
     activate().catch((error) => {
+      enqueueSnackbar(error.description, { variant: 'error' });
+    });
+  };
+
+  const handleDisconnection = () => {
+    deactivate().catch((error) => {
       enqueueSnackbar(error.description, { variant: 'error' });
     });
   };
@@ -30,7 +38,7 @@ export default function WalletConnection({
         connectionStatus={connectionStatus}
         providers={[{ name: 'Beacon', key: 'beacon', icon: '' }]}
         onSelectedProvider={handleConnection}
-        onDisconnection={() => {}}
+        onDisconnection={handleDisconnection}
         account={account}
       />
     </React.Fragment>

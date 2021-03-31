@@ -15,6 +15,7 @@ export default function MultiConnect() {
     },
     tezos: {
       activate: tzActivate,
+      deactivate: tzDeactivate,
       status: tzConnectionStatus,
       account: tzAccount,
     },
@@ -36,7 +37,8 @@ export default function MultiConnect() {
         <StepButton component={'div'}>
           <TezosWalletConnection
             account={tzAccount}
-            activate={tzActivate!}
+            activate={tzActivate}
+            deactivate={tzDeactivate}
             connectionStatus={tzConnectionStatus}
           />
         </StepButton>

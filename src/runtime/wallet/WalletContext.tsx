@@ -16,6 +16,7 @@ import {
   connectionStatusInitialState,
   connectionStatusReducer,
 } from '../../features/wallet/connectionStatus';
+import { RequestPermissionInput } from '@airgap/beacon-sdk';
 
 type ContextValue =
   | undefined
@@ -32,6 +33,7 @@ type ContextValue =
       tezos: {
         library?: TezosToolkit;
         activate: () => Promise<void>;
+        deactivate: () => Promise<void>;
         status: ConnectionStatus;
         account?: string;
       };
@@ -59,14 +61,19 @@ export default function Provider({ children }: PropsWithChildren<{}>) {
     activate: tzActivate,
     status: tezosConnectionStatus,
     account: tzAccount,
+    deactivate: tzDeactivate,
+    reactivate: tzReactivate,
+    wallet: tzWallet,
   } = useTezosContext();
   const ethereumConfig = useEthereumConfig();
   const { rpcUrl, networkId } = useTezosConfig();
-  const connectors = connectorsFactory(ethereumConfig);
+  const ethConnectors = connectorsFactory(ethereumConfig);
 
-  const activateTzConnection = () => {
+  const activateTzConnection = (
+    activation: (request: RequestPermissionInput) => Promise<string>
+  ) => {
     tzDispatchConnectionAction({ type: ConnectionActions.launchingConnection });
-    return tzActivate({
+    return activation({
       network: {
         type: networkId,
         rpcUrl,
@@ -78,6 +85,7 @@ export default function Provider({ children }: PropsWithChildren<{}>) {
         });
       })
       .catch((error) => {
+        console.log(error);
         tzDispatchConnectionAction({
           type: ConnectionActions.connectionFailed,
         });
@@ -90,7 +98,7 @@ export default function Provider({ children }: PropsWithChildren<{}>) {
       type: ConnectionActions.launchingConnection,
     });
     return ethActivate(
-      connectors[key as keyof typeof connectors].connector,
+      ethConnectors[key as keyof typeof ethConnectors].connector,
       (_) => null,
       true
     )
@@ -114,17 +122,26 @@ export default function Provider({ children }: PropsWithChildren<{}>) {
     });
   };
 
+  const deactivateTzConnection = () => {
+    return tzDeactivate().then(() => {
+      tzDispatchConnectionAction({
+        type: ConnectionActions.stoppingConnection,
+      });
+    });
+  };
+
   const [wallet, setWallet] = useState<ContextValue>({
     fullySetup: false,
     ethereum: {
       activate: activateEthConnection,
       deactivate: deactivateEthConnection,
-      connectors,
+      connectors: ethConnectors,
       status: ConnectionStatus.NOT_CONNECTED,
     },
     tezos: {
       account: undefined,
-      activate: activateTzConnection,
+      activate: () => activateTzConnection(tzActivate),
+      deactivate: deactivateTzConnection,
       status: ConnectionStatus.NOT_CONNECTED,
     },
   });
@@ -159,6 +176,7 @@ export default function Provider({ children }: PropsWithChildren<{}>) {
       tezos: {
         library: tzLibrary,
         activate: prevState!.tezos.activate,
+        deactivate: prevState!.tezos.deactivate,
         status: tzConnectionStatus,
         account: tzAccount,
       },
@@ -176,13 +194,22 @@ export default function Provider({ children }: PropsWithChildren<{}>) {
   ]);
 
   useEffect(() => {
-    (connectors.injected.connector as InjectedConnector)
+    (ethConnectors.injected.connector as InjectedConnector)
       .isAuthorized()
       .then((isAuthorized: boolean) => {
         if (isAuthorized) {
           activateEthConnection('injected').catch(() => {});
         }
       });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    tzWallet.client.getActiveAccount().then((activeAccount) => {
+      if (activeAccount) {
+        activateTzConnection(tzReactivate);
+      }
+    });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

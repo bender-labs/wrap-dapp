@@ -65,7 +65,7 @@ const WalletConnectionCard = ({
         <Chip
           icon={blockchainIcon(blockchain)}
           label={ellipsizeAddress(account)}
-          onClick={handleClick}
+          onDelete={handleDisconnection}
         />
       ) : (
         <Button
@@ -84,10 +84,8 @@ const WalletConnectionCard = ({
         open={isOpen}
         onClose={() => setOpen(false)}
         onSelectedValue={handleSelectedProvider}
-        onDisconnection={handleDisconnection}
         providers={providers}
         blockchain={blockchainName}
-        connectionStatus={connectionStatus}
       />
     </React.Fragment>
   );

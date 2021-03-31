@@ -58,6 +58,7 @@ const Render = () => {
     },
     tezos: {
       activate: tzActivate,
+      deactivate: tzDeactivate,
       status: tzConnectionStatus,
       account: tzAccount,
     },
@@ -93,6 +94,7 @@ const Render = () => {
           <TezosWalletConnection
             account={tzAccount}
             activate={tzActivate}
+            deactivate={tzDeactivate}
             connectionStatus={tzConnectionStatus}
           />
           <EthWalletConnection
