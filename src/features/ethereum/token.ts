@@ -5,7 +5,7 @@ export function parseUnits(value: string, decimals: number) {
 }
 
 export function formatUnits(balance: BigNumber, decimals: number): string {
-  return balance.shiftedBy(-decimals).toFormat(decimals);
+  return balance.toString(decimals);
 }
 
 export function formatAmount(
