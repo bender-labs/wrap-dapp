@@ -35,7 +35,6 @@ export default function AmountToWrapInput({
   useEffect(() => {
     const timeOutId = setTimeout(() => validateFormat(userAmount), 300);
     return () => clearTimeout(timeOutId);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userAmount]);
 
   useEffect(() => {
@@ -45,11 +44,10 @@ export default function AmountToWrapInput({
         `balance: ${formatAmount(symbol, balance, decimals)}`,
       ]);
     }
-    // eslint-disable-next-line
   }, [displayBalance, balance, error]);
 
   const validateFormat = (input: string) => {
-    if (!/^\d*(\.\d+)?$/.test(input)) {
+    if (!/^\d+(\.\d+)?$/.test(input)) {
       setUserError([true, 'Invalid number']);
       return;
     }
@@ -73,7 +71,7 @@ export default function AmountToWrapInput({
     if (error) {
       setUserError([false, '']);
     }
-    const value = event.target.value === '' ? '0' : event.target.value;
+    const value = event.target.value;
     const cleaned = value.replace(',', '.').replace(' ', '');
     setUserAmount(cleaned);
   };
