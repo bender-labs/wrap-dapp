@@ -15,6 +15,10 @@ import { themeOptions } from './runtime/theme/theme';
 import { RecoilRoot } from 'recoil';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import AppBar from './components/header/AppBar';
+import WrapFlow from './screens/WrapFlow';
+import { paths } from './screens/routes';
+import UnwrapFlow from './screens/UnwrapFlow';
+import { WrapPaper } from './components/paper/Paper';
 
 const theme = createMuiTheme(themeOptions);
 
@@ -35,11 +39,15 @@ function App() {
                         <Route path="/history">
                           <HistoryScreen />
                         </Route>
-                        <Route path="/">
+                        <Route path="/" exact>
                           <Box mt={4}>
                             <WrapScreen />
                           </Box>
                         </Route>
+                        <WrapPaper>
+                          <Route path={paths.WRAP} component={WrapFlow} />
+                          <Route path={paths.UNWRAP} component={UnwrapFlow} />
+                        </WrapPaper>
                       </Switch>
                     </Container>
                   </SnackbarProvider>
