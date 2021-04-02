@@ -1,5 +1,5 @@
 import {
-  IndexerERC20Payload,
+  IndexerTokenPayload,
   IndexerUnwrapPayload,
   IndexerWrapPayload,
 } from '../../indexer/indexerApi';
@@ -9,7 +9,7 @@ import { unwrapFees, wrapFees } from '../../fees/fees';
 import { Operation, OperationStatus, OperationType, StatusType } from './types';
 
 const toOperationStatus = (
-  p: IndexerERC20Payload,
+  p: IndexerTokenPayload,
   signaturesThreshold: number
 ): OperationStatus => {
   if (p.confirmations < p.confirmationsThreshold) {
@@ -68,8 +68,8 @@ export const wrapsToOperations = (
   signaturesThreshold: number,
   payload: IndexerWrapPayload
 ): Operation[] => {
-  return payload.erc20Wraps.map((w) => {
-    const amount = new BigNumber(w.amount);
+  return payload.result.map((w) => {
+    const amount = new BigNumber(w.amount!);
     return {
       status: toOperationStatus(w, signaturesThreshold),
       type: OperationType.WRAP,
@@ -89,8 +89,8 @@ export const unwrapToOperations = (
   signaturesThreshold: number,
   payload: IndexerUnwrapPayload
 ): Operation[] => {
-  return payload.erc20Unwraps.map((w) => {
-    const amount = new BigNumber(w.amount);
+  return payload.result.map((w) => {
+    const amount = new BigNumber(w.amount!);
     return {
       status: toOperationStatus(w, signaturesThreshold),
       type: OperationType.UNWRAP,

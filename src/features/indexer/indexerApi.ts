@@ -1,7 +1,7 @@
 import axios, { AxiosInstance } from 'axios';
 import { EthereumAddress, TezosAddress } from '../ethereum/EthereumWrapApi';
 
-interface IndexerTokenPayload {
+export interface IndexerTokenPayload {
   id: string;
   source: string;
   destination: string;
@@ -11,24 +11,16 @@ interface IndexerTokenPayload {
   signatures: Record<string, string>;
   confirmations: number;
   confirmationsThreshold: number;
-}
-
-export interface IndexerERC20Payload extends IndexerTokenPayload {
-  amount: string;
-}
-
-interface IndexerERC721Payload extends IndexerTokenPayload {
+  amount?: string;
   tokenId: string;
 }
 
 export interface IndexerWrapPayload {
-  erc20Wraps: Array<IndexerERC20Payload>;
-  erc721Wraps: Array<IndexerERC721Payload>;
+  result: Array<IndexerTokenPayload>;
 }
 
 export interface IndexerUnwrapPayload {
-  erc20Unwraps: Array<IndexerERC20Payload>;
-  erc721Unwraps: Array<IndexerERC721Payload>;
+  result: Array<IndexerTokenPayload>;
 }
 
 export interface IndexerConfigPayload {
@@ -76,7 +68,9 @@ export default class IndexerApi {
     tezosAddress?: TezosAddress
   ): Promise<IndexerWrapPayload> {
     return this.client
-      .get('/wraps/pending', { params: { ethereumAddress, tezosAddress } })
+      .get('/wraps', {
+        params: { ethereumAddress, tezosAddress, status: 'asked' },
+      })
       .then(({ data }) => data);
   }
 
@@ -85,7 +79,9 @@ export default class IndexerApi {
     tezosAddress?: TezosAddress
   ): Promise<IndexerUnwrapPayload> {
     return this.client
-      .get('/unwraps/pending', { params: { ethereumAddress, tezosAddress } })
+      .get('/unwraps', {
+        params: { ethereumAddress, tezosAddress, status: 'asked' },
+      })
       .then(({ data }) => data);
   }
 }
