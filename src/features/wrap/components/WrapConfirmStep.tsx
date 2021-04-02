@@ -1,5 +1,5 @@
 import { PaperContent } from '../../../components/paper/Paper';
-import { Button } from '@material-ui/core';
+import { IconButton } from '@material-ui/core';
 import React from 'react';
 import AssetSummary from '../../../components/formatting/AssetSummary';
 import BigNumber from 'bignumber.js';
@@ -8,6 +8,7 @@ import { wrapFees } from '../../fees/fees';
 import { Fees } from '../../../config';
 import WrapActions from './WrapActions';
 import { WrapStatus } from '../hooks/useWrap';
+import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 
 export type WrapConfirmStepProps = {
   token: TokenMetadata;
@@ -33,7 +34,9 @@ export default function WrapConfirmStep({
   const currentFees = wrapFees(amount, fees);
   return (
     <>
-      <Button onClick={onPrevious}>Back</Button>
+      <IconButton onClick={onPrevious}>
+        <ArrowBackIcon />
+      </IconButton>
       <PaperContent>
         <AssetSummary
           label={'Receive'}

@@ -43,6 +43,12 @@ export default function WrapInitialStep({
 
   return (
     <PaperContent>
+      <TokenSelection
+        token={token.ethereumSymbol}
+        onTokenSelect={onTokenChange}
+        blockchainTarget={SupportedBlockchain.Ethereum}
+        tokens={tokens}
+      />
       <AmountToWrapInput
         balance={balance}
         decimals={token.decimals}
@@ -51,13 +57,6 @@ export default function WrapInitialStep({
         amountToWrap={amount}
         displayBalance={connected}
       />
-      <TokenSelection
-        token={token.ethereumSymbol}
-        onTokenSelect={onTokenChange}
-        blockchainTarget={SupportedBlockchain.Ethereum}
-        tokens={tokens}
-      />
-
       <AssetSummary
         label={'You will receive'}
         value={amount.minus(currentFees)}

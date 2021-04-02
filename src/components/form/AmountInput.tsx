@@ -46,6 +46,7 @@ export type AmountInputProps = {
   onChange: (v: string) => void;
   error?: boolean;
   helperText?: string;
+  focus?: boolean;
 };
 
 export default function AmountInput({
@@ -55,6 +56,7 @@ export default function AmountInput({
   onChange,
   error,
   helperText,
+  focus = false,
 }: AmountInputProps) {
   const classes = useStyles();
   const handleOnChange = (e: NumberFormatValues) => {
@@ -66,6 +68,8 @@ export default function AmountInput({
       <NumberFormat
         displayType="input"
         className={classes.input}
+        placeholder={`0 ${symbol}`}
+        autoFocus={focus}
         suffix={` ${symbol}`}
         value={value}
         defaultValue={0}

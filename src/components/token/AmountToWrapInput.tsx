@@ -56,6 +56,7 @@ export default function AmountToWrapInput({
         symbol={symbol}
         onChange={handleOnChange}
         error={error}
+        focus
         helperText={helperText}
       />
       {/*<TextField

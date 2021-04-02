@@ -37,8 +37,9 @@ export default function TokenSelection({
   };
 
   return (
-    <FormControl fullWidth>
+    <FormControl fullWidth variant={'filled'}>
       <Select
+        fullWidth
         value={token}
         onChange={handleTokenSelect}
         displayEmpty
