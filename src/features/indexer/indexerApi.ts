@@ -13,6 +13,7 @@ export interface IndexerTokenPayload {
   confirmationsThreshold: number;
   amount?: string;
   tokenId: string;
+  status: 'asked' | 'finalized';
 }
 
 export interface IndexerWrapPayload {
@@ -70,6 +71,14 @@ export default class IndexerApi {
     return this.client
       .get('/wraps', {
         params: { ethereumAddress, tezosAddress, status: 'asked' },
+      })
+      .then(({ data }) => data);
+  }
+
+  public fetchWrapsByHash(hash: string): Promise<IndexerWrapPayload> {
+    return this.client
+      .get('/wraps', {
+        params: { hash },
       })
       .then(({ data }) => data);
   }

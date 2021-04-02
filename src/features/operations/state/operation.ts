@@ -27,6 +27,12 @@ const toOperationStatus = (
       signatures: p.signatures,
     };
   }
+  if (p.status === 'finalized') {
+    return {
+      type: StatusType.DONE,
+      id: p.id,
+    };
+  }
   return {
     type: StatusType.READY,
     id: p.id,
@@ -54,10 +60,29 @@ export const merge = (current: Operation[], indexer: Operation[]) =>
         return [...acc, op];
       }, []);
 
+export const mergeSingle = (indexer: Operation, current?: Operation) => {
+  if (!current) {
+    return indexer;
+  }
+  if (current.status.type === StatusType.DONE) {
+    return current;
+  }
+  return { ...current, ...indexer };
+};
+
 export const markAsDone = (op: Operation): Operation => {
   switch (op.status.type) {
     case StatusType.READY:
       return { ...op, status: { type: StatusType.DONE, id: op.status.id } };
+    default:
+      throw new Error("Can't be marked as done");
+  }
+};
+
+export const markAsNew = (op: Operation): Operation => {
+  switch (op.status.type) {
+    case StatusType.WAITING_FOR_RECEIPT:
+      return { ...op, status: { type: StatusType.NEW } };
     default:
       throw new Error("Can't be marked as done");
   }

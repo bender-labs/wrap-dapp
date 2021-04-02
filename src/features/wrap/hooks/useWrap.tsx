@@ -215,7 +215,7 @@ export function useWrap() {
         hash: transactionHash,
         source: ethAccount!,
         destination: tzAccount!,
-        status: { type: StatusType.NEW },
+        status: { type: StatusType.WAITING_FOR_RECEIPT },
         type: OperationType.WRAP,
         amount: amountToWrap,
         token: fungibleTokens[state.token].ethereumContractAddress,

@@ -1,4 +1,10 @@
-import { atom, selector, useRecoilState, useSetRecoilState } from 'recoil';
+import {
+  atom,
+  atomFamily,
+  selector,
+  useRecoilCallback,
+  useRecoilState,
+} from 'recoil';
 import {
   Operation,
   OperationType,
@@ -15,7 +21,7 @@ import {
 import { useWalletContext } from '../../../runtime/wallet/WalletContext';
 import {
   markAsDone,
-  merge,
+  mergeSingle,
   unwrapToOperations,
   wrapsToOperations,
 } from './operation';
@@ -24,7 +30,9 @@ import CUSTODIAN_ABI from '../../ethereum/custodianContractAbi';
 import ERC20_ABI from '../../ethereum/erc20Abi';
 
 export const OperationStateKey = 'OPERATIONS_STATE';
+export const PendingOperationsStateKey = 'PENDING_OPERATIONS_STATE';
 export const OperationsCountKey = 'OPERATIONS_COUNT';
+export const OperationsByHashStateKey = 'OPERATIONS_BY_HASH';
 
 export const operationsState = atom<{ mints: Operation[]; burns: Operation[] }>(
   {
@@ -32,6 +40,19 @@ export const operationsState = atom<{ mints: Operation[]; burns: Operation[] }>(
     default: { mints: [], burns: [] },
   }
 );
+
+export const pendingOperationsState = atom<{
+  mints: string[];
+  burns: string[];
+}>({
+  key: PendingOperationsStateKey,
+  default: { mints: [], burns: [] },
+});
+
+export const operationByHashState = atomFamily<Operation | undefined, string>({
+  key: OperationsByHashStateKey,
+  default: undefined,
+});
 
 export function usePendingOperationsActions() {
   const { enqueueSnackbar } = useSnackbar();
@@ -43,48 +64,57 @@ export function usePendingOperationsActions() {
     tezos: { quorumContractAddress, minterContractAddress },
     ethereum: { custodianContractAddress },
   } = useConfig();
-  let setOperations = useSetRecoilState(operationsState);
 
-  const addOperation = (o: Operation) => {
-    setOperations((p) => {
+  const addOperation = useRecoilCallback(
+    ({ snapshot, set }) => async (o: Operation) => {
+      const current = await snapshot.getPromise(pendingOperationsState);
       switch (o.type) {
-        case OperationType.WRAP:
-          return { ...p, mints: [...p.mints, o] };
-        case OperationType.UNWRAP:
-          return { ...p, burns: [...p.burns, o] };
+        case OperationType.WRAP: {
+          set(pendingOperationsState, {
+            ...current,
+            mints: [...current.mints, o.transactionHash],
+          });
+          set(operationByHashState(o.transactionHash), o);
+          break;
+        }
+        case OperationType.UNWRAP: {
+          set(pendingOperationsState, {
+            ...current,
+            burns: [...current.burns, o.operationHash],
+          });
+          set(operationByHashState(o.operationHash), o);
+          break;
+        }
       }
-    });
-  };
-
-  const mintErc20 = async (op: WrapErc20Operation): Promise<string> => {
-    const contract = await tzLibrary!.wallet.at(quorumContractAddress);
-    if (op.status.type !== StatusType.READY) {
-      return Promise.reject('Not ready');
     }
-    const mintSignatures = Object.entries(op.status.signatures);
-    const [blockHash, logIndex] = op.status.id.split(':');
-    const result = await contract.methods
-      .minter(
-        'mint_erc20',
-        op.token.toLowerCase().substring(2),
-        blockHash.substring(2),
-        logIndex,
-        op.destination,
-        op.amount,
-        minterContractAddress,
-        mintSignatures
-      )
-      .send();
-    await result.receipt();
-    enqueueSnackbar('Minting operation sent', { variant: 'info' });
-    setOperations((curr) => {
-      const mints = curr.mints.map((v) =>
-        v.hash === op.hash ? markAsDone(op) : v
-      );
-      return { ...curr, mints };
-    });
-    return result.opHash;
-  };
+  );
+
+  const mintErc20 = useRecoilCallback(
+    ({ set }) => async (op: WrapErc20Operation): Promise<string> => {
+      const contract = await tzLibrary!.wallet.at(quorumContractAddress);
+      if (op.status.type !== StatusType.READY) {
+        return Promise.reject('Not ready');
+      }
+      const mintSignatures = Object.entries(op.status.signatures);
+      const [blockHash, logIndex] = op.status.id.split(':');
+      const result = await contract.methods
+        .minter(
+          'mint_erc20',
+          op.token.toLowerCase().substring(2),
+          blockHash.substring(2),
+          logIndex,
+          op.destination,
+          op.amount,
+          minterContractAddress,
+          mintSignatures
+        )
+        .send();
+      await result.receipt();
+      enqueueSnackbar('Minting operation sent', { variant: 'info' });
+      set(operationByHashState(op.transactionHash), markAsDone(op));
+      return result.opHash;
+    }
+  );
 
   const buildFullSignature = (signatures: Record<string, string>) => {
     const orderedSigners = Object.keys(signatures).sort();
@@ -95,36 +125,34 @@ export function usePendingOperationsActions() {
     );
   };
 
-  const unlockErc20 = async (op: UnwrapErc20Operation): Promise<string> => {
-    if (op.status.type !== StatusType.READY) {
-      return Promise.reject('Operation is not ready');
-    }
-    const custodianContract = new ethers.Contract(
-      custodianContractAddress,
-      new ethers.utils.Interface(CUSTODIAN_ABI),
-      ethLibrary.getSigner()
-    );
-    const erc20Interface = new ethers.utils.Interface(ERC20_ABI);
-    const data = erc20Interface.encodeFunctionData('transfer', [
-      op.destination,
-      op.amount.toFixed(),
-    ]);
-    const result = await custodianContract.execTransaction(
-      op.token,
-      0,
-      data,
-      op.status.id,
-      buildFullSignature(op.status.signatures)
-    );
-    await result.wait();
-    setOperations((curr) => {
-      const burns = curr.burns.map((v) =>
-        v.hash === op.hash ? markAsDone(op) : v
+  const unlockErc20 = useRecoilCallback(
+    ({ set }) => async (op: UnwrapErc20Operation): Promise<string> => {
+      if (op.status.type !== StatusType.READY) {
+        return Promise.reject('Operation is not ready');
+      }
+      const custodianContract = new ethers.Contract(
+        custodianContractAddress,
+        new ethers.utils.Interface(CUSTODIAN_ABI),
+        ethLibrary?.getSigner()
       );
-      return { ...curr, burns };
-    });
-    return result.blockHash;
-  };
+      const erc20Interface = new ethers.utils.Interface(ERC20_ABI);
+      const data = erc20Interface.encodeFunctionData('transfer', [
+        op.destination,
+        op.amount.toFixed(),
+      ]);
+      const result = await custodianContract.execTransaction(
+        op.token,
+        0,
+        data,
+        op.status.id,
+        buildFullSignature(op.status.signatures)
+      );
+      await result.wait();
+      set(operationByHashState(op.operationHash), markAsDone(op));
+
+      return result.blockHash;
+    }
+  );
 
   return { addOperation, mintErc20, unlockErc20 };
 }
@@ -132,7 +160,7 @@ export function usePendingOperationsActions() {
 export const pendingOperationsCount = selector({
   key: OperationsCountKey,
   get: ({ get }) => {
-    const operations = get(operationsState);
+    const operations = get(pendingOperationsState);
     return operations.mints.length + operations.burns.length;
   },
 });
@@ -140,7 +168,7 @@ export const pendingOperationsCount = selector({
 export const useOperationsPolling = () => {
   const indexerApi = useIndexerApi();
 
-  const [operations, setOperations] = useRecoilState(operationsState);
+  const [operations, setOperations] = useRecoilState(pendingOperationsState);
 
   const { fees, wrapSignatureThreshold } = useConfig();
 
@@ -148,6 +176,16 @@ export const useOperationsPolling = () => {
     ethereum: { account: ethAccount },
     tezos: { account: tzAccount },
   } = useWalletContext();
+
+  const setOp: (op: Operation) => Promise<Operation> = useRecoilCallback(
+    ({ snapshot, set }) => async (op: Operation) => {
+      const old = await snapshot.getPromise(operationByHashState(op.hash));
+
+      const value = mergeSingle(op, old);
+      set(operationByHashState(op.hash), value);
+      return value;
+    }
+  );
 
   useEffect(() => {
     const loadPendingWrap = async () => {
@@ -159,22 +197,21 @@ export const useOperationsPolling = () => {
         indexerApi.fetchPendingWrap(ethAccount, tzAccount),
         indexerApi.fetchPendingUnwrap(ethAccount, tzAccount),
       ]);
-
-      setOperations(({ mints, burns }) => {
-        const mintsFromIndexer = wrapsToOperations(
-          fees,
-          wrapSignatureThreshold,
-          pendingWrap
-        );
-        const burnsFromIndexer = unwrapToOperations(
-          fees,
-          wrapSignatureThreshold,
-          pendingUnwrap
-        );
-        return {
-          mints: merge(mints, mintsFromIndexer),
-          burns: merge(burns, burnsFromIndexer),
-        };
+      const mintsFromIndexer = wrapsToOperations(
+        fees,
+        wrapSignatureThreshold,
+        pendingWrap
+      );
+      const burnsFromIndexer = unwrapToOperations(
+        fees,
+        wrapSignatureThreshold,
+        pendingUnwrap
+      );
+      const mints = await Promise.all(mintsFromIndexer.map(setOp));
+      const burns = await Promise.all(burnsFromIndexer.map(setOp));
+      setOperations({
+        mints: mints.map((o) => o.hash),
+        burns: burns.map((o) => o.hash),
       });
     };
     // noinspection JSIgnoredPromiseFromCall

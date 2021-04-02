@@ -1,5 +1,5 @@
 const WRAP = '/wrap';
-const WRAP_FINALIZE = '/wrap_confirm';
+const WRAP_FINALIZE = '/wrap/:transactionHash';
 const UNWRAP = '/unwrap';
 const UNWRAP_FINALIZE = '/unwrap_finalize';
 

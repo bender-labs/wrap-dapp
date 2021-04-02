@@ -17,13 +17,14 @@ import {
   connectionStatusReducer,
 } from '../../features/wallet/connectionStatus';
 import { RequestPermissionInput } from '@airgap/beacon-sdk';
+import { Web3Provider } from '@ethersproject/providers';
 
 type ContextValue =
   | undefined
   | {
       fullySetup: boolean;
       ethereum: {
-        library?: any;
+        library?: Web3Provider;
         activate: (connectorKey: string) => Promise<void>;
         deactivate: () => void;
         account?: string;

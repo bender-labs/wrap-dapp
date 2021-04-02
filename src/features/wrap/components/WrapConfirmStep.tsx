@@ -63,7 +63,7 @@ export default function WrapConfirmStep({
           label={'Send'}
           decimals={token.decimals}
           value={amount}
-          symbol={token.tezosSymbol}
+          symbol={token.ethereumSymbol}
         />
         <LabelAndValue label={'From'} value={sendingAddress} />
         <LabelAndValue label={'To'} value={recipientAddress} />

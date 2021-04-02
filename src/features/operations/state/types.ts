@@ -6,11 +6,16 @@ export enum OperationType {
 }
 
 export enum StatusType {
+  WAITING_FOR_RECEIPT = 'WAITING_FOR_RECEIPT',
   NEW = 'NEW',
   WAITING_FOR_CONFIRMATIONS = 'WAITING_CONFIRMATIONS',
   WAITING_FOR_SIGNATURES = 'WAITING_SIGNATURES',
   READY = 'READY',
   DONE = 'DONE',
+}
+
+export interface WaitingForReceipt {
+  type: StatusType.WAITING_FOR_RECEIPT;
 }
 
 export interface New {
@@ -42,6 +47,7 @@ export interface Done {
 }
 
 export type OperationStatus =
+  | WaitingForReceipt
   | New
   | WaitingForConfirmations
   | WaitingForSignatures
