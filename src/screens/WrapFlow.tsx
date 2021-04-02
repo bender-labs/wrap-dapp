@@ -25,6 +25,8 @@ function Wrap() {
     connected,
     fungibleTokens,
     fees,
+    ethAccount,
+    tzAccount,
   } = useWrap();
 
   const [step, setStep] = useState(Step.AMOUNT);
@@ -56,6 +58,8 @@ function Wrap() {
           amount={amountToWrap}
           status={status}
           currentAllowance={currentAllowance}
+          recipientAddress={tzAccount!}
+          sendingAddress={ethAccount!}
           onWrap={launchWrap}
           onAuthorize={launchAllowanceApproval}
           onPrevious={() => setStep(Step.AMOUNT)}

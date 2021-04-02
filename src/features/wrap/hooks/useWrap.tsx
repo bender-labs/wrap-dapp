@@ -254,6 +254,8 @@ export function useWrap() {
     selectToken,
     selectAmountToWrap,
     launchAllowanceApproval,
+    tzAccount,
+    ethAccount,
     launchWrap,
   };
 }
