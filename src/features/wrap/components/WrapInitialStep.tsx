@@ -11,6 +11,7 @@ import { wrapFees } from '../../fees/fees';
 import AssetSummary from '../../../components/formatting/AssetSummary';
 import EthereumConnectionButton from '../../ethereum/components/EthereumConnectionButton';
 import { WrapStatus } from '../hooks/useWrap';
+import { SpacedDivider } from '../../../components/formatting/SpacedDivider';
 
 export type WrapInitialStepProps = {
   status: WrapStatus;
@@ -42,40 +43,47 @@ export default function WrapInitialStep({
   useEffect(() => setCurrentFees(wrapFees(amount, fees)), [amount, fees]);
 
   return (
-    <PaperContent>
-      <TokenSelection
-        token={token.ethereumSymbol}
-        onTokenSelect={onTokenChange}
-        blockchainTarget={SupportedBlockchain.Ethereum}
-        tokens={tokens}
-      />
-      <AmountToWrapInput
-        balance={balance}
-        decimals={token.decimals}
-        symbol={token.ethereumSymbol}
-        onChange={onAmountChange}
-        amountToWrap={amount}
-        displayBalance={connected}
-      />
-      <AssetSummary
-        label={'You will receive'}
-        value={amount.minus(currentFees)}
-        symbol={token.tezosSymbol}
-        decimals={token.decimals}
-      />
-
-      {connected && (
-        <Button
-          fullWidth
-          variant={'contained'}
-          color={'primary'}
-          onClick={onNext}
-          disabled={status < WrapStatus.AMOUNT_TO_WRAP_SELECTED}
-        >
-          NEXT
-        </Button>
-      )}
-      {!connected && <EthereumConnectionButton />}
-    </PaperContent>
+    <>
+      <PaperContent>
+        <TokenSelection
+          token={token.ethereumSymbol}
+          onTokenSelect={onTokenChange}
+          blockchainTarget={SupportedBlockchain.Ethereum}
+          tokens={tokens}
+        />
+        <AmountToWrapInput
+          balance={balance}
+          decimals={token.decimals}
+          symbol={token.ethereumSymbol}
+          onChange={onAmountChange}
+          amountToWrap={amount}
+          displayBalance={connected}
+        />
+      </PaperContent>
+      <SpacedDivider />
+      <PaperContent>
+        <AssetSummary
+          label={'You will receive'}
+          value={amount.minus(currentFees)}
+          symbol={token.tezosSymbol}
+          decimals={token.decimals}
+        />
+      </PaperContent>
+      <SpacedDivider />
+      <PaperContent>
+        {connected && (
+          <Button
+            fullWidth
+            variant={'contained'}
+            color={'primary'}
+            onClick={onNext}
+            disabled={status < WrapStatus.AMOUNT_TO_WRAP_SELECTED}
+          >
+            NEXT
+          </Button>
+        )}
+        {!connected && <EthereumConnectionButton />}
+      </PaperContent>
+    </>
   );
 }
