@@ -7,18 +7,16 @@ import TezosProvider from './features/tezos/TezosContext';
 import ConfigProvider from './runtime/config/ConfigContext';
 import WalletProvider from './runtime/wallet/WalletContext';
 import { SnackbarProvider } from 'notistack';
-import { Box, Container, createMuiTheme, CssBaseline } from '@material-ui/core';
-import WrapScreen from './screens/WrapScreen';
+import { Container, createMuiTheme, CssBaseline } from '@material-ui/core';
 import HistoryScreen from './screens/HistoryScreen';
 import { makeStyles, ThemeProvider } from '@material-ui/core/styles';
 import { themeOptions } from './runtime/theme/theme';
 import { RecoilRoot } from 'recoil';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import AppBar from './screens/AppBar';
-import WrapFlow from './screens/WrapFlow';
-import { paths } from './screens/routes';
-import UnwrapFlow from './screens/UnwrapFlow';
+import { mainPaths, paths } from './screens/routes';
 import { WrapPaper } from './components/paper/Paper';
+import MainScreen from './screens/MainScreen';
 
 const theme = createMuiTheme(themeOptions);
 
@@ -41,17 +39,15 @@ function App() {
                     <AppBar />
                     <Container maxWidth="sm">
                       <Switch>
-                        <Route path="/history">
+                        <Route path={paths.HISTORY}>
                           <HistoryScreen />
                         </Route>
-                        <Route path="/" exact>
-                          <Box mt={4}>
-                            <WrapScreen />
-                          </Box>
-                        </Route>
                         <WrapPaper className={classes.root}>
-                          <Route path={paths.WRAP} component={WrapFlow} />
-                          <Route path={paths.UNWRAP} component={UnwrapFlow} />
+                          <Route
+                            exact
+                            path={mainPaths}
+                            component={MainScreen}
+                          />
                         </WrapPaper>
                       </Switch>
                     </Container>

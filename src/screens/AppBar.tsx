@@ -23,6 +23,7 @@ import EthWalletConnection from '../components/ethereum/WalletConnection';
 import TezosWalletConnection from '../components/tezos/WalletConnection';
 import { useWalletContext } from '../runtime/wallet/WalletContext';
 import OperationHistoryDialog from '../features/operations/components/OperationHistoryDialog';
+import { paths } from './routes';
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -84,10 +85,10 @@ const Render = () => {
       <Toolbar>
         <img src={logo} className={classes.logo} alt="Logo" />
         <Typography variant="h6" component="h1" className={classes.title}>
-          <Link component={RouterLink} color="inherit" to="/">
+          <Link component={RouterLink} color="inherit" to={paths.WRAP}>
             WRAP
           </Link>
-          <Link component={RouterLink} color="inherit" to="/history">
+          <Link component={RouterLink} color="inherit" to={paths.HISTORY}>
             HISTORY
           </Link>
         </Typography>
