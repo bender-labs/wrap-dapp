@@ -83,6 +83,14 @@ export default class IndexerApi {
       .then(({ data }) => data);
   }
 
+  public fetchUnwrapsByHash(hash: string): Promise<IndexerUnwrapPayload> {
+    return this.client
+      .get('/unwraps', {
+        params: { hash },
+      })
+      .then(({ data }) => data);
+  }
+
   public fetchPendingUnwrap(
     ethereumAddress?: EthereumAddress,
     tezosAddress?: TezosAddress

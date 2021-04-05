@@ -1,15 +1,16 @@
 import { Operation } from '../features/operations/state/types';
 
 const WRAP = '/wrap';
-const OPERATION_FINALIZE = '/operations/:transactionHash';
+const WRAP_FINALIZE = '/wrap/:transactionHash';
+const UNWRAP_FINALIZE = '/unwrap/:transactionHash';
 const UNWRAP = '/unwrap';
-const UNWRAP_FINALIZE = '/unwrap_finalize';
 
 export const paths = {
   WRAP,
-  OPERATION_FINALIZE,
   UNWRAP,
+  WRAP_FINALIZE,
   UNWRAP_FINALIZE,
 };
 
-export const operationPage = (op: Operation) => `/operations/${op.hash}`;
+export const wrapPage = (op: Operation) => `/wrap/${op.hash}`;
+export const unwrapPage = (op: Operation) => `/unwrap/${op.hash}`;

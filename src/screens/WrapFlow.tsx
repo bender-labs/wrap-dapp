@@ -5,14 +5,17 @@ import React, { useState } from 'react';
 import WrapConfirmStep from '../features/wrap/components/WrapConfirmStep';
 import { usePendingOperationsActions } from '../features/operations/state/pendingOperations';
 import { useHistory } from 'react-router';
-import { operationPage } from './routes';
+import { paths, wrapPage } from './routes';
+import { Route } from 'react-router-dom';
+import OperationScreen from './OperationScreen';
+import { OperationType } from '../features/operations/state/types';
 
 enum Step {
   AMOUNT,
   CONFIRM,
 }
 
-export default function WrapFlow() {
+function WrapForm() {
   const {
     status,
     amountToWrap,
@@ -38,7 +41,7 @@ export default function WrapFlow() {
   const doLaunchWrap = async () => {
     const op = await launchWrap();
     await addOperation(op);
-    history.push(operationPage(op));
+    history.push(wrapPage(op));
     return op;
   };
 
@@ -76,6 +79,19 @@ export default function WrapFlow() {
           onPrevious={() => setStep(Step.AMOUNT)}
         />
       )}
+    </>
+  );
+}
+
+function WrapReceipt() {
+  return <OperationScreen type={OperationType.WRAP} />;
+}
+
+export default function WrapFlow() {
+  return (
+    <>
+      <Route exact path={paths.WRAP} component={WrapForm} />
+      <Route exact path={paths.WRAP_FINALIZE} component={WrapReceipt} />
     </>
   );
 }

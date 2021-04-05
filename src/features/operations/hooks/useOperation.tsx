@@ -7,6 +7,8 @@ import {
 } from '../../../runtime/config/ConfigContext';
 import { useEffect } from 'react';
 import {
+  Operation,
+  OperationType,
   StatusType,
   UnwrapErc20Operation,
   WrapErc20Operation,
@@ -15,13 +17,14 @@ import {
   markAsDone,
   markAsNew,
   mergeSingle,
+  unwrapToOperations,
   wrapsToOperations,
 } from '../state/operation';
 import { ethers } from 'ethers';
 import CUSTODIAN_ABI from '../../ethereum/custodianContractAbi';
 import ERC20_ABI from '../../ethereum/erc20Abi';
 
-export const useOperation = (hash: string) => {
+export const useOperation = (hash: string, type: OperationType) => {
   const {
     tezos: { library: tzLibrary },
     ethereum: { library: ethLibrary },
@@ -54,9 +57,21 @@ export const useOperation = (hash: string) => {
   }, [hash, operation, ethLibrary]);
 
   useEffect(() => {
+    let all: Operation[] = [];
     const fetch = async () => {
-      const payload = await indexerApi.fetchWrapsByHash(hash);
-      const all = wrapsToOperations(fees, wrapSignatureThreshold, payload);
+      switch (type) {
+        case OperationType.WRAP: {
+          const payload = await indexerApi.fetchWrapsByHash(hash);
+          all = wrapsToOperations(fees, wrapSignatureThreshold, payload);
+          break;
+        }
+        case OperationType.UNWRAP: {
+          const payload = await indexerApi.fetchUnwrapsByHash(hash);
+          all = unwrapToOperations(fees, wrapSignatureThreshold, payload);
+          break;
+        }
+      }
+
       if (all.length > 0) {
         setOp(mergeSingle(all[0], operation));
       }

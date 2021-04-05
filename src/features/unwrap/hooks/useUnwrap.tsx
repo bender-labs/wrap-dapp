@@ -217,5 +217,7 @@ export function useUnwrap() {
     launchUnwrap,
     fungibleTokens,
     fees,
+    tzAccount,
+    ethAccount,
   };
 }

@@ -6,6 +6,7 @@ import {
 import { useEffect, useState } from 'react';
 import {
   Operation,
+  OperationType,
   UnwrapErc20Operation,
   WrapErc20Operation,
 } from '../state/types';
@@ -13,7 +14,7 @@ import { unwrapToOperations, wrapsToOperations } from '../state/operation';
 import { useHistory } from 'react-router';
 import { useRecoilCallback } from 'recoil';
 import { operationByHashState } from '../state/pendingOperations';
-import { operationPage } from '../../../screens/routes';
+import { unwrapPage, wrapPage } from '../../../screens/routes';
 
 type OperationsHistoryState = {
   mints: WrapErc20Operation[];
@@ -73,7 +74,14 @@ export const useOperationsHistory = () => {
 
   const selectOperation = useRecoilCallback(({ set }) => (op: Operation) => {
     set(operationByHashState(op.hash), op);
-    history.push(operationPage(op));
+    switch (op.type) {
+      case OperationType.WRAP:
+        history.push(wrapPage(op));
+        break;
+      case OperationType.UNWRAP:
+        history.push(unwrapPage(op));
+        break;
+    }
   });
 
   useEffect(() => setCount(operations.burns.length + operations.mints.length), [

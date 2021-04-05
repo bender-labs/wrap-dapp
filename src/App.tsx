@@ -19,7 +19,6 @@ import WrapFlow from './screens/WrapFlow';
 import { paths } from './screens/routes';
 import UnwrapFlow from './screens/UnwrapFlow';
 import { WrapPaper } from './components/paper/Paper';
-import OperationScreen from './screens/OperationScreen';
 
 const theme = createMuiTheme(themeOptions);
 
@@ -53,10 +52,6 @@ function App() {
                         <WrapPaper className={classes.root}>
                           <Route path={paths.WRAP} component={WrapFlow} />
                           <Route path={paths.UNWRAP} component={UnwrapFlow} />
-                          <Route
-                            path={paths.OPERATION_FINALIZE}
-                            component={OperationScreen}
-                          />
                         </WrapPaper>
                       </Switch>
                     </Container>

@@ -5,10 +5,15 @@ import WrapReceipt from '../features/wrap/components/WrapReceipt';
 import React from 'react';
 import UnwrapReceipt from '../features/unwrap/components/UnwrapReceipt';
 
-export default function OperationScreen() {
+export type OperationScreenType = {
+  type: OperationType;
+};
+
+export default function OperationScreen({ type }: OperationScreenType) {
   const { transactionHash } = useParams() as { transactionHash: string };
   const { operation, fungibleTokens, mintErc20, unlockErc20 } = useOperation(
-    transactionHash
+    transactionHash,
+    type
   );
   if (!operation) {
     return <div>Loading</div>;
