@@ -3,7 +3,7 @@ import { useWeb3React } from '@web3-react/core';
 import {
   TezosConnectionStatus,
   useTezosContext,
-} from '../../components/tezos/TezosContext';
+} from '../../features/tezos/TezosContext';
 import { TezosToolkit } from '@taquito/taquito';
 import { useEthereumConfig, useTezosConfig } from '../config/ConfigContext';
 import connectorsFactory, {

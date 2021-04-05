@@ -6,7 +6,14 @@ import {
 import { Fees } from '../../../config';
 import BigNumber from 'bignumber.js';
 import { unwrapFees, wrapFees } from '../../fees/fees';
-import { Operation, OperationStatus, OperationType, StatusType } from './types';
+import {
+  Operation,
+  OperationStatus,
+  OperationType,
+  StatusType,
+  UnwrapErc20Operation,
+  WrapErc20Operation,
+} from './types';
 
 const toOperationStatus = (
   p: IndexerTokenPayload,
@@ -92,7 +99,7 @@ export const wrapsToOperations = (
   fees: Fees,
   signaturesThreshold: number,
   payload: IndexerWrapPayload
-): Operation[] => {
+): WrapErc20Operation[] => {
   return payload.result.map((w) => {
     const amount = new BigNumber(w.amount!);
     return {
@@ -113,7 +120,7 @@ export const unwrapToOperations = (
   fees: Fees,
   signaturesThreshold: number,
   payload: IndexerUnwrapPayload
-): Operation[] => {
+): UnwrapErc20Operation[] => {
   return payload.result.map((w) => {
     const amount = new BigNumber(w.amount!);
     return {

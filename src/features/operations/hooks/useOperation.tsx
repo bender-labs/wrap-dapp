@@ -1,13 +1,13 @@
 import { useRecoilState } from 'recoil';
-import { operationByHashState } from './pendingOperations';
+import { operationByHashState } from '../state/pendingOperations';
 import { useWalletContext } from '../../../runtime/wallet/WalletContext';
 import {
   useConfig,
   useIndexerApi,
 } from '../../../runtime/config/ConfigContext';
 import { useEffect } from 'react';
-import { StatusType } from './types';
-import { markAsNew, mergeSingle, wrapsToOperations } from './operation';
+import { StatusType } from '../state/types';
+import { markAsNew, mergeSingle, wrapsToOperations } from '../state/operation';
 
 export const useOperation = (hash: string) => {
   const {
@@ -45,8 +45,12 @@ export const useOperation = (hash: string) => {
       (operation?.status.type !== StatusType.DONE &&
         operation?.status.type !== StatusType.READY)
     ) {
+      // noinspection JSIgnoredPromiseFromCall
+      fetch();
       const intervalId = setInterval(fetch, 5000);
-      return () => clearInterval(intervalId);
+      return () => {
+        clearInterval(intervalId);
+      };
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps

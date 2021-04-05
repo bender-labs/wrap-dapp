@@ -1,22 +1,18 @@
-import { Route, useParams } from 'react-router-dom';
-import { paths } from './routes';
 import { SwapDirectionTab } from '../features/swap/SwapDirectionTab';
 import WrapInitialStep from '../features/wrap/components/WrapInitialStep';
 import { useWrap } from '../features/wrap/hooks/useWrap';
 import React, { useState } from 'react';
 import WrapConfirmStep from '../features/wrap/components/WrapConfirmStep';
 import { usePendingOperationsActions } from '../features/operations/state/pendingOperations';
-import { OperationType } from '../features/operations/state/types';
-import WrapReceipt from '../features/wrap/components/WrapReceipt';
 import { useHistory } from 'react-router';
-import { useOperation } from '../features/operations/state/useOperation';
+import { operationPage } from './routes';
 
 enum Step {
   AMOUNT,
   CONFIRM,
 }
 
-function Wrap() {
+export default function WrapFlow() {
   const {
     status,
     amountToWrap,
@@ -42,7 +38,7 @@ function Wrap() {
   const doLaunchWrap = async () => {
     const op = await launchWrap();
     await addOperation(op);
-    history.push(`/wrap/${op.transactionHash}`);
+    history.push(operationPage(op));
     return op;
   };
 
@@ -80,31 +76,6 @@ function Wrap() {
           onPrevious={() => setStep(Step.AMOUNT)}
         />
       )}
-    </>
-  );
-}
-
-function WrapFinalize() {
-  const { transactionHash } = useParams() as { transactionHash: string };
-  const { operation, fungibleTokens } = useOperation(transactionHash);
-  const { mintErc20 } = usePendingOperationsActions();
-  if (operation?.type === OperationType.WRAP) {
-    return (
-      <WrapReceipt
-        operation={operation}
-        tokens={fungibleTokens}
-        onMint={() => mintErc20(operation).then(() => {})}
-      />
-    );
-  }
-  return <></>;
-}
-
-export default function WrapFlow() {
-  return (
-    <>
-      <Route exact path={paths.WRAP} component={Wrap} />
-      <Route exact path={paths.WRAP_FINALIZE} component={WrapFinalize} />
     </>
   );
 }

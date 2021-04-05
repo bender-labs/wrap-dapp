@@ -15,13 +15,14 @@ import { Link as RouterLink } from 'react-router-dom';
 import {
   useConfig,
   useEnvironmentSelectorContext,
-} from '../../runtime/config/ConfigContext';
-import { Environment } from '../../config';
+} from '../runtime/config/ConfigContext';
+import { Environment } from '../config';
 import SwapHorizIcon from '@material-ui/icons/SwapHoriz';
 import logo from './logo.png';
-import EthWalletConnection from '../ethereum/WalletConnection';
-import TezosWalletConnection from '../tezos/WalletConnection';
-import { useWalletContext } from '../../runtime/wallet/WalletContext';
+import EthWalletConnection from '../components/ethereum/WalletConnection';
+import TezosWalletConnection from '../components/tezos/WalletConnection';
+import { useWalletContext } from '../runtime/wallet/WalletContext';
+import OperationHistoryDialog from '../features/operations/components/OperationHistoryDialog';
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -90,7 +91,9 @@ const Render = () => {
             HISTORY
           </Link>
         </Typography>
+
         <Box className={classes.wallets}>
+          <OperationHistoryDialog />
           <TezosWalletConnection
             account={tzAccount}
             activate={tzActivate}

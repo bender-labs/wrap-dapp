@@ -3,7 +3,7 @@ import { Web3ReactProvider } from '@web3-react/core';
 import './App.css';
 import { getLibrary as getEthLibrary } from './features/ethereum/web3React';
 import { getLibrary as getTezosLibrary } from './features/tezos/beacon';
-import TezosProvider from './components/tezos/TezosContext';
+import TezosProvider from './features/tezos/TezosContext';
 import ConfigProvider from './runtime/config/ConfigContext';
 import WalletProvider from './runtime/wallet/WalletContext';
 import { SnackbarProvider } from 'notistack';
@@ -14,11 +14,12 @@ import { makeStyles, ThemeProvider } from '@material-ui/core/styles';
 import { themeOptions } from './runtime/theme/theme';
 import { RecoilRoot } from 'recoil';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
-import AppBar from './components/header/AppBar';
+import AppBar from './screens/AppBar';
 import WrapFlow from './screens/WrapFlow';
 import { paths } from './screens/routes';
 import UnwrapFlow from './screens/UnwrapFlow';
 import { WrapPaper } from './components/paper/Paper';
+import OperationScreen from './screens/OperationScreen';
 
 const theme = createMuiTheme(themeOptions);
 
@@ -52,6 +53,10 @@ function App() {
                         <WrapPaper className={classes.root}>
                           <Route path={paths.WRAP} component={WrapFlow} />
                           <Route path={paths.UNWRAP} component={UnwrapFlow} />
+                          <Route
+                            path={paths.OPERATION_FINALIZE}
+                            component={OperationScreen}
+                          />
                         </WrapPaper>
                       </Switch>
                     </Container>

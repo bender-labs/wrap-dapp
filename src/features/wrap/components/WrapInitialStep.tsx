@@ -9,9 +9,9 @@ import { Fees } from '../../../config';
 import { Button } from '@material-ui/core';
 import { wrapFees } from '../../fees/fees';
 import AssetSummary from '../../../components/formatting/AssetSummary';
-import EthereumConnectionButton from '../../ethereum/components/EthereumConnectionButton';
 import { WrapStatus } from '../hooks/useWrap';
 import { SpacedDivider } from '../../../components/formatting/SpacedDivider';
+import MultiConnect from '../../wallet/MultiConnect';
 
 export type WrapInitialStepProps = {
   status: WrapStatus;
@@ -82,7 +82,7 @@ export default function WrapInitialStep({
             NEXT
           </Button>
         )}
-        {!connected && <EthereumConnectionButton />}
+        {!connected && <MultiConnect />}
       </PaperContent>
     </>
   );
