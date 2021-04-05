@@ -104,7 +104,7 @@ export function usePendingOperationsActions() {
           blockHash.substring(2),
           logIndex,
           op.destination,
-          op.amount,
+          op.amount.toFixed(),
           minterContractAddress,
           mintSignatures
         )

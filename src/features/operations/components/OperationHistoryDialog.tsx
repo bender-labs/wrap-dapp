@@ -129,7 +129,7 @@ export default function OperationHistoryDialog() {
       const { decimals, ethereumSymbol } = tokensByEthAddress[
         operation.token.toLowerCase()
       ];
-      return `unlock ${formatAmount(
+      return `release ${formatAmount(
         ethereumSymbol,
         operation.amount.minus(operation.fees),
         decimals
@@ -156,7 +156,7 @@ export default function OperationHistoryDialog() {
             </React.Fragment>
           );
         case StatusType.READY:
-          return 'Ready to unlock';
+          return 'Ready to release';
       }
     };
 
@@ -196,14 +196,14 @@ export default function OperationHistoryDialog() {
             )}
             <Divider />
             <ListSubheader className={classes.subHeader}>
-              Unlock operations
+              Release operations
             </ListSubheader>
             {operations.burns.map((o, i) =>
               renderBurn(o, i === operations.burns.length - 1)
             )}
             {operations.burns.length === 0 && (
               <ListItem>
-                <ListItemText>No pending unlocking operation</ListItemText>
+                <ListItemText>No pending release operation</ListItemText>
               </ListItem>
             )}
           </List>

@@ -74,7 +74,6 @@ export default function OperationList() {
   const { mints, burns } = useRecoilValue(pendingOperationsState);
   const {
     tezos: { status: tezosStatus },
-    ethereum: { status: ethStatus },
   } = useWalletContext();
   const { mintErc20, unlockErc20 } = usePendingOperationsActions();
   const { fungibleTokens, wrapSignatureThreshold } = useConfig();
