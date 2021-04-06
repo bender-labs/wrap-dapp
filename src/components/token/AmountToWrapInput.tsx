@@ -26,12 +26,22 @@ export default function AmountToWrapInput({
   ]);
 
   useEffect(() => {
-    if (displayBalance && !error) {
-      setUserError([
-        false,
-        `balance: ${formatAmount(symbol, balance, decimals)}`,
-      ]);
+    if (!displayBalance) {
+      setUserError([false, '']);
+      return;
     }
+    if (amountToWrap.gt(balance)) {
+      setUserError([
+        true,
+        `Insufficient Balance of ${formatAmount(symbol, balance, decimals)}`,
+      ]);
+      return;
+    }
+    setUserError([
+      false,
+      `balance: ${formatAmount(symbol, balance, decimals)}`,
+    ]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [decimals, symbol, displayBalance, balance, error]);
 
   const handleOnChange = (v: string) => {
@@ -59,20 +69,6 @@ export default function AmountToWrapInput({
         focus
         helperText={helperText}
       />
-      {/*<TextField
-        error={error}
-        id="amount-to-wrap"
-        value={userAmount}
-        onChange={handleOnChange}
-        helperText={helperText}
-        aria-describedby="standard-weight-helper-text"
-        fullWidth
-        InputProps={{
-          startAdornment: (
-            <InputAdornment position="start">{symbol}</InputAdornment>
-          ),
-        }}
-      />*/}
     </>
   );
 }

@@ -28,23 +28,31 @@ type WrapState = {
   custodianContractAddress: string;
 };
 
+export enum WrapAction {
+  WALLET_CHANGE,
+  USER_BALANCE_CHANGE,
+  AMOUNT_TO_WRAP_CHANGE,
+  TOKEN_SELECT,
+  ALLOWANCE_CHANGE,
+  RUN_ALLOWANCE,
+  RUN_WRAP,
+}
+
 export enum WrapStatus {
-  UNINITIALIZED,
-  WALLETS_CHANGED,
-  TOKEN_SELECTED,
-  USER_BALANCE_FETCHED,
-  AMOUNT_TO_WRAP_SELECTED,
+  NOT_READY,
+  READY_TO_CONFIRM,
   WAITING_FOR_ALLOWANCE_APPROVAL,
   READY_TO_WRAP,
+  WAITING_FOR_WRAP,
 }
 
 type Action =
   | {
-      type: WrapStatus.TOKEN_SELECTED;
+      type: WrapAction.TOKEN_SELECT;
       payload: { token: string };
     }
   | {
-      type: WrapStatus.USER_BALANCE_FETCHED;
+      type: WrapAction.USER_BALANCE_CHANGE;
       payload: {
         currentBalance: BigNumber;
         currentAllowance: BigNumber;
@@ -52,62 +60,96 @@ type Action =
       };
     }
   | {
-      type: WrapStatus.AMOUNT_TO_WRAP_SELECTED;
+      type: WrapAction.AMOUNT_TO_WRAP_CHANGE;
       payload: { amountToWrap: BigNumber };
     }
-  | { type: WrapStatus.WAITING_FOR_ALLOWANCE_APPROVAL }
   | {
-      type: WrapStatus.READY_TO_WRAP;
+      type: WrapAction.ALLOWANCE_CHANGE;
       payload: { newCurrentAllowance: BigNumber };
     }
   | {
-      type: WrapStatus.WALLETS_CHANGED;
+      type: WrapAction.RUN_ALLOWANCE;
+    }
+  | {
+      type: WrapAction.WALLET_CHANGE;
       payload: Partial<{
         tezosAccount: string;
         tezosLibrary: TezosToolkit;
         ethAccount: string;
         ethLibrary: Web3Provider;
       }>;
+    }
+  | {
+      type: WrapAction.RUN_WRAP;
     };
 
-function reducer(state: WrapState, action: Action): WrapState {
+export function initialState(token: string, custodianContractAddress: string) {
+  return {
+    status: WrapStatus.NOT_READY,
+    token: token,
+    contract: null,
+    currentBalance: new BigNumber(0),
+    currentAllowance: new BigNumber(0),
+    amountToWrap: new BigNumber(0),
+    connected: false,
+    custodianContractAddress,
+  };
+}
+
+const tryReady = (state: WrapState): WrapState => {
+  if (
+    !state.connected ||
+    state.amountToWrap.isZero() ||
+    state.amountToWrap.isNaN() ||
+    state.amountToWrap.isGreaterThan(state.currentBalance)
+  ) {
+    return { ...state, status: WrapStatus.NOT_READY };
+  }
+  const newState = state.amountToWrap.lte(state.currentAllowance)
+    ? WrapStatus.READY_TO_WRAP
+    : WrapStatus.READY_TO_CONFIRM;
+  return { ...state, status: newState };
+};
+
+export function reducer(state: WrapState, action: Action): WrapState {
   switch (action.type) {
-    case WrapStatus.TOKEN_SELECTED:
+    case WrapAction.TOKEN_SELECT:
       return {
         ...state,
-        status: WrapStatus.TOKEN_SELECTED,
+        status: WrapStatus.NOT_READY,
         ...action.payload,
         currentBalance: new BigNumber(0),
         currentAllowance: new BigNumber(0),
         amountToWrap: new BigNumber(0),
       };
-    case WrapStatus.USER_BALANCE_FETCHED:
-      return {
+    case WrapAction.USER_BALANCE_CHANGE:
+      return tryReady({
         ...state,
-        status: WrapStatus.USER_BALANCE_FETCHED,
         ...action.payload,
-      };
-    case WrapStatus.AMOUNT_TO_WRAP_SELECTED:
+      });
+    case WrapAction.AMOUNT_TO_WRAP_CHANGE:
       const { amountToWrap } = action.payload;
-      return {
+      return tryReady({
         ...state,
         amountToWrap,
-        status: amountToWrap.lte(state.currentAllowance)
-          ? WrapStatus.READY_TO_WRAP
-          : WrapStatus.AMOUNT_TO_WRAP_SELECTED,
-      };
-    case WrapStatus.WAITING_FOR_ALLOWANCE_APPROVAL:
+      });
+    case WrapAction.RUN_ALLOWANCE:
       return {
         ...state,
         status: WrapStatus.WAITING_FOR_ALLOWANCE_APPROVAL,
       };
-    case WrapStatus.READY_TO_WRAP:
+    case WrapAction.ALLOWANCE_CHANGE:
       return {
         ...state,
         status: WrapStatus.READY_TO_WRAP,
         currentAllowance: action.payload.newCurrentAllowance,
       };
-    case WrapStatus.WALLETS_CHANGED:
+    case WrapAction.RUN_WRAP:
+      return {
+        ...state,
+        status: WrapStatus.WAITING_FOR_WRAP,
+      };
+    case WrapAction.WALLET_CHANGE:
       const { ethAccount, tezosAccount, ethLibrary } = action.payload;
       const ethWrapApiFactory =
         tezosAccount && ethAccount && ethLibrary
@@ -118,6 +160,7 @@ function reducer(state: WrapState, action: Action): WrapState {
           : undefined;
       return {
         ...state,
+        currentBalance: new BigNumber(0),
         contractFactory: ethWrapApiFactory,
         connected: ethAccount !== undefined && tezosAccount !== undefined,
       };
@@ -138,20 +181,14 @@ export function useWrap() {
     tezos: { account: tzAccount, library: tezosLibrary },
   } = useWalletContext();
 
-  const [state, dispatch] = useReducer<typeof reducer>(reducer, {
-    status: WrapStatus.UNINITIALIZED,
-    token: Object.keys(fungibleTokens)[0] || '',
-    contract: null,
-    currentBalance: new BigNumber(0),
-    currentAllowance: new BigNumber(0),
-    amountToWrap: new BigNumber(0),
-    connected: false,
-    custodianContractAddress,
-  });
+  const [state, dispatch] = useReducer<typeof reducer>(
+    reducer,
+    initialState(Object.keys(fungibleTokens)[0], custodianContractAddress)
+  );
 
   useEffect(() => {
     dispatch({
-      type: WrapStatus.WALLETS_CHANGED,
+      type: WrapAction.WALLET_CHANGE,
       payload: {
         ethLibrary,
         ethAccount: ethAccount || undefined,
@@ -163,14 +200,14 @@ export function useWrap() {
 
   const selectToken = useCallback((token: string) => {
     dispatch({
-      type: WrapStatus.TOKEN_SELECTED,
+      type: WrapAction.TOKEN_SELECT,
       payload: { token },
     });
   }, []);
 
   const selectAmountToWrap = useCallback((amountToWrap: BigNumber) => {
     dispatch({
-      type: WrapStatus.AMOUNT_TO_WRAP_SELECTED,
+      type: WrapAction.AMOUNT_TO_WRAP_CHANGE,
       payload: { amountToWrap },
     });
   }, []);
@@ -181,7 +218,7 @@ export function useWrap() {
       if (amountToWrap.lte(currentAllowance)) return;
       if (contract == null) return;
       await contract.approve(amountToWrap);
-      dispatch({ type: WrapStatus.WAITING_FOR_ALLOWANCE_APPROVAL });
+      dispatch({ type: WrapAction.RUN_ALLOWANCE });
       let counter = 0;
       const refreshCurrentAllowance = () =>
         setTimeout(async () => {
@@ -189,7 +226,7 @@ export function useWrap() {
           const newAllowance = await contract.allowanceOf();
           if (amountToWrap.lte(newAllowance)) {
             dispatch({
-              type: WrapStatus.READY_TO_WRAP,
+              type: WrapAction.ALLOWANCE_CHANGE,
               payload: { newCurrentAllowance: newAllowance },
             });
             return;
@@ -223,7 +260,7 @@ export function useWrap() {
       };
       return op;
     };
-
+    dispatch({ type: WrapAction.RUN_WRAP });
     return startWrapping();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   };
@@ -236,10 +273,12 @@ export function useWrap() {
       const contract = state.contractFactory.forErc20(
         fungibleTokens[state.token].ethereumContractAddress
       );
-      const currentBalance = await contract.balanceOf();
-      const currentAllowance = await contract.allowanceOf();
+      const [currentBalance, currentAllowance] = await Promise.all([
+        contract.balanceOf(),
+        contract.allowanceOf(),
+      ]);
       dispatch({
-        type: WrapStatus.USER_BALANCE_FETCHED,
+        type: WrapAction.USER_BALANCE_CHANGE,
         payload: { currentBalance, currentAllowance, contract },
       });
     };

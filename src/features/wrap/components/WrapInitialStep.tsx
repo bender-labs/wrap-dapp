@@ -77,7 +77,10 @@ export default function WrapInitialStep({
             variant={'contained'}
             color={'primary'}
             onClick={onNext}
-            disabled={status < WrapStatus.AMOUNT_TO_WRAP_SELECTED}
+            disabled={
+              status !== WrapStatus.READY_TO_CONFIRM &&
+              status !== WrapStatus.READY_TO_WRAP
+            }
           >
             NEXT
           </Button>
