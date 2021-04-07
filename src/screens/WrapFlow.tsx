@@ -1,7 +1,7 @@
 import { SwapDirectionTab } from '../features/swap/SwapDirectionTab';
 import WrapInitialStep from '../features/wrap/components/WrapInitialStep';
-import { useWrap } from '../features/wrap/hooks/useWrap';
-import React, { useState } from 'react';
+import { useWrap, WrapStatus } from '../features/wrap/hooks/useWrap';
+import React, { useEffect, useState } from 'react';
 import WrapConfirmStep from '../features/wrap/components/WrapConfirmStep';
 import { usePendingOperationsActions } from '../features/operations/state/pendingOperations';
 import { useHistory } from 'react-router';
@@ -44,6 +44,12 @@ function WrapForm() {
     history.push(wrapPage(op));
     return op;
   };
+
+  useEffect(() => {
+    if (status === WrapStatus.NOT_READY && step === Step.CONFIRM) {
+      setStep(Step.AMOUNT);
+    }
+  }, [status, step]);
 
   // noinspection RequiredAttributes
   return (

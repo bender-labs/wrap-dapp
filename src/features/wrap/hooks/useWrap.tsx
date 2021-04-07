@@ -162,6 +162,7 @@ export function reducer(state: WrapState, action: Action): WrapState {
         ...state,
         currentBalance: new BigNumber(0),
         contractFactory: ethWrapApiFactory,
+        status: ethWrapApiFactory ? state.status : WrapStatus.NOT_READY,
         connected: ethAccount !== undefined && tezosAccount !== undefined,
       };
   }

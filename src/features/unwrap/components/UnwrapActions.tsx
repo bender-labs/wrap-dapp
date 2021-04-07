@@ -1,6 +1,6 @@
-import { Box, Button } from '@material-ui/core';
 import React from 'react';
 import { UnwrapStatus } from '../hooks/useUnwrap';
+import LoadableButton from '../../../components/button/LoadableButton';
 
 export type UnwrapActionsProp = {
   onUnwrap: () => void;
@@ -9,16 +9,12 @@ export type UnwrapActionsProp = {
 
 export default function UnwrapActions({ status, onUnwrap }: UnwrapActionsProp) {
   return (
-    <Box mt={2} textAlign={'center'}>
-      <Button
-        variant="contained"
-        color="primary"
-        onClick={onUnwrap}
-        fullWidth
-        disabled={status !== UnwrapStatus.READY_TO_UNWRAP}
-      >
-        UNWRAP
-      </Button>
-    </Box>
+    <LoadableButton
+      loading={status === UnwrapStatus.WAITING_FOR_UNWRAP}
+      onClick={onUnwrap}
+      disabled={status !== UnwrapStatus.READY_TO_UNWRAP}
+      text={'UNWRAP'}
+      color={'primary'}
+    />
   );
 }

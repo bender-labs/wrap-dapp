@@ -17,6 +17,14 @@ import {
 } from '../../operations/state/types';
 import { unwrapFees } from '../../fees/fees';
 
+export enum UnwrapAction {
+  WALLET_CHANGE,
+  USER_BALANCE_CHANGE,
+  AMOUNT_TO_UNWRAP_CHANGE,
+  TOKEN_SELECT,
+  RUN_UNWRAP,
+}
+
 type UnwrapState = {
   status: UnwrapStatus;
   token: string;
@@ -31,68 +39,74 @@ type UnwrapState = {
 
 export enum UnwrapStatus {
   UNINITIALIZED,
-  TOKEN_SELECTED,
-  WALLET_CHANGED,
-  USER_BALANCE_FETCHED,
-  AMOUNT_TO_WRAP_SELECTED,
+  NOT_READY,
   READY_TO_UNWRAP,
+  WAITING_FOR_UNWRAP,
 }
 
 type Action =
   | {
-      type: UnwrapStatus.TOKEN_SELECTED;
+      type: UnwrapAction.TOKEN_SELECT;
       payload: { token: string };
     }
   | {
-      type: UnwrapStatus.USER_BALANCE_FETCHED;
+      type: UnwrapAction.USER_BALANCE_CHANGE;
       payload: { currentBalance: BigNumber; contract: TezosUnwrapApi };
     }
   | {
-      type: UnwrapStatus.AMOUNT_TO_WRAP_SELECTED;
+      type: UnwrapAction.AMOUNT_TO_UNWRAP_CHANGE;
       payload: { amountToUnwrap: BigNumber };
     }
   | { type: UnwrapStatus.READY_TO_UNWRAP; payload: {} }
   | {
-      type: UnwrapStatus.WALLET_CHANGED;
+      type: UnwrapAction.WALLET_CHANGE;
       payload: Partial<{
         tezosAccount: string;
         tezosLibrary: TezosToolkit;
         ethAccount: string;
         ethLibrary: Web3Provider;
       }>;
-    };
+    }
+  | { type: UnwrapAction.RUN_UNWRAP };
+
+const tryReady = (state: UnwrapState): UnwrapState => {
+  if (
+    !state.connected ||
+    state.amountToUnwrap.isZero() ||
+    state.amountToUnwrap.isNaN() ||
+    state.amountToUnwrap.isGreaterThan(state.currentBalance)
+  ) {
+    return { ...state, status: UnwrapStatus.NOT_READY };
+  }
+  return {
+    ...state,
+    status: state.amountToUnwrap.lte(state.currentBalance)
+      ? UnwrapStatus.READY_TO_UNWRAP
+      : UnwrapStatus.NOT_READY,
+  };
+};
 
 function reducer(state: UnwrapState, action: Action): UnwrapState {
   switch (action.type) {
-    case UnwrapStatus.TOKEN_SELECTED:
+    case UnwrapAction.TOKEN_SELECT:
       return {
         ...state,
-        status: UnwrapStatus.TOKEN_SELECTED,
+        status: UnwrapStatus.NOT_READY,
         ...action.payload,
         currentBalance: new BigNumber(0),
         amountToUnwrap: new BigNumber(0),
       };
-    case UnwrapStatus.USER_BALANCE_FETCHED:
-      return {
-        ...state,
-        status: UnwrapStatus.USER_BALANCE_FETCHED,
-        ...action.payload,
-      };
-    case UnwrapStatus.AMOUNT_TO_WRAP_SELECTED:
+    case UnwrapAction.USER_BALANCE_CHANGE:
+      return tryReady({ ...state, ...action.payload });
+    case UnwrapAction.AMOUNT_TO_UNWRAP_CHANGE:
       const { amountToUnwrap } = action.payload;
+      return tryReady({ ...state, amountToUnwrap });
+    case UnwrapAction.RUN_UNWRAP:
       return {
         ...state,
-        amountToUnwrap: amountToUnwrap,
-        status: amountToUnwrap.lte(state.currentBalance)
-          ? UnwrapStatus.READY_TO_UNWRAP
-          : UnwrapStatus.AMOUNT_TO_WRAP_SELECTED,
+        status: UnwrapStatus.WAITING_FOR_UNWRAP,
       };
-    case UnwrapStatus.READY_TO_UNWRAP:
-      return {
-        ...state,
-        status: UnwrapStatus.READY_TO_UNWRAP,
-      };
-    case UnwrapStatus.WALLET_CHANGED:
+    case UnwrapAction.WALLET_CHANGE:
       const { ethAccount, tezosAccount, tezosLibrary } = action.payload;
       const contractFactory =
         ethAccount && tezosAccount && tezosLibrary
@@ -105,6 +119,7 @@ function reducer(state: UnwrapState, action: Action): UnwrapState {
       return {
         ...state,
         contractFactory,
+        status: contractFactory ? state.status : UnwrapStatus.NOT_READY,
         connected: ethAccount !== undefined && tezosAccount !== undefined,
       };
   }
@@ -126,7 +141,7 @@ export function useUnwrap() {
 
   useEffect(() => {
     dispatch({
-      type: UnwrapStatus.WALLET_CHANGED,
+      type: UnwrapAction.WALLET_CHANGE,
       payload: {
         ethLibrary,
         ethAccount: ethAccount || undefined,
@@ -149,7 +164,7 @@ export function useUnwrap() {
 
   const selectToken = useCallback((token: string) => {
     dispatch({
-      type: UnwrapStatus.TOKEN_SELECTED,
+      type: UnwrapAction.TOKEN_SELECT,
       payload: { token },
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -157,7 +172,7 @@ export function useUnwrap() {
 
   const selectAmountToUnwrap = useCallback((amountToUnwrap: BigNumber) => {
     dispatch({
-      type: UnwrapStatus.AMOUNT_TO_WRAP_SELECTED,
+      type: UnwrapAction.AMOUNT_TO_UNWRAP_CHANGE,
       payload: { amountToUnwrap },
     });
   }, []);
@@ -166,6 +181,7 @@ export function useUnwrap() {
     const { contract, amountToUnwrap } = state;
     if (contract == null) return Promise.reject('Not ready');
 
+    dispatch({ type: UnwrapAction.RUN_UNWRAP });
     const startUnwrapping = async () => {
       const operationHash = await contract.unwrap(amountToUnwrap);
       const op: UnwrapErc20Operation = {
@@ -202,7 +218,7 @@ export function useUnwrap() {
       );
       const currentBalance = await contract.balanceOf();
       dispatch({
-        type: UnwrapStatus.USER_BALANCE_FETCHED,
+        type: UnwrapAction.USER_BALANCE_CHANGE,
         payload: { currentBalance, contract },
       });
     };

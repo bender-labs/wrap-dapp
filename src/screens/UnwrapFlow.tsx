@@ -1,9 +1,9 @@
 import { SwapDirectionTab } from '../features/swap/SwapDirectionTab';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { usePendingOperationsActions } from '../features/operations/state/pendingOperations';
 import { useHistory } from 'react-router';
 import UnwrapInitialStep from '../features/unwrap/components/UnwrapInitialStep';
-import { useUnwrap } from '../features/unwrap/hooks/useUnwrap';
+import { UnwrapStatus, useUnwrap } from '../features/unwrap/hooks/useUnwrap';
 import UnwrapConfirmStep from '../features/unwrap/components/UnwrapConfirmStep';
 import { paths, unwrapPage } from './routes';
 import { Route } from 'react-router-dom';
@@ -40,6 +40,12 @@ function UnwrapForm() {
     history.push(unwrapPage(op));
     return op;
   };
+
+  useEffect(() => {
+    if (status === UnwrapStatus.NOT_READY && step === Step.CONFIRM) {
+      setStep(Step.AMOUNT);
+    }
+  }, [status, step]);
 
   const history = useHistory();
   // noinspection RequiredAttributes
