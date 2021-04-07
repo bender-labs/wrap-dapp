@@ -16,6 +16,7 @@ import {
   UnwrapErc20Operation,
 } from '../../operations/state/types';
 import { unwrapFees } from '../../fees/fees';
+import { useSnackbar } from 'notistack';
 
 export enum UnwrapAction {
   WALLET_CHANGE,
@@ -23,6 +24,7 @@ export enum UnwrapAction {
   AMOUNT_TO_UNWRAP_CHANGE,
   TOKEN_SELECT,
   RUN_UNWRAP,
+  UNWRAP_DONE,
 }
 
 type UnwrapState = {
@@ -67,7 +69,8 @@ type Action =
         ethLibrary: Web3Provider;
       }>;
     }
-  | { type: UnwrapAction.RUN_UNWRAP };
+  | { type: UnwrapAction.RUN_UNWRAP }
+  | { type: UnwrapAction.UNWRAP_DONE };
 
 const tryReady = (state: UnwrapState): UnwrapState => {
   if (
@@ -106,6 +109,11 @@ function reducer(state: UnwrapState, action: Action): UnwrapState {
         ...state,
         status: UnwrapStatus.WAITING_FOR_UNWRAP,
       };
+    case UnwrapAction.UNWRAP_DONE:
+      return {
+        ...state,
+        status: UnwrapStatus.READY_TO_UNWRAP,
+      };
     case UnwrapAction.WALLET_CHANGE:
       const { ethAccount, tezosAccount, tezosLibrary } = action.payload;
       const contractFactory =
@@ -128,6 +136,8 @@ function reducer(state: UnwrapState, action: Action): UnwrapState {
 }
 
 export function useUnwrap() {
+  const { enqueueSnackbar } = useSnackbar();
+
   const {
     fungibleTokens,
     fees,
@@ -183,19 +193,25 @@ export function useUnwrap() {
 
     dispatch({ type: UnwrapAction.RUN_UNWRAP });
     const startUnwrapping = async () => {
-      const operationHash = await contract.unwrap(amountToUnwrap);
-      const op: UnwrapErc20Operation = {
-        operationHash,
-        hash: operationHash,
-        source: ethAccount!,
-        destination: tzAccount!,
-        status: { type: StatusType.NEW },
-        type: OperationType.UNWRAP,
-        amount: amountToUnwrap,
-        token: fungibleTokens[state.token].ethereumContractAddress,
-        fees: unwrapFees(amountToUnwrap, fees),
-      };
-      return op;
+      try {
+        const operationHash = await contract.unwrap(amountToUnwrap);
+
+        const op: UnwrapErc20Operation = {
+          operationHash,
+          hash: operationHash,
+          source: ethAccount!,
+          destination: tzAccount!,
+          status: { type: StatusType.NEW },
+          type: OperationType.UNWRAP,
+          amount: amountToUnwrap,
+          token: fungibleTokens[state.token].ethereumContractAddress,
+          fees: unwrapFees(amountToUnwrap, fees),
+        };
+        return op;
+      } catch (e) {
+        enqueueSnackbar('Error while calling unwrap', { variant: 'error' });
+      }
+      dispatch({ type: UnwrapAction.UNWRAP_DONE });
     };
 
     return startUnwrapping();

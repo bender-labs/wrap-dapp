@@ -36,6 +36,9 @@ function UnwrapForm() {
 
   const doLaunchUnwrap = async () => {
     const op = await launchUnwrap();
+    if (!op) {
+      return;
+    }
     await addOperation(op);
     history.push(unwrapPage(op));
     return op;

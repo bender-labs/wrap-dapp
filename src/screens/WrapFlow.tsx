@@ -40,11 +40,13 @@ function WrapForm() {
 
   const doLaunchWrap = async () => {
     const op = await launchWrap();
+    if (!op) {
+      return;
+    }
     await addOperation(op);
     history.push(wrapPage(op));
     return op;
   };
-
   useEffect(() => {
     if (status === WrapStatus.NOT_READY && step === Step.CONFIRM) {
       setStep(Step.AMOUNT);

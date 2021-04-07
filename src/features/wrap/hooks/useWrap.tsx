@@ -15,6 +15,7 @@ import {
   StatusType,
 } from '../../operations/state/types';
 import { wrapFees } from '../../fees/fees';
+import { useSnackbar } from 'notistack';
 
 type WrapState = {
   status: WrapStatus;
@@ -36,6 +37,7 @@ export enum WrapAction {
   ALLOWANCE_CHANGE,
   RUN_ALLOWANCE,
   RUN_WRAP,
+  WRAP_DONE,
 }
 
 export enum WrapStatus {
@@ -81,7 +83,8 @@ type Action =
     }
   | {
       type: WrapAction.RUN_WRAP;
-    };
+    }
+  | { type: WrapAction.WRAP_DONE };
 
 export function initialState(token: string, custodianContractAddress: string) {
   return {
@@ -149,6 +152,12 @@ export function reducer(state: WrapState, action: Action): WrapState {
         ...state,
         status: WrapStatus.WAITING_FOR_WRAP,
       };
+    case WrapAction.WRAP_DONE: {
+      return {
+        ...state,
+        status: WrapStatus.READY_TO_WRAP,
+      };
+    }
     case WrapAction.WALLET_CHANGE:
       const { ethAccount, tezosAccount, ethLibrary } = action.payload;
       const ethWrapApiFactory =
@@ -171,6 +180,8 @@ export function reducer(state: WrapState, action: Action): WrapState {
 }
 
 export function useWrap() {
+  const { enqueueSnackbar } = useSnackbar();
+
   const {
     fungibleTokens,
     fees,
@@ -247,19 +258,25 @@ export function useWrap() {
     if (contract == null) return Promise.reject('Not ready');
 
     const startWrapping = async () => {
-      const transactionHash = await contract.wrap(amountToWrap);
-      const op: Operation = {
-        transactionHash,
-        hash: transactionHash,
-        source: ethAccount!,
-        destination: tzAccount!,
-        status: { type: StatusType.WAITING_FOR_RECEIPT },
-        type: OperationType.WRAP,
-        amount: amountToWrap,
-        token: fungibleTokens[state.token].ethereumContractAddress,
-        fees: wrapFees(amountToWrap, fees),
-      };
-      return op;
+      try {
+        const transactionHash = await contract.wrap(amountToWrap);
+        const op: Operation = {
+          transactionHash,
+          hash: transactionHash,
+          source: ethAccount!,
+          destination: tzAccount!,
+          status: { type: StatusType.WAITING_FOR_RECEIPT },
+          type: OperationType.WRAP,
+          amount: amountToWrap,
+          token: fungibleTokens[state.token].ethereumContractAddress,
+          fees: wrapFees(amountToWrap, fees),
+        };
+
+        return op;
+      } catch (e) {
+        enqueueSnackbar('Error while calling wrap', { variant: 'error' });
+      }
+      dispatch({ type: WrapAction.WRAP_DONE });
     };
     dispatch({ type: WrapAction.RUN_WRAP });
     return startWrapping();
