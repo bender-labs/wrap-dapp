@@ -12,7 +12,7 @@ import { useWalletContext } from '../../../runtime/wallet/WalletContext';
 import {
   Operation,
   OperationType,
-  StatusType,
+  OperationStatusType,
 } from '../../operations/state/types';
 import { wrapFees } from '../../fees/fees';
 import { useSnackbar } from 'notistack';
@@ -265,7 +265,7 @@ export function useWrap() {
           hash: transactionHash,
           source: ethAccount!,
           destination: tzAccount!,
-          status: { type: StatusType.WAITING_FOR_RECEIPT },
+          status: { type: OperationStatusType.WAITING_FOR_RECEIPT },
           type: OperationType.WRAP,
           amount: amountToWrap,
           token: fungibleTokens[state.token].ethereumContractAddress,

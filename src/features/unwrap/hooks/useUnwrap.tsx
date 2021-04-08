@@ -12,7 +12,7 @@ import { Fees } from '../../../config';
 import { useWalletContext } from '../../../runtime/wallet/WalletContext';
 import {
   OperationType,
-  StatusType,
+  OperationStatusType,
   UnwrapErc20Operation,
 } from '../../operations/state/types';
 import { unwrapFees } from '../../fees/fees';
@@ -201,7 +201,7 @@ export function useUnwrap() {
           hash: operationHash,
           source: ethAccount!,
           destination: tzAccount!,
-          status: { type: StatusType.NEW },
+          status: { type: OperationStatusType.NEW },
           type: OperationType.UNWRAP,
           amount: amountToUnwrap,
           token: fungibleTokens[state.token].ethereumContractAddress,

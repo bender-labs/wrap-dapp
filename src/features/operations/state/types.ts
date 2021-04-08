@@ -5,7 +5,7 @@ export enum OperationType {
   UNWRAP,
 }
 
-export enum StatusType {
+export enum OperationStatusType {
   WAITING_FOR_RECEIPT = 'WAITING_FOR_RECEIPT',
   NEW = 'NEW',
   WAITING_FOR_CONFIRMATIONS = 'WAITING_CONFIRMATIONS',
@@ -15,34 +15,34 @@ export enum StatusType {
 }
 
 export interface WaitingForReceipt {
-  type: StatusType.WAITING_FOR_RECEIPT;
+  type: OperationStatusType.WAITING_FOR_RECEIPT;
 }
 
 export interface New {
-  type: StatusType.NEW;
+  type: OperationStatusType.NEW;
 }
 
 export interface WaitingForConfirmations {
-  type: StatusType.WAITING_FOR_CONFIRMATIONS;
+  type: OperationStatusType.WAITING_FOR_CONFIRMATIONS;
   id: string;
   confirmations: number;
   confirmationsThreshold: number;
 }
 
 export interface WaitingForSignatures {
-  type: StatusType.WAITING_FOR_SIGNATURES;
+  type: OperationStatusType.WAITING_FOR_SIGNATURES;
   id: string;
   signatures: Record<string, string>;
 }
 
 export interface Ready {
-  type: StatusType.READY;
+  type: OperationStatusType.READY;
   id: string;
   signatures: Record<string, string>;
 }
 
 export interface Done {
-  type: StatusType.DONE;
+  type: OperationStatusType.DONE;
   id: string;
 }
 

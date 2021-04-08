@@ -1,4 +1,7 @@
-import { StatusType, UnwrapErc20Operation } from '../../operations/state/types';
+import {
+  OperationStatusType,
+  UnwrapErc20Operation,
+} from '../../operations/state/types';
 import {
   PaperActions,
   PaperContent,
@@ -6,7 +9,7 @@ import {
   PaperNav,
   PaperTitle,
 } from '../../../components/paper/Paper';
-import React, { useMemo, useState } from 'react';
+import React, { useMemo } from 'react';
 import LabelAndValue from '../../../components/formatting/LabelAndValue';
 import { CircularProgressWithLabel } from '../../../components/progress/CircularProgressWithLabel';
 import LabelAndAsset from '../../../components/formatting/LabelAndAsset';
@@ -14,10 +17,14 @@ import { TokenMetadata } from '../../swap/token';
 import { Button, Typography } from '@material-ui/core';
 import { SpacedDivider } from '../../../components/formatting/SpacedDivider';
 import LoadableButton from '../../../components/button/LoadableButton';
+import { ReceiptStatus } from '../../operations/hooks/useOperation';
+import { ConnectionStatus } from '../../wallet/connectionStatus';
 
 export type UnwrapReceiptProps = {
   operation: UnwrapErc20Operation;
   tokens: Record<string, TokenMetadata>;
+  status: ReceiptStatus;
+  walletStatus: ConnectionStatus;
   onRelease: () => Promise<void>;
 };
 
@@ -34,25 +41,26 @@ function unwrapStatus(
   confirmations: number,
   signatures: number,
   onRelease: () => any,
-  loading: boolean
+  status: ReceiptStatus,
+  walletStatus: ConnectionStatus
 ) {
   const step = 100 / (confirmations + signatures + 2);
   switch (operation.status.type) {
-    case StatusType.WAITING_FOR_RECEIPT:
+    case OperationStatusType.WAITING_FOR_RECEIPT:
       return (
         <CircularProgressWithLabel
           label={label('Waiting to be included')}
           value={step}
         />
       );
-    case StatusType.NEW:
+    case OperationStatusType.NEW:
       return (
         <CircularProgressWithLabel
           label={label('Waiting for indexer')}
           value={step * 2}
         />
       );
-    case StatusType.WAITING_FOR_CONFIRMATIONS:
+    case OperationStatusType.WAITING_FOR_CONFIRMATIONS:
       const value = step * 2 + step * operation.status.confirmations;
       return (
         <CircularProgressWithLabel
@@ -62,7 +70,7 @@ function unwrapStatus(
           value={value}
         />
       );
-    case StatusType.WAITING_FOR_SIGNATURES:
+    case OperationStatusType.WAITING_FOR_SIGNATURES:
       const signaturesCount = Object.keys(operation.status.signatures).length;
       const sigValue = step * 2 + step * confirmations + step * signaturesCount;
       return (
@@ -73,21 +81,23 @@ function unwrapStatus(
           value={sigValue}
         />
       );
-    case StatusType.READY:
+    case OperationStatusType.READY:
       return (
         <PaperContent>
-          <LoadableButton
-            variant={'contained'}
-            color={'primary'}
-            disabled={false}
-            loading={loading}
-            onClick={onRelease}
-            text={'RELEASE'}
-          />
+          {walletStatus === ConnectionStatus.CONNECTED && (
+            <LoadableButton
+              variant={'contained'}
+              color={'primary'}
+              disabled={false}
+              loading={status === ReceiptStatus.WAITING_FOR_APPLY}
+              onClick={onRelease}
+              text={'RELEASE'}
+            />
+          )}
         </PaperContent>
       );
 
-    case StatusType.DONE:
+    case OperationStatusType.DONE:
       return (
         <PaperContent>
           <Button
@@ -106,6 +116,8 @@ function unwrapStatus(
 export default function UnwrapReceipt({
   operation,
   tokens,
+  status,
+  walletStatus,
   onRelease,
 }: UnwrapReceiptProps) {
   const tokensByEthAddress = useMemo(
@@ -119,14 +131,6 @@ export default function UnwrapReceipt({
       ),
     [tokens]
   );
-
-  const [loading, setLoading] = useState(false);
-
-  const doRelease = async () => {
-    setLoading(true);
-    await onRelease();
-    setLoading(false);
-  };
 
   const { decimals, ethereumSymbol, tezosSymbol } = tokensByEthAddress[
     operation.token.toLowerCase()
@@ -157,7 +161,7 @@ export default function UnwrapReceipt({
         />
       </PaperContent>
       <SpacedDivider />
-      {unwrapStatus(operation, 10, 2, doRelease, loading)}
+      {unwrapStatus(operation, 10, 2, onRelease, status, walletStatus)}
     </>
   );
 }

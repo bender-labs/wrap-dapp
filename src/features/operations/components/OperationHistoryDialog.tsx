@@ -14,7 +14,7 @@ import {
 import { makeStyles } from '@material-ui/core/styles';
 import {
   Operation,
-  StatusType,
+  OperationStatusType,
   UnwrapErc20Operation,
   WrapErc20Operation,
 } from '../state/types';
@@ -99,11 +99,11 @@ export default function OperationHistoryDialog() {
 
     const secondaryText = () => {
       switch (operation.status.type) {
-        case StatusType.NEW:
+        case OperationStatusType.NEW:
           return 'Waiting for operation to be included';
-        case StatusType.WAITING_FOR_CONFIRMATIONS:
+        case OperationStatusType.WAITING_FOR_CONFIRMATIONS:
           return `Pending... (${operation.status.confirmations}/${operation.status.confirmationsThreshold} confirmations)`;
-        case StatusType.WAITING_FOR_SIGNATURES:
+        case OperationStatusType.WAITING_FOR_SIGNATURES:
           return (
             <React.Fragment>
               <Typography component="p" variant={'caption'}>
@@ -116,7 +116,7 @@ export default function OperationHistoryDialog() {
               </Typography>
             </React.Fragment>
           );
-        case StatusType.READY:
+        case OperationStatusType.READY:
           return 'Ready to mint';
       }
     };
@@ -138,11 +138,11 @@ export default function OperationHistoryDialog() {
 
     const secondaryText = () => {
       switch (operation.status.type) {
-        case StatusType.NEW:
+        case OperationStatusType.NEW:
           return 'Waiting for operation to be included';
-        case StatusType.WAITING_FOR_CONFIRMATIONS:
+        case OperationStatusType.WAITING_FOR_CONFIRMATIONS:
           return `Pending... (${operation.status.confirmations}/${operation.status.confirmationsThreshold} confirmations)`;
-        case StatusType.WAITING_FOR_SIGNATURES:
+        case OperationStatusType.WAITING_FOR_SIGNATURES:
           return (
             <React.Fragment>
               <Typography component="p" variant={'caption'}>
@@ -155,7 +155,7 @@ export default function OperationHistoryDialog() {
               </Typography>
             </React.Fragment>
           );
-        case StatusType.READY:
+        case OperationStatusType.READY:
           return 'Ready to release';
       }
     };

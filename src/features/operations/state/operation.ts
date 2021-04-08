@@ -10,7 +10,7 @@ import {
   Operation,
   OperationStatus,
   OperationType,
-  StatusType,
+  OperationStatusType,
   UnwrapErc20Operation,
   WrapErc20Operation,
 } from './types';
@@ -21,7 +21,7 @@ const toOperationStatus = (
 ): OperationStatus => {
   if (p.confirmations < p.confirmationsThreshold) {
     return {
-      type: StatusType.WAITING_FOR_CONFIRMATIONS,
+      type: OperationStatusType.WAITING_FOR_CONFIRMATIONS,
       id: p.id,
       confirmations: p.confirmations,
       confirmationsThreshold: p.confirmationsThreshold,
@@ -29,19 +29,19 @@ const toOperationStatus = (
   }
   if (Object.keys(p.signatures).length < signaturesThreshold) {
     return {
-      type: StatusType.WAITING_FOR_SIGNATURES,
+      type: OperationStatusType.WAITING_FOR_SIGNATURES,
       id: p.id,
       signatures: p.signatures,
     };
   }
   if (p.status === 'finalized') {
     return {
-      type: StatusType.DONE,
+      type: OperationStatusType.DONE,
       id: p.id,
     };
   }
   return {
-    type: StatusType.READY,
+    type: OperationStatusType.READY,
     id: p.id,
     signatures: p.signatures,
   };
@@ -52,13 +52,13 @@ export const merge = (current: Operation[], indexer: Operation[]) =>
     ? indexer
     : current.reduce<Operation[]>((acc, op) => {
         const maybeSame = indexer.find((v) => v.hash === op.hash);
-        if (!maybeSame && op.status.type === StatusType.NEW) {
+        if (!maybeSame && op.status.type === OperationStatusType.NEW) {
           return [...acc, op];
         }
-        if (!maybeSame && op.status.type === StatusType.DONE) {
+        if (!maybeSame && op.status.type === OperationStatusType.DONE) {
           return acc;
         }
-        if (maybeSame && op.status.type === StatusType.DONE) {
+        if (maybeSame && op.status.type === OperationStatusType.DONE) {
           return [...acc, op];
         }
         if (maybeSame) {
@@ -71,7 +71,7 @@ export const mergeSingle = (indexer: Operation, current?: Operation) => {
   if (!current) {
     return indexer;
   }
-  if (current.status.type === StatusType.DONE) {
+  if (current.status.type === OperationStatusType.DONE) {
     return current;
   }
   return { ...current, ...indexer };
@@ -79,8 +79,11 @@ export const mergeSingle = (indexer: Operation, current?: Operation) => {
 
 export const markAsDone = (op: Operation): Operation => {
   switch (op.status.type) {
-    case StatusType.READY:
-      return { ...op, status: { type: StatusType.DONE, id: op.status.id } };
+    case OperationStatusType.READY:
+      return {
+        ...op,
+        status: { type: OperationStatusType.DONE, id: op.status.id },
+      };
     default:
       throw new Error("Can't be marked as done");
   }
@@ -88,8 +91,8 @@ export const markAsDone = (op: Operation): Operation => {
 
 export const markAsNew = (op: Operation): Operation => {
   switch (op.status.type) {
-    case StatusType.WAITING_FOR_RECEIPT:
-      return { ...op, status: { type: StatusType.NEW } };
+    case OperationStatusType.WAITING_FOR_RECEIPT:
+      return { ...op, status: { type: OperationStatusType.NEW } };
     default:
       throw new Error("Can't be marked as done");
   }

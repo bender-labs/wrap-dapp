@@ -1,5 +1,9 @@
 import { merge } from './operation';
-import { OperationType, StatusType, WrapErc20Operation } from './types';
+import {
+  OperationType,
+  OperationStatusType,
+  WrapErc20Operation,
+} from './types';
 import BigNumber from 'bignumber.js';
 
 const aNewOperation = () => {
@@ -8,7 +12,7 @@ const aNewOperation = () => {
     hash: 'hash',
     source: 'ethAccount',
     destination: 'tzAccount',
-    status: { type: StatusType.NEW },
+    status: { type: OperationStatusType.NEW },
     type: OperationType.WRAP,
     amount: new BigNumber(10),
     token: 'DAI',
@@ -23,7 +27,7 @@ const aDoneOperation = () => {
     hash: 'hash',
     source: 'ethAccount',
     destination: 'tzAccount',
-    status: { type: StatusType.DONE, id: 'id' },
+    status: { type: OperationStatusType.DONE, id: 'id' },
     type: OperationType.WRAP,
     amount: new BigNumber(10),
     token: 'DAI',
@@ -37,7 +41,7 @@ const waitingForConfirmation = (
 ): WrapErc20Operation => ({
   ...newOp,
   status: {
-    type: StatusType.WAITING_FOR_CONFIRMATIONS,
+    type: OperationStatusType.WAITING_FOR_CONFIRMATIONS,
     confirmationsThreshold: 2,
     confirmations: 0,
     id: 'id',
