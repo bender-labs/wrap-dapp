@@ -9,6 +9,8 @@ export type LabelAndAssetProps = {
   value: BigNumber;
   decimals: number;
   symbol: string;
+  emptyState?: boolean;
+  emptyStatePlaceHolder?: string;
 };
 
 export default function LabelAndAsset({
@@ -16,17 +18,23 @@ export default function LabelAndAsset({
   value,
   symbol,
   decimals,
+  emptyState = false,
+  emptyStatePlaceHolder = '',
 }: LabelAndAssetProps) {
   return (
     <LabelAndValue
       label={label}
       value={
-        <NumberFormat
-          displayType="text"
-          suffix={` ${symbol}`}
-          {...formatOptions}
-          value={value.shiftedBy(-decimals).toString()}
-        />
+        emptyState ? (
+          emptyStatePlaceHolder
+        ) : (
+          <NumberFormat
+            displayType="text"
+            suffix={` ${symbol}`}
+            {...formatOptions}
+            value={value.shiftedBy(-decimals).toString()}
+          />
+        )
       }
     />
   );

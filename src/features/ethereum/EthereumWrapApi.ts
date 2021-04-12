@@ -53,6 +53,18 @@ export class EthereumWrapApi {
     return response.hash;
   }
 
+  async networkFees(amount: BigNumber): Promise<BigNumber> {
+    const gas = await this.custodianContract.estimateGas.wrapERC20(
+      this.erc20ContractAddress(),
+      ethers.BigNumber.from(amount.toString(10)),
+      this.erc20ContractAddress(),
+      {
+        gasLimit: 100000,
+      }
+    );
+    return new BigNumber(gas.toString(), 10);
+  }
+
   private benderContractAddress() {
     return this.custodianContract.address;
   }
@@ -60,10 +72,10 @@ export class EthereumWrapApi {
   private erc20ContractAddress() {
     return this.erc20Contract.address;
   }
-
   private readonly erc20Contract: ethers.Contract;
   private readonly custodianContract: ethers.Contract;
   private readonly ethAccountAddress: EthereumAddress;
+
   private readonly tzAccountAddress: TezosAddress;
 }
 

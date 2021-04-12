@@ -31,6 +31,7 @@ function WrapForm() {
     fees,
     ethAccount,
     tzAccount,
+    networkFees,
   } = useWrap();
 
   const [step, setStep] = useState(Step.AMOUNT);
@@ -52,7 +53,6 @@ function WrapForm() {
       setStep(Step.AMOUNT);
     }
   }, [status, step]);
-
   // noinspection RequiredAttributes
   return (
     <>
@@ -85,6 +85,7 @@ function WrapForm() {
           onWrap={doLaunchWrap}
           onAuthorize={launchAllowanceApproval}
           onPrevious={() => setStep(Step.AMOUNT)}
+          networkFees={networkFees}
         />
       )}
     </>
