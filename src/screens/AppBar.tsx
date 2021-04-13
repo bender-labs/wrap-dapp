@@ -10,6 +10,7 @@ import {
   Toolbar,
   Typography,
 } from '@material-ui/core';
+import Grid from '@material-ui/core/Grid'
 import React, { useState } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 import {
@@ -35,6 +36,16 @@ const useStyles = makeStyles((theme) =>
     },
     logo: {
       width: 50,
+    },
+    // grid: {
+    //   display: 'flex',
+    //   border: '2px solid red',
+    // },
+    gridItemsR: {
+      border: '2px solid blue',
+    },
+    gridItemsL: {
+      border: '2px solid green',
     },
     wallets: {
       '& > *': {
@@ -82,72 +93,118 @@ const Render = () => {
     closeEnvSelector();
   };
 
+
+
   return (
     <AppBar position="static">
-      <Toolbar>
-        <img src={logo} className={classes.logo} alt="Logo" />
-        <Typography variant="h6" component="h1" className={classes.title}>
-          <Link component={RouterLink} color="inherit" to={paths.WRAP}>
-            WRAP
-          </Link>
-          <Link component={RouterLink} color="inherit" to={paths.HISTORY}>
-            HISTORY
-          </Link>
-        </Typography>
 
-        <Box className={classes.wallets}>
-          <OperationHistoryDialog />
-          <TezosWalletConnection
-            account={tzAccount}
-            activate={tzActivate}
-            deactivate={tzDeactivate}
-            connectionStatus={tzConnectionStatus}
-          />
-          <EthWalletConnection
-            account={ethAccount}
-            activate={ethActivate}
-            deactivate={ethDeactivate}
-            connectors={connectors}
-            connectionStatus={ethConnectionStatus}
-          />
-        </Box>
-        <Button
-          aria-label="Environment selector"
-          aria-controls="env-selector-appbar"
-          aria-haspopup="true"
-          onClick={openEnvSelector}
-          color="inherit"
-          size="small"
-          variant="outlined"
-          endIcon={<SwapHorizIcon />}
-        >
-          {config.environmentName}
-        </Button>
-        <Menu
-          id="env-selector-appbar"
-          anchorEl={anchorEnvSelector}
-          anchorOrigin={{
-            vertical: 'top',
-            horizontal: 'right',
-          }}
-          keepMounted
-          transformOrigin={{
-            vertical: 'top',
-            horizontal: 'right',
-          }}
-          open={open}
-          onClose={closeEnvSelector}
-        >
-          {environmentOptions.map(({ name, environment }) => (
-            <MenuItem
-              key={environment}
-              onClick={() => handleEnvSelection(environment)}
+        <Toolbar>
+          <Grid
+            container
+            direction="row"
+            justify="flex-start"
+            alignItems="center"
             >
-              {name}
-            </MenuItem>
-          ))}
-        </Menu>
-      </Toolbar>
+
+          <Grid item className={classes.gridItemsR}>
+            <img src={logo} className={classes.logo} alt="Logo" />
+          </Grid>
+
+          <Grid
+            item
+            className={classes.gridItemsR}
+            >
+
+            <Typography variant="h6" component="h1" className={classes.title}>
+              <Link component={RouterLink} color="inherit" to={paths.WRAP}>
+                WRAP
+              </Link>
+            </Typography>
+          </Grid>
+
+          <Grid
+            item
+            className={classes.gridItemsR}
+            >
+            <Typography variant="h6" component="h1" className={classes.title}>
+              <Link component={RouterLink} color="inherit" to={paths.HISTORY}>
+                HISTORY
+              </Link>
+            </Typography>
+          </Grid>
+        </Grid>
+
+        <Grid
+          container
+          direction="row"
+          justify="flex-end"
+          alignItems="center"
+          >
+          <Grid
+            item
+            className={classes.gridItemsL}
+            >
+          <Box className={classes.wallets}>
+              <OperationHistoryDialog />
+              <TezosWalletConnection
+                account={tzAccount}
+                activate={tzActivate}
+                deactivate={tzDeactivate}
+                connectionStatus={tzConnectionStatus}
+                />
+              <EthWalletConnection
+                account={ethAccount}
+                activate={ethActivate}
+                deactivate={ethDeactivate}
+                connectors={connectors}
+                connectionStatus={ethConnectionStatus}
+              />
+            </Box>
+          </Grid>
+          <Grid
+            item
+            className={classes.gridItemsL}
+            >
+            <Button
+              aria-label="Environment selector"
+              aria-controls="env-selector-appbar"
+              aria-haspopup="true"
+              onClick={openEnvSelector}
+              color="inherit"
+              size="small"
+              variant="outlined"
+              endIcon={<SwapHorizIcon />}
+              >
+                {config.environmentName}
+            </Button>
+            </Grid>
+          </Grid>
+          <Menu
+            id="env-selector-appbar"
+            anchorEl={anchorEnvSelector}
+            anchorOrigin={{
+              vertical: 'top',
+              horizontal: 'right',
+            }}
+            keepMounted
+            transformOrigin={{
+              vertical: 'top',
+              horizontal: 'right',
+            }}
+            open={open}
+            onClose={closeEnvSelector}
+          >
+            {environmentOptions.map(({ name, environment }) => (
+              <MenuItem
+                key={environment}
+                onClick={() => handleEnvSelection(environment)}
+              >
+                {name}
+              </MenuItem>
+            ))}
+          </Menu>
+        </Toolbar>
+
     </AppBar>
   );
 };
