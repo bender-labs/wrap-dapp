@@ -303,10 +303,14 @@ export function useWrap() {
   useEffect(() => {
     const computeNetworkFees = async () => {
       const { status, contract, amountToWrap } = state;
-      if (status !== WrapStatus.READY_TO_WRAP || contract == null) {
+      if (
+        status !== WrapStatus.READY_TO_WRAP ||
+        contract == null ||
+        ethLibrary == null
+      ) {
         return;
       }
-      const networkFees = await contract.networkFees(amountToWrap);
+      const networkFees = await contract.networkFees(amountToWrap, ethLibrary);
       dispatch({ type: WrapAction.NETWORK_FEES, payload: { networkFees } });
     };
 

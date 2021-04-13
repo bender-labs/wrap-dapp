@@ -53,7 +53,10 @@ export class EthereumWrapApi {
     return response.hash;
   }
 
-  async networkFees(amount: BigNumber): Promise<BigNumber> {
+  async networkFees(
+    amount: BigNumber,
+    provider: Web3Provider
+  ): Promise<BigNumber> {
     const gas = await this.custodianContract.estimateGas.wrapERC20(
       this.erc20ContractAddress(),
       ethers.BigNumber.from(amount.toString(10)),
@@ -62,7 +65,9 @@ export class EthereumWrapApi {
         gasLimit: 100000,
       }
     );
-    return new BigNumber(gas.toString(), 10);
+    const gasPrice = await provider.getGasPrice();
+    const fees = gas.mul(gasPrice);
+    return new BigNumber(fees.toString(), 10);
   }
 
   private benderContractAddress() {
