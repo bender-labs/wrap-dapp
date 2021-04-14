@@ -1,4 +1,5 @@
 import React from 'react';
+import './App.css'
 import { Web3ReactProvider } from '@web3-react/core';
 import { getLibrary as getEthLibrary } from './features/ethereum/web3React';
 import { getLibrary as getTezosLibrary } from './features/tezos/beacon';
@@ -21,9 +22,16 @@ const theme = createMuiTheme(themeOptions);
 
 const useStyle = makeStyles((theme) => ({
   root: { 
-    marginTop: theme.spacing(4),
-    backgroundColor: '#FFD000',
-    color: 'black'
+    marginTop: theme.spacing(),
+    typography: {
+      fontFamily: [
+      'Roboto',
+      ],
+    },
+    backgroundColor: '#E5E5E5',
+    // #FFD000
+    color: 'black',
+    borderRadius: '15px',
   },
 }));
 
@@ -40,7 +48,7 @@ function App() {
                   <SnackbarProvider autoHideDuration={6000}>
                     <CssBaseline />
                     <AppBar />
-                    <Container maxWidth="sm">
+                    <Container maxWidth="xs">
                       <Switch>
                         <Route path={paths.HISTORY}>
                           <HistoryScreen />

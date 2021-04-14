@@ -44,6 +44,23 @@ export default function WrapInitialStep({
 
   return (
     <>
+    <PaperContent>
+        {connected && (
+          <Button
+            fullWidth
+            variant={'contained'}
+            color={'primary'}
+            onClick={onNext}
+            disabled={
+              status !== WrapStatus.READY_TO_CONFIRM &&
+              status !== WrapStatus.READY_TO_WRAP
+            }
+          >
+            NEXT
+          </Button>
+        )}
+        {!connected && <MultiConnect />}
+      </PaperContent>
       <PaperContent>
         <TokenSelection
           token={token.ethereumSymbol}
@@ -68,24 +85,6 @@ export default function WrapInitialStep({
           symbol={token.tezosSymbol}
           decimals={token.decimals}
         />
-      </PaperContent>
-      <SpacedDivider />
-      <PaperContent>
-        {connected && (
-          <Button
-            fullWidth
-            variant={'contained'}
-            color={'primary'}
-            onClick={onNext}
-            disabled={
-              status !== WrapStatus.READY_TO_CONFIRM &&
-              status !== WrapStatus.READY_TO_WRAP
-            }
-          >
-            NEXT
-          </Button>
-        )}
-        {!connected && <MultiConnect />}
       </PaperContent>
     </>
   );

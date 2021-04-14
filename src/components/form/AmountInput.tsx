@@ -82,6 +82,7 @@ export default function AmountInput({
         onValueChange={handleOnChange}
         {...formatOptions}
       />
+      amountinput
     </div>
   );
 }

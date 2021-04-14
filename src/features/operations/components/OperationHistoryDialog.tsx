@@ -27,7 +27,7 @@ import { PaperContent } from '../../../components/paper/Paper';
 const useStyle = makeStyles((theme) => ({
   subHeader: {
     backgroundColor: theme.palette.primary.main,
-    color: theme.palette.primary.contrastText,
+    color: theme.palette.secondary.contrastText,
   },
 }));
 

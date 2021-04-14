@@ -50,7 +50,7 @@ export default function AssetSummary({
     <div className={classes.root}>
       <div className={classes.wrapper}>
         <Typography component="span" className={classes.label}>
-          {label}
+          {label} AssetSummary 
         </Typography>
         <NumberFormat
           className={classes.valueWrapper}
