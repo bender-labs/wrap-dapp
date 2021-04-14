@@ -1,6 +1,5 @@
 import React from 'react';
 import { Web3ReactProvider } from '@web3-react/core';
-import './App.css';
 import { getLibrary as getEthLibrary } from './features/ethereum/web3React';
 import { getLibrary as getTezosLibrary } from './features/tezos/beacon';
 import TezosProvider from './features/tezos/TezosContext';
@@ -21,7 +20,11 @@ import MainScreen from './screens/MainScreen';
 const theme = createMuiTheme(themeOptions);
 
 const useStyle = makeStyles((theme) => ({
-  root: { marginTop: theme.spacing() },
+  root: { 
+    marginTop: theme.spacing(4),
+    backgroundColor: '#FFD000',
+    color: 'black'
+  },
 }));
 
 function App() {

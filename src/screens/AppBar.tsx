@@ -11,6 +11,10 @@ import {
   Typography,
 } from '@material-ui/core';
 import Grid from '@material-ui/core/Grid'
+import Hidden from '@material-ui/core/Hidden';
+import IconButton from '@material-ui/core/IconButton';
+import MenuIcon from '@material-ui/icons/Menu';
+import DrawerComp from './DrawerComp'
 import React, { useState } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 import {
@@ -37,32 +41,30 @@ const useStyles = makeStyles((theme) =>
     logo: {
       width: 50,
     },
-    // grid: {
-    //   display: 'flex',
-    //   border: '2px solid red',
-    // },
-    gridItemsR: {
-      border: '2px solid blue',
-    },
-    gridItemsL: {
-      border: '2px solid green',
-    },
     wallets: {
       '& > *': {
         marginRight: theme.spacing(1),
       },
     },
+    menuButton: {
+      marginRight: theme.spacing(2),
+      [theme.breakpoints.up('sm')]: {
+        display: 'none',
+      },
+    },
   })
 );
 
-// i have added this test
 
 const Render = () => {
+
   const config = useConfig();
+
   const {
     setEnvironment,
     environmentOptions,
   } = useEnvironmentSelectorContext();
+
   const {
     ethereum: {
       activate: ethActivate,
@@ -78,134 +80,148 @@ const Render = () => {
       account: tzAccount,
     },
   } = useWalletContext();
+
   const classes = useStyles();
+
   const [
     anchorEnvSelector,
     setAnchorEnvSelector,
   ] = useState<null | HTMLElement>(null);
+
   const open = Boolean(anchorEnvSelector);
 
   const openEnvSelector = (event: React.MouseEvent<HTMLElement>) =>
     setAnchorEnvSelector(event.currentTarget);
+
   const closeEnvSelector = () => setAnchorEnvSelector(null);
+
   const handleEnvSelection = (env: Environment) => {
     setEnvironment(env);
     closeEnvSelector();
   };
 
+  const [mobileOpen, setMobileOpen] = React.useState(true);
+
+  const handleDrawerToggle = () => {
+    setMobileOpen(!mobileOpen);
+  };
+
 
 
   return (
-    <AppBar position="static">
+    <>
+      <AppBar position="static">
 
-        <Toolbar>
+          <Toolbar>
+          <IconButton
+              color="inherit"
+              aria-label="open drawer"
+              edge="start"
+              onClick={handleDrawerToggle}
+              className={classes.menuButton}
+            >
+              <MenuIcon />
+            </IconButton>
+            <Grid
+              container
+              direction="row"
+              justify="flex-start"
+              alignItems="center"
+              >
+
+            <Grid item>
+              <img src={logo} className={classes.logo} alt="Logo" />
+            </Grid>
+            <Hidden smDown>
+              <Grid item>
+
+                <Typography variant="h6" component="h1" className={classes.title}>
+                  <Link component={RouterLink} color="inherit" to={paths.WRAP}>
+                    WRAP
+                  </Link>
+                </Typography>
+              </Grid>
+            </Hidden>
+            <Hidden smDown>
+            <Grid item>
+              <Typography variant="h6" component="h1" className={classes.title}>
+                <Link component={RouterLink} color="inherit" to={paths.HISTORY}>
+                  HISTORY
+                </Link>
+              </Typography>
+            </Grid>
+            </Hidden>
+          </Grid>
+          <Hidden smDown>
           <Grid
             container
             direction="row"
-            justify="flex-start"
+            justify="flex-end"
             alignItems="center"
             >
-
-          <Grid item className={classes.gridItemsR}>
-            <img src={logo} className={classes.logo} alt="Logo" />
-          </Grid>
-
-          <Grid
-            item
-            className={classes.gridItemsR}
-            >
-
-            <Typography variant="h6" component="h1" className={classes.title}>
-              <Link component={RouterLink} color="inherit" to={paths.WRAP}>
-                WRAP
-              </Link>
-            </Typography>
-          </Grid>
-
-          <Grid
-            item
-            className={classes.gridItemsR}
-            >
-            <Typography variant="h6" component="h1" className={classes.title}>
-              <Link component={RouterLink} color="inherit" to={paths.HISTORY}>
-                HISTORY
-              </Link>
-            </Typography>
-          </Grid>
-        </Grid>
-
-        <Grid
-          container
-          direction="row"
-          justify="flex-end"
-          alignItems="center"
-          >
-          <Grid
-            item
-            className={classes.gridItemsL}
-            >
-          <Box className={classes.wallets}>
-              <OperationHistoryDialog />
-              <TezosWalletConnection
-                account={tzAccount}
-                activate={tzActivate}
-                deactivate={tzDeactivate}
-                connectionStatus={tzConnectionStatus}
+            <Grid item>
+            <Box className={classes.wallets}>
+                <OperationHistoryDialog />
+                <TezosWalletConnection
+                  account={tzAccount}
+                  activate={tzActivate}
+                  deactivate={tzDeactivate}
+                  connectionStatus={tzConnectionStatus}
+                  />
+                <EthWalletConnection
+                  account={ethAccount}
+                  activate={ethActivate}
+                  deactivate={ethDeactivate}
+                  connectors={connectors}
+                  connectionStatus={ethConnectionStatus}
                 />
-              <EthWalletConnection
-                account={ethAccount}
-                activate={ethActivate}
-                deactivate={ethDeactivate}
-                connectors={connectors}
-                connectionStatus={ethConnectionStatus}
-              />
-            </Box>
-          </Grid>
-          <Grid
-            item
-            className={classes.gridItemsL}
-            >
-            <Button
-              aria-label="Environment selector"
-              aria-controls="env-selector-appbar"
-              aria-haspopup="true"
-              onClick={openEnvSelector}
-              color="inherit"
-              size="small"
-              variant="outlined"
-              endIcon={<SwapHorizIcon />}
-              >
-                {config.environmentName}
-            </Button>
+              </Box>
             </Grid>
-          </Grid>
-          <Menu
-            id="env-selector-appbar"
-            anchorEl={anchorEnvSelector}
-            anchorOrigin={{
-              vertical: 'top',
-              horizontal: 'right',
-            }}
-            keepMounted
-            transformOrigin={{
-              vertical: 'top',
-              horizontal: 'right',
-            }}
-            open={open}
-            onClose={closeEnvSelector}
-          >
-            {environmentOptions.map(({ name, environment }) => (
-              <MenuItem
-                key={environment}
-                onClick={() => handleEnvSelection(environment)}
-              >
-                {name}
-              </MenuItem>
-            ))}
-          </Menu>
-        </Toolbar>
+            <Grid item>
+              <Button
+                aria-label="Environment selector"
+                aria-controls="env-selector-appbar"
+                aria-haspopup="true"
+                onClick={openEnvSelector}
+                color="inherit"
+                size="small"
+                variant="outlined"
+                endIcon={<SwapHorizIcon />}
+                >
+                  {config.environmentName}
+              </Button>
+              </Grid>
+            </Grid>
+            </Hidden>
+            <Menu
+              id="env-selector-appbar"
+              anchorEl={anchorEnvSelector}
+              anchorOrigin={{
+                vertical: 'top',
+                horizontal: 'right',
+              }}
+              keepMounted
+              transformOrigin={{
+                vertical: 'top',
+                horizontal: 'right',
+              }}
+              open={open}
+              onClose={closeEnvSelector}
+            >
+              {environmentOptions.map(({ name, environment }) => (
+                <MenuItem
+                  key={environment}
+                  onClick={() => handleEnvSelection(environment)}
+                >
+                  {name}
+                </MenuItem>
+              ))}
+            </Menu>
+          </Toolbar>
 
-    </AppBar>
+      </AppBar>
+      <DrawerComp open={mobileOpen} onClose={handleDrawerToggle} />
+    </>
   );
 };
 export default Render;
