@@ -35,15 +35,20 @@ const useStyles = makeStyles((theme) =>
     title: {
       flexGrow: 1,
       '& > *': {
-        marginLeft: theme.spacing(2),
+        marginLeft: theme.spacing(4),
       },
     },
     logo: {
       width: 50,
+      backgroundColor: '#FFD000',
+      borderRadius: '12px'
+    },
+    toolbar: {
+      minHeight: 128
     },
     wallets: {
       '& > *': {
-        marginRight: theme.spacing(1),
+        marginRight: theme.spacing(5),
       },
     },
     menuButton: {
@@ -110,9 +115,9 @@ const Render = () => {
 
   return (
     <>
-      <AppBar position="static">
+      <AppBar position="static" style={{ background: 'transparent', boxShadow: 'none'}}>
 
-          <Toolbar>
+          <Toolbar className={classes.toolbar}>
           <IconButton
               color="inherit"
               aria-label="open drawer"
@@ -137,7 +142,7 @@ const Render = () => {
 
                 <Typography variant="h6" component="h1" className={classes.title}>
                   <Link component={RouterLink} color="inherit" to={paths.WRAP}>
-                    WRAP
+                    Wrap
                   </Link>
                 </Typography>
               </Grid>
@@ -146,7 +151,7 @@ const Render = () => {
             <Grid item>
               <Typography variant="h6" component="h1" className={classes.title}>
                 <Link component={RouterLink} color="inherit" to={paths.HISTORY}>
-                  HISTORY
+                  History
                 </Link>
               </Typography>
             </Grid>
