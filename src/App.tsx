@@ -28,9 +28,8 @@ const useStyle = makeStyles((theme) => ({
       'Roboto',
       ],
     },
-    backgroundColor: '#E5E5E5',
-    borderRadius: '15px',
-    padding: '0 25px'
+    backgroundColor: 'none'
+    
   },
 }));
 
@@ -52,7 +51,7 @@ function App() {
                         <Route path={paths.HISTORY}>
                           <HistoryScreen />
                         </Route>
-                        <WrapPaper className={classes.root}>
+                        <WrapPaper>
                           <Route
                             exact
                             path={mainPaths}

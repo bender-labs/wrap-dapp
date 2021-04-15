@@ -1,10 +1,29 @@
-import { Box, Paper, PaperProps, styled } from '@material-ui/core';
+import { Box, Paper, PaperProps, styled, makeStyles, createStyles } from '@material-ui/core';
 import * as React from 'react';
+
+const useStyles = makeStyles(() => 
+  createStyles({
+    bg: {
+      backgroundColor: 'transparent',
+      borderRadius: '15px',
+      color: 'white',
+      textTransform: 'lowercase',
+    },
+    card: {
+      backgroundColor: '#E5E5E5',
+    }
+
+  })
+);
+
 
 export type WrapPaperProps = PaperProps;
 
 export function WrapPaper(props: WrapPaperProps) {
-  return <Paper {...props} />;
+  const classes = useStyles();
+  return (
+    <Paper className={classes.bg} {...props} />
+    );
 }
 
 export const PaperHeader = styled('header')((theme) => ({
@@ -43,7 +62,9 @@ export const PaperActions = styled('div')({
 });
 
 export function PaperContent(props: React.HTMLAttributes<HTMLDivElement>) {
-  return <Box p={2} {...props} />;
+  const classes = useStyles();
+
+  return <Box className={classes.card} p={2} {...props} />;
 }
 
 export function PaperSection() {}
