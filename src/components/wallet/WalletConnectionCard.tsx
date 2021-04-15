@@ -7,7 +7,7 @@ import {
 } from '../../features/wallet/blockchain';
 import { ConnectionStatus } from '../../features/wallet/connectionStatus';
 import ProviderSelectionDialog from './ProviderSelectionDialog';
-import { ellipsizeAddress } from '../../features/wallet/address';
+// import { ellipsizeAddress } from '../../features/wallet/address';
 import EthereumIcon from '../ethereum/Icon';
 import TezosIcon from '../tezos/Icon';
 
@@ -18,6 +18,10 @@ const useStyles = makeStyles(() => ({
       color: '#616161',
     },
   },
+  chip: {
+    background: "#FFD000",
+    padding: "10px"
+  }
 }));
 
 const blockchainIcon = (blockchain: SupportedBlockchain) =>
@@ -64,8 +68,9 @@ const WalletConnectionCard = ({
       {connectionStatus === ConnectionStatus.CONNECTED && account != null ? (
         <Chip
           icon={blockchainIcon(blockchain)}
-          label={ellipsizeAddress(account)}
+          label={"Connected"}
           onDelete={handleDisconnection}
+          className={classes.chip}
         />
       ) : (
         <Button

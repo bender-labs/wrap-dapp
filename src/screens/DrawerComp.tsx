@@ -22,7 +22,9 @@ const useStyles = makeStyles((theme: Theme) =>
       [theme.breakpoints.up('sm')]: {
         width: drawerWidth,
         flexShrink: 0,
+        
       },
+      
     },
     
     menuButton: {
@@ -35,9 +37,14 @@ const useStyles = makeStyles((theme: Theme) =>
     toolbar: theme.mixins.toolbar,
     drawerPaper: {
       width: drawerWidth,
+      background: "#E5E5E5"
     },
-    close: {
-      float: 'right',
+    button: {
+      border: 'none',
+      background: "#E5E5E5",
+      '&:focus': {
+        outline: 0
+      }
     },
     content: {
       flexGrow: 1,
@@ -65,11 +72,11 @@ export default function DrawerComp(props: Props) {
   const drawer = (
     <div>
       <div className={classes.toolbar} />
-      <button onClick={onClose}><CloseIcon className={classes.close} /></button>
+      <button className={classes.button} onClick={onClose}><CloseIcon /></button>
       <List>
         {['WRAP', 'HISTORY'].map((text, index) => (
           <ListItem button key={text}>
-            <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
+
             <ListItemText primary={text} />
           </ListItem>
         ))}
@@ -95,7 +102,6 @@ export default function DrawerComp(props: Props) {
           <Drawer
             container={container}
             variant="temporary"
-            // anchor={theme.direction === 'rtl' ? 'right' : 'left'}
             open={!open}
             onClose={onClose}
             classes={{

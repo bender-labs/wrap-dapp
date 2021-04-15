@@ -46,11 +46,13 @@ const useStyles = makeStyles((theme) =>
     },
     toolbar: {
       color: '#FFFFFF',
-      minHeight: 110
+      minHeight: 110,
     },
     wallets: {
       '& > *': {
         marginRight: theme.spacing(2),
+        borderRadius: '25px',
+        padding: '3px 25px'
       },
     },
     menuSpace: {
@@ -62,7 +64,7 @@ const useStyles = makeStyles((theme) =>
     },
 
     menuButton: {
-      marginRight: theme.spacing(4),
+      marginRight: theme.spacing(),
       [theme.breakpoints.up('sm')]: {
         display: 'none',
       },
@@ -176,15 +178,21 @@ const Render = () => {
             >
 
             <Grid item>
-            
+              <OperationHistoryDialog />
+            </Grid>
+            <Grid item>
             <Box className={classes.wallets}>
-              <OperationHistoryDialog />      
+                    
                 <TezosWalletConnection
                   account={tzAccount}
                   activate={tzActivate}
                   deactivate={tzDeactivate}
                   connectionStatus={tzConnectionStatus}
-                  />
+                />
+              </Box>
+            </Grid>
+            <Grid item>
+              <Box className={classes.wallets}>
                 <EthWalletConnection
                   account={ethAccount}
                   activate={ethActivate}

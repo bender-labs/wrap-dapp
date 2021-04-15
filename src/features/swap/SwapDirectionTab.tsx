@@ -20,6 +20,7 @@ export const SwapDirectionTab: React.FC<TabsProps> = () => {
         value={path}
         onChange={onTabChange}
         indicatorColor="primary"
+        style={{ backgroundColor: "transparent"}}
         variant="fullWidth"
       >
         <Tab
