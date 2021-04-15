@@ -20,7 +20,7 @@ const useStyles = makeStyles(() => ({
   },
   chip: {
     background: "#FFD000",
-    padding: "10px"
+    padding: "5px 10px"
   }
 }));
 
