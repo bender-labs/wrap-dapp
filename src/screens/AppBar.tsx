@@ -24,8 +24,8 @@ import {
 import { Environment } from '../config';
 import SwapHorizIcon from '@material-ui/icons/SwapHoriz';
 import logo from './logo.png';
-// import EthWalletConnection from '../components/ethereum/WalletConnection';
-// import TezosWalletConnection from '../components/tezos/WalletConnection';
+import EthWalletConnection from '../components/ethereum/WalletConnection';
+import TezosWalletConnection from '../components/tezos/WalletConnection';
 import { useWalletContext } from '../runtime/wallet/WalletContext';
 import OperationHistoryDialog from '../features/operations/components/OperationHistoryDialog';
 import { paths } from './routes';
@@ -34,7 +34,6 @@ const useStyles = makeStyles((theme) =>
   createStyles({
     title: {
       flexGrow: 1,
-      
       '& > *': {
         marginLeft: theme.spacing(4),
       },
@@ -47,18 +46,18 @@ const useStyles = makeStyles((theme) =>
     },
     toolbar: {
       color: '#FFFFFF',
-      minHeight: 128
+      minHeight: 110
     },
     wallets: {
       '& > *': {
-        marginRight: theme.spacing(5),
+        marginRight: theme.spacing(2),
       },
     },
     menuSpace: {
-      
       '& > *': {
         marginRight: theme.spacing(5),
-      }
+      },
+      
       
     },
 
@@ -81,21 +80,21 @@ const Render = () => {
     environmentOptions,
   } = useEnvironmentSelectorContext();
 
-  // const {
-  //   ethereum: {
-  //     activate: ethActivate,
-  //     deactivate: ethDeactivate,
-  //     account: ethAccount,
-  //     connectors,
-  //     status: ethConnectionStatus,
-  //   },
-  //   tezos: {
-  //     activate: tzActivate,
-  //     deactivate: tzDeactivate,
-  //     status: tzConnectionStatus,
-  //     account: tzAccount,
-  //   },
-  // } = useWalletContext();
+  const {
+    ethereum: {
+      activate: ethActivate,
+      deactivate: ethDeactivate,
+      account: ethAccount,
+      connectors,
+      status: ethConnectionStatus,
+    },
+    tezos: {
+      activate: tzActivate,
+      deactivate: tzDeactivate,
+      status: tzConnectionStatus,
+      account: tzAccount,
+    },
+  } = useWalletContext();
 
   const classes = useStyles();
 
@@ -176,9 +175,10 @@ const Render = () => {
             alignItems="center"
             >
 
-            {/* <Grid item>
+            <Grid item>
+            
             <Box className={classes.wallets}>
-                
+              <OperationHistoryDialog />      
                 <TezosWalletConnection
                   account={tzAccount}
                   activate={tzActivate}
@@ -193,8 +193,8 @@ const Render = () => {
                   connectionStatus={ethConnectionStatus}
                 />
               </Box>
-            </Grid> */}
-            <OperationHistoryDialog />
+            </Grid>
+            
             <Grid item className={classes.menuSpace}>
             
               <Button
@@ -215,7 +215,6 @@ const Render = () => {
             <Menu
               id="env-selector-appbar"
               anchorEl={anchorEnvSelector}
-              
               anchorOrigin={{
                 vertical: 'top',
                 horizontal: 'right',

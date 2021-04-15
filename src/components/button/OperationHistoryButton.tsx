@@ -1,5 +1,5 @@
 import RestoreIcon from '@material-ui/icons/Restore';
-import { Badge, IconButton } from '@material-ui/core';
+import { Badge, createStyles, IconButton } from '@material-ui/core';
 
 export type OperationHistoryButtonProps = {
   count: number;
@@ -11,13 +11,14 @@ export default function OperationHistoryButton({
   onClick,
 }: OperationHistoryButtonProps) {
   return (
-    <IconButton
+    <IconButton 
       onClick={(e) => {
         e.preventDefault();
         onClick();
       }}
+      color="inherit"
     >
-      <Badge badgeContent={count} color={'secondary'}>
+      <Badge badgeContent={count} color={"default"} >
         <RestoreIcon />
       </Badge>
     </IconButton>

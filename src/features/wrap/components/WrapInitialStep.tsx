@@ -77,7 +77,9 @@ export default function WrapInitialStep({
           displayBalance={connected}
         />
       </PaperContent>
-      <SpacedDivider />
+      { !amount.isZero() && 
+        <>
+       <SpacedDivider />
       <PaperContent>
         <AssetSummary
           label={'You will receive'}
@@ -86,6 +88,9 @@ export default function WrapInitialStep({
           decimals={token.decimals}
         />
       </PaperContent>
+      </>
+      }
+    
     </>
   );
 }

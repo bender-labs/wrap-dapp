@@ -45,6 +45,20 @@ export default function UnwrapInitialStep({
   return (
     <>
       <PaperContent>
+        {connected && (
+          <Button
+            fullWidth
+            variant={'contained'}
+            color={'primary'}
+            onClick={onNext}
+            disabled={status !== UnwrapStatus.READY_TO_UNWRAP}
+          >
+            NEXT
+          </Button>
+        )}
+        {!connected && <MultiConnect />}
+      </PaperContent>
+      <PaperContent>
         <TokenSelection
           token={token.ethereumSymbol}
           onTokenSelect={onTokenChange}
@@ -60,30 +74,20 @@ export default function UnwrapInitialStep({
           displayBalance={connected}
         />
       </PaperContent>
-      <SpacedDivider />
+      { !amount.isZero() && 
+        <>
+       <SpacedDivider />
       <PaperContent>
         <AssetSummary
           label={'You will receive'}
           value={amount.minus(currentFees)}
-          symbol={token.ethereumSymbol}
+          symbol={token.tezosSymbol}
           decimals={token.decimals}
         />
       </PaperContent>
-      <SpacedDivider />
-      <PaperContent>
-        {connected && (
-          <Button
-            fullWidth
-            variant={'contained'}
-            color={'primary'}
-            onClick={onNext}
-            disabled={status !== UnwrapStatus.READY_TO_UNWRAP}
-          >
-            NEXT
-          </Button>
-        )}
-        {!connected && <MultiConnect />}
-      </PaperContent>
+      </>
+      }
+      
     </>
   );
 }

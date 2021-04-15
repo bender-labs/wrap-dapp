@@ -1,0 +1,14 @@
+body {
+    padding:0;
+    margin:0;
+}
+body #background-container {
+    min-height: 100vh;
+    min-width: 100vw;
+    background-image: url("/static/images/background.png"), linear-gradient(73.72deg, #444444 2.47%, #000000 92.92%);
+    background-size: cover;
+    position:fixed;
+    z-index: -99;
+    margin:0;
+    padding: 0;
+}
