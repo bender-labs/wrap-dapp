@@ -57,6 +57,7 @@ export default function WrapConfirmStep({
         <PaperActions />
       </PaperHeader>
 
+
       <PaperContent>
         <Typography variant={'body2'}>Details</Typography>
         <LabelAndAsset

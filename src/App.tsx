@@ -51,13 +51,13 @@ function App() {
                         <Route path={paths.HISTORY}>
                           <HistoryScreen />
                         </Route>
-                        <WrapPaper>
+
                           <Route
                             exact
                             path={mainPaths}
                             component={MainScreen}
                           />
-                        </WrapPaper>
+
                       </Switch>
                     </Container>
                   </SnackbarProvider>

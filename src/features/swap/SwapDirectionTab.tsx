@@ -1,10 +1,22 @@
 import React, { useCallback } from 'react';
-import { Tab, Tabs, TabsProps } from '@material-ui/core';
+import { createStyles, makeStyles, Tab, Tabs, TabsProps } from '@material-ui/core';
 import { useHistory } from 'react-router';
 import { useRouteMatch } from 'react-router-dom';
 import { paths } from '../../screens/routes';
 
+const useStyles = makeStyles(() =>
+  createStyles({
+    bg: {
+      color: 'white',
+      textTransform: 'lowercase',
+      marginBottom: '10px'
+    }
+
+  })
+);
+
 export const SwapDirectionTab: React.FC<TabsProps> = () => {
+  const classes = useStyles();
   const history = useHistory();
   const { path } = useRouteMatch();
   const onTabChange = useCallback(
@@ -15,12 +27,12 @@ export const SwapDirectionTab: React.FC<TabsProps> = () => {
   );
 
   return (
-    <>
+    
       <Tabs
         value={path}
         onChange={onTabChange}
+        className={classes.bg}
         indicatorColor="primary"
-        style={{ backgroundColor: "transparent"}}
         variant="fullWidth"
       >
         <Tab
@@ -32,6 +44,6 @@ export const SwapDirectionTab: React.FC<TabsProps> = () => {
           value={paths.UNWRAP}
         />
       </Tabs>
-    </>
+
   );
 };

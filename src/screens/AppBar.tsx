@@ -38,6 +38,12 @@ const useStyles = makeStyles((theme) =>
         marginLeft: theme.spacing(4),
       },
     },
+    first:{
+      flex: 1,
+    },
+    second: {
+      flex: 2,
+    },
     logo: {
       width: 50,
       backgroundColor: '#FFD000',
@@ -140,38 +146,40 @@ const Render = () => {
               <MenuIcon />
             </IconButton>
             <Grid
+              className={classes.first}
               container
               direction="row"
               justify="flex-start"
               alignItems="center"
               >
 
-            <Grid item>
-              <img src={logo} className={classes.logo} alt="Logo" />
-            </Grid>
-            <Hidden smDown>
               <Grid item>
+                <img src={logo} className={classes.logo} alt="Logo" />
+              </Grid>
+              <Hidden xsDown>
+                <Grid item>
 
+                  <Typography variant="h6" component="h1" className={classes.title}>
+                    <Link component={RouterLink} color="inherit" to={paths.WRAP}>
+                      Wrap
+                    </Link>
+                  </Typography>
+                </Grid>
+              </Hidden>
+              <Hidden xsDown>
+              <Grid item>
                 <Typography variant="h6" component="h1" className={classes.title}>
-                  <Link component={RouterLink} color="inherit" to={paths.WRAP}>
-                    Wrap
+                  <Link component={RouterLink} color="inherit" to={paths.HISTORY}>
+                    History
                   </Link>
                 </Typography>
               </Grid>
-            </Hidden>
-            <Hidden smDown>
-            <Grid item>
-              <Typography variant="h6" component="h1" className={classes.title}>
-                <Link component={RouterLink} color="inherit" to={paths.HISTORY}>
-                  History
-                </Link>
-              </Typography>
-            </Grid>
-            </Hidden>
+              </Hidden>
           </Grid>
-          <Hidden smDown>
+          <Hidden xsDown>
           <Grid
             container
+            className={classes.second}
             direction="row"
             justify="flex-end"
             alignItems="center"

@@ -3,13 +3,9 @@ import * as React from 'react';
 
 const useStyles = makeStyles(() => 
   createStyles({
-    bg: {
-      backgroundColor: 'transparent',
-      borderRadius: '15px',
-      color: 'white',
-      textTransform: 'lowercase',
-    },
+
     card: {
+
       backgroundColor: '#E5E5E5',
     }
 
@@ -22,7 +18,7 @@ export type WrapPaperProps = PaperProps;
 export function WrapPaper(props: WrapPaperProps) {
   const classes = useStyles();
   return (
-    <Paper className={classes.bg} {...props} />
+    <Paper {...props} />
     );
 }
 
@@ -66,5 +62,7 @@ export function PaperContent(props: React.HTMLAttributes<HTMLDivElement>) {
 
   return <Box className={classes.card} p={2} {...props} />;
 }
+
+// what is this for?
 
 export function PaperSection() {}
