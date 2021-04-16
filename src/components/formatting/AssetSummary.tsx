@@ -8,7 +8,8 @@ import { formatOptions } from './numberFormat';
 const useStyle = makeStyles((theme) => ({
   root: {
     border: `1px solid ${theme.palette.divider}`,
-    borderRadius: 10,
+    backgroundColor: '#343434',
+    color: '#FFFFFF',
     padding: '10px 20px',
   },
   wrapper: {
@@ -24,6 +25,9 @@ const useStyle = makeStyles((theme) => ({
 
   valueWrapper: {
     flexGrow: 2,
+    color: '#FFD000',
+    fontSize: 20,
+    fontWeight: 'bold',
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'center',

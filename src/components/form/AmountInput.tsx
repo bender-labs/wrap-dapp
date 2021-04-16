@@ -8,6 +8,7 @@ const useStyles = makeStyles((theme) => ({
   container: {
     width: '100%',
     textAlign: 'center',
+    padding: '30px 0',
     '& input': {
       fontFamily: 'inherit',
       textAlign: 'center',

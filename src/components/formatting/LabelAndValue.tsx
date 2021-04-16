@@ -38,7 +38,7 @@ export default function LabelAndValue({ label, value }: LabelAndValueProps) {
     <div className={classes.root}>
       <div className={classes.wrapper}>
         <Typography component="span" className={classes.label}>
-          {label} L
+          {label}
         </Typography>
         <div className={classes.valueWrapper}>{value}</div>
       </div>

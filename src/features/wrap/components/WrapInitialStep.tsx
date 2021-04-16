@@ -45,23 +45,10 @@ export default function WrapInitialStep({
   return (
     <>
     <PaperContent>
-        {connected && (
-          <Button
-            fullWidth
-            variant={'contained'}
-            color={'primary'}
-            onClick={onNext}
-            disabled={
-              status !== WrapStatus.READY_TO_CONFIRM &&
-              status !== WrapStatus.READY_TO_WRAP
-            }
-          >
-            NEXT
-          </Button>
-        )}
+
         {!connected && <MultiConnect />}
       </PaperContent>
-      <PaperContent>
+      <PaperContent style={{ padding: '0 50px' }}>
         <TokenSelection
           token={token.ethereumSymbol}
           onTokenSelect={onTokenChange}
@@ -69,6 +56,7 @@ export default function WrapInitialStep({
           tokens={tokens}
         />
         <AmountToWrapInput
+
           balance={balance}
           decimals={token.decimals}
           symbol={token.ethereumSymbol}
@@ -77,9 +65,8 @@ export default function WrapInitialStep({
           displayBalance={connected}
         />
       </PaperContent>
-      { !amount.isZero() && 
+      { !amount.isZero() &&
         <>
-       <SpacedDivider />
       <PaperContent>
         <AssetSummary
           label={'You will receive'}
@@ -90,7 +77,27 @@ export default function WrapInitialStep({
       </PaperContent>
       </>
       }
+      { !amount.isZero() &&
+
+      <PaperContent>
+      {connected && (
+        <Button
+          fullWidth
+          variant={'contained'}
+          color={'secondary'}
+          onClick={onNext}
+          disabled={
+            status !== WrapStatus.READY_TO_CONFIRM &&
+            status !== WrapStatus.READY_TO_WRAP
+          }
+        >
+          NEXT
+        </Button>
+      )}
+
     
+    </PaperContent>
+      }
     </>
   );
 }

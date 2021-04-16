@@ -32,7 +32,7 @@ export default function MultiConnect() {
   };
 
   return (
-    <Stepper alternativeLabel activeStep={activeStep()}>
+    <Stepper style={ {backgroundColor: '#E5E5E5'}} alternativeLabel activeStep={activeStep()}>
       <Step>
         <StepButton component={'div'}>
           <TezosWalletConnection

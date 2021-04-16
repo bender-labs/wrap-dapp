@@ -15,12 +15,6 @@ const useStyles = makeStyles(() =>
 
 export type WrapPaperProps = PaperProps;
 
-export function WrapPaper(props: WrapPaperProps) {
-  const classes = useStyles();
-  return (
-    <Paper {...props} />
-    );
-}
 
 export const PaperHeader = styled('header')((theme) => ({
   display: 'flex',

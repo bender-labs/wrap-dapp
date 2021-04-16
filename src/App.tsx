@@ -9,32 +9,19 @@ import WalletProvider from './runtime/wallet/WalletContext';
 import { SnackbarProvider } from 'notistack';
 import { Container, createMuiTheme, CssBaseline } from '@material-ui/core';
 import HistoryScreen from './screens/HistoryScreen';
-import { makeStyles, ThemeProvider } from '@material-ui/core/styles';
+import { ThemeProvider } from '@material-ui/core/styles';
 import { themeOptions } from './runtime/theme/theme';
 import { RecoilRoot } from 'recoil';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import AppBar from './screens/AppBar';
 import { mainPaths, paths } from './screens/routes';
-import { WrapPaper } from './components/paper/Paper';
 import MainScreen from './screens/MainScreen';
 
 const theme = createMuiTheme(themeOptions);
 
-const useStyle = makeStyles((theme) => ({
-  root: { 
-    marginTop: theme.spacing(),
-    typography: {
-      fontFamily: [
-      'Roboto',
-      ],
-    },
-    backgroundColor: 'none'
-    
-  },
-}));
+
 
 function App() {
-  const classes = useStyle();
   return (
     <ConfigProvider>
       <Web3ReactProvider getLibrary={getEthLibrary}>
