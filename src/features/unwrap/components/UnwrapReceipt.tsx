@@ -15,7 +15,7 @@ import { CircularProgressWithLabel } from '../../../components/progress/Circular
 import LabelAndAsset from '../../../components/formatting/LabelAndAsset';
 import { TokenMetadata } from '../../swap/token';
 import { Button, Typography } from '@material-ui/core';
-import { SpacedDivider } from '../../../components/formatting/SpacedDivider';
+// import { SpacedDivider } from '../../../components/formatting/SpacedDivider';
 import LoadableButton from '../../../components/button/LoadableButton';
 import { ReceiptStatus } from '../../operations/hooks/useOperation';
 import { ConnectionStatus } from '../../wallet/connectionStatus';
@@ -137,7 +137,13 @@ export default function UnwrapReceipt({
   ];
   return (
     <>
-      <PaperHeader>
+      <PaperHeader
+        style={{
+          backgroundColor: '#E5E5E5',
+          fontSize: '20px',
+          fontWeight: 'bold',
+          paddingTop: '20px',
+          boxShadow: 'inset 0 -7px 9px -7px rgba(0,0,0,0.4)'}}>
         <PaperNav />
         <PaperTitle>Releasing</PaperTitle>
         <PaperActions />
@@ -160,8 +166,11 @@ export default function UnwrapReceipt({
           decimals={decimals}
         />
       </PaperContent>
-      <SpacedDivider />
-      {unwrapStatus(operation, 10, 2, onRelease, status, walletStatus)}
+      <PaperContent>
+        <div>{unwrapStatus(operation, 10, 2, onRelease, status, walletStatus)}</div>
+      </PaperContent>
+      <PaperContent style={{ minHeight: '200px', borderRadius: '0 0 10px 10px'}}>
+      </PaperContent>
     </>
   );
 }

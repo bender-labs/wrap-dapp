@@ -136,15 +136,7 @@ const Render = () => {
       <AppBar position="static" style={{ background: 'transparent', boxShadow: 'none'}}>
 
           <Toolbar className={classes.toolbar}>
-          <IconButton
-              color="inherit"
-              aria-label="open drawer"
-              edge="start"
-              onClick={handleDrawerToggle}
-              className={classes.menuButton}
-            >
-              <MenuIcon />
-            </IconButton>
+
             <Grid
               className={classes.first}
               container
@@ -156,7 +148,7 @@ const Render = () => {
               <Grid item>
                 <img src={logo} className={classes.logo} alt="Logo" />
               </Grid>
-              <Hidden xsDown>
+              <Hidden smDown>
                 <Grid item>
 
                   <Typography variant="h6" component="h1" className={classes.title}>
@@ -166,7 +158,7 @@ const Render = () => {
                   </Typography>
                 </Grid>
               </Hidden>
-              <Hidden xsDown>
+              <Hidden smDown>
               <Grid item>
                 <Typography variant="h6" component="h1" className={classes.title}>
                   <Link component={RouterLink} color="inherit" to={paths.HISTORY}>
@@ -176,7 +168,7 @@ const Render = () => {
               </Grid>
               </Hidden>
           </Grid>
-          <Hidden xsDown>
+          <Hidden smDown>
           <Grid
             container
             className={classes.second}
@@ -233,12 +225,12 @@ const Render = () => {
               anchorEl={anchorEnvSelector}
               anchorOrigin={{
                 vertical: 'top',
-                horizontal: 'right',
+                horizontal: 'left',
               }}
               keepMounted
               transformOrigin={{
                 vertical: 'top',
-                horizontal: 'right',
+                horizontal: 'left',
               }}
               open={open}
               onClose={closeEnvSelector}
@@ -252,6 +244,15 @@ const Render = () => {
                 </MenuItem>
               ))}
             </Menu>
+            <IconButton
+              color="inherit"
+              aria-label="open drawer"
+              edge="start"
+              onClick={handleDrawerToggle}
+              className={classes.menuButton}
+            >
+              <MenuIcon />
+            </IconButton>
           </Toolbar>
 
       </AppBar>

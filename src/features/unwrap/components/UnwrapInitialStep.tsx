@@ -8,7 +8,6 @@ import { PaperContent } from '../../../components/paper/Paper';
 import TokenSelection from '../../../components/token/TokenSelection';
 import { SupportedBlockchain } from '../../wallet/blockchain';
 import AmountToWrapInput from '../../../components/token/AmountToWrapInput';
-import { SpacedDivider } from '../../../components/formatting/SpacedDivider';
 import AssetSummary from '../../../components/formatting/AssetSummary';
 import { Button, createStyles, makeStyles } from '@material-ui/core';
 import MultiConnect from '../../wallet/MultiConnect';

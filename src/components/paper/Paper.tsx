@@ -1,4 +1,4 @@
-import { Box, Paper, PaperProps, styled, makeStyles, createStyles } from '@material-ui/core';
+import { Box, PaperProps, styled, makeStyles, createStyles } from '@material-ui/core';
 import * as React from 'react';
 
 const useStyles = makeStyles(() => 

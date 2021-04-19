@@ -11,7 +11,6 @@ import { Button, makeStyles, createStyles } from '@material-ui/core';
 import { wrapFees } from '../../fees/fees';
 import AssetSummary from '../../../components/formatting/AssetSummary';
 import { WrapStatus } from '../hooks/useWrap';
-import { SpacedDivider } from '../../../components/formatting/SpacedDivider';
 import MultiConnect from '../../wallet/MultiConnect';
 
 const useStyles = makeStyles(() =>
