@@ -32,7 +32,7 @@ export default function WrapActions({
   };
 
   return (
-    <Stepper alternativeLabel activeStep={activeStep()}>
+    <Stepper alternativeLabel activeStep={activeStep()} style={{ borderRadius: '0 0 10px 10px', backgroundColor: '#e5e5e5' }}>
       <Step>
         <StepButton component="div">
           <AllowanceButton

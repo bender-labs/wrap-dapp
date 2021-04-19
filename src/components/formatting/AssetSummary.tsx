@@ -16,6 +16,8 @@ const useStyle = makeStyles((theme) => ({
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
+    padding: '0 26px'
+
   },
 
   label: {

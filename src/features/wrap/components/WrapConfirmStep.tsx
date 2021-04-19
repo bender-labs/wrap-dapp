@@ -47,7 +47,8 @@ export default function WrapConfirmStep({
   const currentFees = wrapFees(amount, fees);
   return (
     <>
-      <PaperHeader>
+      <PaperHeader style={{ backgroundColor: '#E5E5E5',
+      fontSize: '20px', fontWeight: 'bold'}}>
         <PaperNav>
           <IconButton onClick={onPrevious}>
             <ArrowBackIcon />
@@ -68,6 +69,8 @@ export default function WrapConfirmStep({
         />
         <LabelAndValue label={'From'} value={sendingAddress} />
         <LabelAndValue label={'To'} value={recipientAddress} />
+      </PaperContent>
+      <PaperContent style={{ backgroundColor: '#C4C4C4'}}>
         <Typography variant={'body2'}>Fees</Typography>
         <LabelAndAsset
           label={'Wrap fees'}
@@ -82,8 +85,8 @@ export default function WrapConfirmStep({
           symbol={token.tezosSymbol}
         />
       </PaperContent>
-      <SpacedDivider />
-      <PaperContent>
+
+      <PaperContent style={{ padding: '0' }}>
         <AssetSummary
           label={'Receive'}
           value={amount.minus(currentFees)}
@@ -91,7 +94,7 @@ export default function WrapConfirmStep({
           symbol={token.tezosSymbol}
         />
       </PaperContent>
-      <SpacedDivider />
+
       <WrapActions
         currentAllowance={currentAllowance}
         amountToWrap={amount}

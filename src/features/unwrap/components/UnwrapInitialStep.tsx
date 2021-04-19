@@ -10,8 +10,23 @@ import { SupportedBlockchain } from '../../wallet/blockchain';
 import AmountToWrapInput from '../../../components/token/AmountToWrapInput';
 import { SpacedDivider } from '../../../components/formatting/SpacedDivider';
 import AssetSummary from '../../../components/formatting/AssetSummary';
-import { Button } from '@material-ui/core';
+import { Button, createStyles, makeStyles } from '@material-ui/core';
 import MultiConnect from '../../wallet/MultiConnect';
+import ArrowRightAltIcon from '@material-ui/icons/ArrowRightAlt';
+
+const useStyles = makeStyles(() =>
+  createStyles({
+    buttonStyle: {
+      color: 'black',
+      backgroundColor: '#FFD000',
+      width: "40%",
+      borderRadius: '25px',
+      float: 'right'
+
+    },
+
+  })
+)
 
 export type UnwrapInitialStepProps = {
   status: UnwrapStatus;
@@ -40,25 +55,16 @@ export default function UnwrapInitialStep({
 }: UnwrapInitialStepProps) {
   const [currentFees, setCurrentFees] = useState(new BigNumber(0));
 
+  const classes = useStyles()
+
   useEffect(() => setCurrentFees(wrapFees(amount, fees)), [amount, fees]);
 
   return (
     <>
       <PaperContent>
-        {connected && (
-          <Button
-            fullWidth
-            variant={'contained'}
-            color={'primary'}
-            onClick={onNext}
-            disabled={status !== UnwrapStatus.READY_TO_UNWRAP}
-          >
-            NEXT
-          </Button>
-        )}
         {!connected && <MultiConnect />}
       </PaperContent>
-      <PaperContent>
+      <PaperContent style={{ padding: '0 50px' }}>
         <TokenSelection
           token={token.ethereumSymbol}
           onTokenSelect={onTokenChange}
@@ -74,19 +80,34 @@ export default function UnwrapInitialStep({
           displayBalance={connected}
         />
       </PaperContent>
-      { !amount.isZero() && 
-        <>
-       <SpacedDivider />
-      <PaperContent>
-        <AssetSummary
-          label={'You will receive'}
-          value={amount.minus(currentFees)}
-          symbol={token.tezosSymbol}
-          decimals={token.decimals}
-        />
+      {/*{!amount.isZero() &&*/}
+      {/*<>*/}
+      {/*  <SpacedDivider />*/}
+        <PaperContent style={{ padding: '16px 0'}}>
+          <AssetSummary
+            label={'You will receive'}
+            value={amount.minus(currentFees)}
+            symbol={token.tezosSymbol}
+            decimals={token.decimals}
+          />
+        </PaperContent>
+      {/*</>*/}
+      {/*}*/}
+      {/*{ !amount.isZero() &&*/}
+      <PaperContent style={{ borderRadius: '0 0 10px 10px', minHeight: '70px', padding: '60px 30px'}}>
+        {connected && (
+          <Button
+            className={classes.buttonStyle}
+            variant={'contained'}
+            color={'primary'}
+            onClick={onNext}
+            disabled={status !== UnwrapStatus.READY_TO_UNWRAP}
+          >
+            NEXT <ArrowRightAltIcon />
+          </Button>
+        )}
       </PaperContent>
-      </>
-      }
+      {/*}*/}
       
     </>
   );
