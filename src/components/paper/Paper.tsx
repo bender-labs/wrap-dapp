@@ -1,11 +1,20 @@
-import { Box, Paper, PaperProps, styled } from '@material-ui/core';
+import { Box, PaperProps, styled, makeStyles, createStyles } from '@material-ui/core';
 import * as React from 'react';
+
+const useStyles = makeStyles(() => 
+  createStyles({
+
+    card: {
+
+      backgroundColor: '#E5E5E5',
+    }
+
+  })
+);
+
 
 export type WrapPaperProps = PaperProps;
 
-export function WrapPaper(props: WrapPaperProps) {
-  return <Paper {...props} />;
-}
 
 export const PaperHeader = styled('header')((theme) => ({
   display: 'flex',
@@ -43,7 +52,11 @@ export const PaperActions = styled('div')({
 });
 
 export function PaperContent(props: React.HTMLAttributes<HTMLDivElement>) {
-  return <Box p={2} {...props} />;
+  const classes = useStyles();
+
+  return <Box className={classes.card} p={2} {...props} />;
 }
+
+// what is this for?
 
 export function PaperSection() {}

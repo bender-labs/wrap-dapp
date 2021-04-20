@@ -11,13 +11,14 @@ export default function OperationHistoryButton({
   onClick,
 }: OperationHistoryButtonProps) {
   return (
-    <IconButton
+    <IconButton 
       onClick={(e) => {
         e.preventDefault();
         onClick();
       }}
+      color="inherit"
     >
-      <Badge badgeContent={count} color={'secondary'}>
+      <Badge badgeContent={count} color={"default"} >
         <RestoreIcon />
       </Badge>
     </IconButton>

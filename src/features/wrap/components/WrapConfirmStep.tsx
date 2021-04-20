@@ -14,7 +14,6 @@ import { Fees } from '../../../config';
 import WrapActions from './WrapActions';
 import { WrapStatus } from '../hooks/useWrap';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
-import { SpacedDivider } from '../../../components/formatting/SpacedDivider';
 import LabelAndAsset from '../../../components/formatting/LabelAndAsset';
 import AssetSummary from '../../../components/formatting/AssetSummary';
 import LabelAndValue from '../../../components/formatting/LabelAndValue';
@@ -49,7 +48,8 @@ export default function WrapConfirmStep({
   const currentFees = wrapFees(amount, fees);
   return (
     <>
-      <PaperHeader>
+      <PaperHeader style={{ backgroundColor: '#E5E5E5',
+      fontSize: '20px', fontWeight: 'bold', boxShadow: 'inset 0 -7px 9px -7px rgba(0,0,0,0.4)'}}>
         <PaperNav>
           <IconButton onClick={onPrevious}>
             <ArrowBackIcon />
@@ -59,8 +59,9 @@ export default function WrapConfirmStep({
         <PaperActions />
       </PaperHeader>
 
+
       <PaperContent>
-        <Typography variant={'body2'}>Details</Typography>
+        <Typography variant={'body2'} style={{ paddingLeft: '20px', fontWeight: 'bold'}}>Details</Typography>
         <LabelAndAsset
           label={'Send'}
           decimals={token.decimals}
@@ -69,7 +70,9 @@ export default function WrapConfirmStep({
         />
         <LabelAndValue label={'From'} value={sendingAddress} />
         <LabelAndValue label={'To'} value={recipientAddress} />
-        <Typography variant={'body2'}>Fees</Typography>
+      </PaperContent>
+      <PaperContent style={{ backgroundColor: '#C4C4C4'}}>
+        <Typography variant={'body2'} style={{ paddingLeft: '20px', fontWeight: 'bold'}}>Fees</Typography>
         <LabelAndAsset
           label={'Wrap fees'}
           decimals={token.decimals}
@@ -85,8 +88,8 @@ export default function WrapConfirmStep({
           emptyStatePlaceHolder={'Awaiting for allowance'}
         />
       </PaperContent>
-      <SpacedDivider />
-      <PaperContent>
+
+      <PaperContent style={{ padding: '0' }}>
         <AssetSummary
           label={'Receive'}
           value={amount.minus(currentFees)}
@@ -94,7 +97,7 @@ export default function WrapConfirmStep({
           symbol={token.tezosSymbol}
         />
       </PaperContent>
-      <SpacedDivider />
+
       <WrapActions
         currentAllowance={currentAllowance}
         amountToWrap={amount}

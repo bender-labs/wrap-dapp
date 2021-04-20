@@ -15,15 +15,17 @@ const useStyle = makeStyles((theme) => ({
   label: {
     width: '35%',
     fontSize: 12,
+    fontWeight: 'bold'
   },
 
   valueWrapper: {
-    flexGrow: 2,
+    flexGrow: 1,
+    fontSize: 12,
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'flex-end',
-    textAlign: 'right',
+    textAlign: 'left',
   },
 }));
 

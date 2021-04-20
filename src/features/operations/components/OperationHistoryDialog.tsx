@@ -27,8 +27,15 @@ import { PaperContent } from '../../../components/paper/Paper';
 const useStyle = makeStyles((theme) => ({
   subHeader: {
     backgroundColor: theme.palette.primary.main,
-    color: theme.palette.primary.contrastText,
+    color: theme.palette.secondary.main,
+    textAlign: 'center',
+    fontWeight: 'bold'
   },
+  other: {
+    backgroundColor: '#191919',
+    color: 'white',
+    textAlign: 'center'
+  }
 }));
 
 export default function OperationHistoryDialog() {
@@ -72,6 +79,7 @@ export default function OperationHistoryDialog() {
     return (
       <React.Fragment key={operation.hash}>
         <ListItem
+          className={classes.other}
           button
           onClick={(e) => {
             e.preventDefault();
@@ -171,10 +179,10 @@ export default function OperationHistoryDialog() {
           setOpen(!open);
         }}
       />
-      <Dialog open={open} onBackdropClick={() => setOpen(false)} fullWidth>
-        <DialogTitle>Pending operations</DialogTitle>
+      <Dialog open={open} onBackdropClick={() => setOpen(false)} fullWidth >
+        <DialogTitle className={classes.other}>Pending operations</DialogTitle>
         {!canFetch && (
-          <PaperContent>
+          <PaperContent className={classes.other}>
             <Typography variant={'body1'}>
               Please connect to at least one wallet to see your pending
               operations
@@ -190,7 +198,7 @@ export default function OperationHistoryDialog() {
               renderMint(o, i === operations.mints.length - 1)
             )}
             {operations.mints.length === 0 && (
-              <ListItem>
+              <ListItem className={classes.other}>
                 <ListItemText>No pending minting operation</ListItemText>
               </ListItem>
             )}
@@ -202,7 +210,7 @@ export default function OperationHistoryDialog() {
               renderBurn(o, i === operations.burns.length - 1)
             )}
             {operations.burns.length === 0 && (
-              <ListItem>
+              <ListItem className={classes.other}>
                 <ListItemText>No pending release operation</ListItemText>
               </ListItem>
             )}

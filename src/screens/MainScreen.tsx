@@ -1,8 +1,9 @@
+import React from 'react';
 import { Route, RouteComponentProps } from 'react-router-dom';
 import { paths } from './routes';
 import WrapFlow from './WrapFlow';
 import UnwrapFlow from './UnwrapFlow';
-import React from 'react';
+
 
 export default function MainScreen({ location, history }: RouteComponentProps) {
   if (location.pathname === '/') {

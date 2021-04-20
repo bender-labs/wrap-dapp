@@ -19,6 +19,7 @@ const useStyles = makeStyles(() => ({
     color: grey[600],
     display: 'block',
     margin: '5 0',
+    position: 'relative',
   },
 }));
 

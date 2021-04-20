@@ -28,6 +28,7 @@ const useStyles = makeStyles((theme) => ({
   },
   wrapper: {
     margin: theme.spacing(1),
+    backgroundColor: '#F7CB16',
     position: 'relative',
   },
 }));
