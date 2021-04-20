@@ -6,10 +6,11 @@ import Hidden from '@material-ui/core/Hidden';
 import CloseIcon from '@material-ui/icons/Close';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
-// import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
-// import MailIcon from '@material-ui/icons/Mail';
+import { Link } from '@material-ui/core';
 import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
+import { Link as RouterLink } from 'react-router-dom';
+import { paths } from './routes';
 
 const drawerWidth = 240;
 
@@ -74,12 +75,17 @@ export default function DrawerComp(props: Props) {
       <div className={classes.toolbar} />
       <button className={classes.button} onClick={onClose}><CloseIcon /></button>
       <List>
-        {['WRAP', 'HISTORY'].map((text, index) => (
-          <ListItem button key={text}>
+        <ListItem button>
+          <Link component={RouterLink} to={paths.WRAP}>
+            Wrap
+          </Link>
 
-            <ListItemText primary={text} />
           </ListItem>
-        ))}
+        <ListItem button>
+          <Link component={RouterLink} to={paths.HISTORY}>
+            History
+          </Link>
+        </ListItem>
       </List>
       <Divider />
       <ListItem>
