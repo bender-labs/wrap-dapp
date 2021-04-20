@@ -44,6 +44,7 @@ export default function OperationScreen({ type }: OperationScreenProps) {
       return (
         <UnwrapReceipt
           status={status}
+          signaturesThreshold={unwrapSignaturesThreshold}
           walletStatus={ethStatus}
           operation={operation}
           tokens={fungibleTokens}

@@ -23,6 +23,7 @@ import { ConnectionStatus } from '../../wallet/connectionStatus';
 export type UnwrapReceiptProps = {
   operation: UnwrapErc20Operation;
   tokens: Record<string, TokenMetadata>;
+  signaturesThreshold: number;
   status: ReceiptStatus;
   walletStatus: ConnectionStatus;
   onRelease: () => Promise<void>;
@@ -38,30 +39,29 @@ function label(value: string) {
 
 function unwrapStatus(
   operation: UnwrapErc20Operation,
-  confirmations: number,
-  signatures: number,
+  signaturesThreshold: number,
   onRelease: () => any,
   status: ReceiptStatus,
   walletStatus: ConnectionStatus
 ) {
-  const step = 100 / (confirmations + signatures + 2);
+  const step = 100 / 4;
   switch (operation.status.type) {
     case OperationStatusType.WAITING_FOR_RECEIPT:
       return (
         <CircularProgressWithLabel
           label={label('Waiting to be included')}
-          value={step}
+          value={0}
         />
       );
     case OperationStatusType.NEW:
       return (
         <CircularProgressWithLabel
           label={label('Waiting for confirmations')}
-          value={step * 2}
+          value={step}
         />
       );
     case OperationStatusType.WAITING_FOR_CONFIRMATIONS:
-      const value = step * 2 + step * operation.status.confirmations;
+      const value = step * 2;
       return (
         <CircularProgressWithLabel
           label={label(
@@ -72,11 +72,11 @@ function unwrapStatus(
       );
     case OperationStatusType.WAITING_FOR_SIGNATURES:
       const signaturesCount = Object.keys(operation.status.signatures).length;
-      const sigValue = step * 2 + step * confirmations + step * signaturesCount;
+      const sigValue = step * 3;
       return (
         <CircularProgressWithLabel
           label={label(
-            `Waiting for signatures. ${signaturesCount}/${signatures}`
+            `Waiting for signatures. ${signaturesCount}/${signaturesThreshold}`
           )}
           value={sigValue}
         />
@@ -116,6 +116,7 @@ function unwrapStatus(
 export default function UnwrapReceipt({
   operation,
   tokens,
+  signaturesThreshold,
   status,
   walletStatus,
   onRelease,
@@ -170,12 +171,18 @@ export default function UnwrapReceipt({
       </PaperContent>
       <PaperContent>
         <div>
-          {unwrapStatus(operation, 10, 2, onRelease, status, walletStatus)}
+          {unwrapStatus(
+            operation,
+            signaturesThreshold,
+            onRelease,
+            status,
+            walletStatus
+          )}
         </div>
       </PaperContent>
       <PaperContent
         style={{ minHeight: '200px', borderRadius: '0 0 10px 10px' }}
-      ></PaperContent>
+      />
     </>
   );
 }
