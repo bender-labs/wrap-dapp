@@ -148,7 +148,7 @@ const Render = () => {
               <Grid item>
                 <img src={logo} className={classes.logo} alt="Logo" />
               </Grid>
-              <Hidden smDown>
+              <Hidden xsDown>
                 <Grid item>
 
                   <Typography variant="h6" component="h1" className={classes.title}>
@@ -158,7 +158,7 @@ const Render = () => {
                   </Typography>
                 </Grid>
               </Hidden>
-              <Hidden smDown>
+              <Hidden xsDown>
               <Grid item>
                 <Typography variant="h6" component="h1" className={classes.title}>
                   <Link component={RouterLink} color="inherit" to={paths.HISTORY}>
@@ -168,7 +168,7 @@ const Render = () => {
               </Grid>
               </Hidden>
           </Grid>
-          <Hidden smDown>
+
           <Grid
             container
             className={classes.second}
@@ -176,10 +176,12 @@ const Render = () => {
             justify="flex-end"
             alignItems="center"
             >
-
+            <Hidden smDown>
             <Grid item>
               <OperationHistoryDialog />
             </Grid>
+            </Hidden>
+            <Hidden xsDown>
             <Grid item>
             <Box className={classes.wallets}>
                     
@@ -191,6 +193,8 @@ const Render = () => {
                 />
               </Box>
             </Grid>
+            </Hidden>
+            <Hidden xsDown>
             <Grid item>
               <Box className={classes.wallets}>
                 <EthWalletConnection
@@ -202,6 +206,8 @@ const Render = () => {
                 />
               </Box>
             </Grid>
+            </Hidden>
+            <Hidden smDown>
             
             <Grid item className={classes.menuSpace}>
             
@@ -218,8 +224,9 @@ const Render = () => {
                   {config.environmentName}
               </Button>
               </Grid>
-            </Grid>
             </Hidden>
+            </Grid>
+
             <Menu
               id="env-selector-appbar"
               anchorEl={anchorEnvSelector}

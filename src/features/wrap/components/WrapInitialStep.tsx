@@ -71,7 +71,6 @@ export default function WrapInitialStep({
           tokens={tokens}
         />
         <AmountToWrapInput
-
           balance={balance}
           decimals={token.decimals}
           symbol={token.ethereumSymbol}
