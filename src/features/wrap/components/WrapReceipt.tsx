@@ -24,6 +24,7 @@ export type WrapReceiptProps = {
   operation: WrapErc20Operation;
   status: ReceiptStatus;
   walletStatus: ConnectionStatus;
+  signaturesThreshold: number;
   tokens: Record<string, TokenMetadata>;
   onMint: () => Promise<void>;
 };
@@ -38,30 +39,29 @@ function label(value: string) {
 
 function wrapStatus(
   operation: WrapErc20Operation,
-  confirmations: number,
-  signatures: number,
+  signaturesThreshold: number,
   onMint: () => any,
   status: ReceiptStatus,
   walletStatus: ConnectionStatus
 ) {
-  const step = 100 / (confirmations + signatures + 2);
+  const step = 100 / 4;
   switch (operation.status.type) {
     case OperationStatusType.WAITING_FOR_RECEIPT:
       return (
         <CircularProgressWithLabel
           label={label('Waiting to be included')}
-          value={step}
+          value={0}
         />
       );
     case OperationStatusType.NEW:
       return (
         <CircularProgressWithLabel
           label={label('Waiting for confirmations')}
-          value={step * 2}
+          value={step}
         />
       );
     case OperationStatusType.WAITING_FOR_CONFIRMATIONS:
-      const value = step * 2 + step * operation.status.confirmations;
+      const value = step * 2;
       return (
         <CircularProgressWithLabel
           label={label(
@@ -72,11 +72,11 @@ function wrapStatus(
       );
     case OperationStatusType.WAITING_FOR_SIGNATURES:
       const signaturesCount = Object.keys(operation.status.signatures).length;
-      const sigValue = step * 2 + step * confirmations + step * signaturesCount;
+      const sigValue = step * 3;
       return (
         <CircularProgressWithLabel
           label={label(
-            `Waiting for signatures. ${signaturesCount}/${signatures}`
+            `Waiting for signatures. ${signaturesCount}/${signaturesThreshold}`
           )}
           value={sigValue}
         />
@@ -118,6 +118,7 @@ export default function WrapReceipt({
   tokens,
   onMint,
   status,
+  signaturesThreshold,
   walletStatus,
 }: WrapReceiptProps) {
   const tokensByEthAddress = useMemo(
@@ -170,12 +171,18 @@ export default function WrapReceipt({
       </PaperContent>
       <PaperContent style={{ color: '#ffffff' }}>
         <div style={{ paddingTop: '10px', borderRadius: '5px' }}>
-          {wrapStatus(operation, 10, 2, onMint, status, walletStatus)}
+          {wrapStatus(
+            operation,
+            signaturesThreshold,
+            onMint,
+            status,
+            walletStatus
+          )}
         </div>
       </PaperContent>
       <PaperContent
         style={{ minHeight: '200px', borderRadius: '0 0 10px 10px' }}
-      ></PaperContent>
+      />
     </>
   );
 }

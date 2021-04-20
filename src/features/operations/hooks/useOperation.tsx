@@ -323,6 +323,7 @@ export const useOperation = (
   const {
     fees,
     wrapSignatureThreshold,
+    unwrapSignatureThreshold,
     fungibleTokens,
     tezos: { quorumContractAddress, minterContractAddress },
     ethereum: { custodianContractAddress },
@@ -440,5 +441,14 @@ export const useOperation = (
         })
       : Promise.reject('Not connected');
 
-  return { state, fungibleTokens, mintErc20, unlockErc20 };
+  return {
+    state,
+    fungibleTokens,
+    signaturesThreshold: {
+      wrap: wrapSignatureThreshold,
+      unwrap: unwrapSignatureThreshold,
+    },
+    mintErc20,
+    unlockErc20,
+  };
 };

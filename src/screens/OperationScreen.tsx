@@ -7,17 +7,23 @@ import UnwrapReceipt from '../features/unwrap/components/UnwrapReceipt';
 import { useRecoilValue } from 'recoil';
 import { operationByHashState } from '../features/operations/state/pendingOperations';
 
-export type OperationScreenType = {
+export type OperationScreenProps = {
   type: OperationType;
 };
 
-export default function OperationScreen({ type }: OperationScreenType) {
+export default function OperationScreen({ type }: OperationScreenProps) {
   const { transactionHash } = useParams() as { transactionHash: string };
   const maybeOperation = useRecoilValue(operationByHashState(transactionHash));
-  const { state, fungibleTokens, mintErc20, unlockErc20 } = useOperation(
-    maybeOperation || transactionHash,
-    type
-  );
+  const {
+    state,
+    fungibleTokens,
+    mintErc20,
+    unlockErc20,
+    signaturesThreshold: {
+      wrap: wrapSignaturesThreshold,
+      unwrap: unwrapSignaturesThreshold,
+    },
+  } = useOperation(maybeOperation || transactionHash, type);
   const { operation, status, tzStatus, ethStatus } = state;
   if (!operation) {
     return <div>Loading</div>;
@@ -27,6 +33,7 @@ export default function OperationScreen({ type }: OperationScreenType) {
       return (
         <WrapReceipt
           status={status}
+          signaturesThreshold={wrapSignaturesThreshold}
           walletStatus={tzStatus}
           operation={operation}
           tokens={fungibleTokens}
