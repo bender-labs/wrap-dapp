@@ -27,6 +27,7 @@ type WrapState = {
   connected: boolean;
   contractFactory?: EthereumWrapApiFactory;
   custodianContractAddress: string;
+  networkFees: BigNumber;
 };
 
 export enum WrapAction {
@@ -38,6 +39,7 @@ export enum WrapAction {
   RUN_ALLOWANCE,
   RUN_WRAP,
   WRAP_DONE,
+  NETWORK_FEES,
 }
 
 export enum WrapStatus {
@@ -63,7 +65,9 @@ type Action =
     }
   | {
       type: WrapAction.AMOUNT_TO_WRAP_CHANGE;
-      payload: { amountToWrap: BigNumber };
+      payload: {
+        amountToWrap: BigNumber;
+      };
     }
   | {
       type: WrapAction.ALLOWANCE_CHANGE;
@@ -84,7 +88,13 @@ type Action =
   | {
       type: WrapAction.RUN_WRAP;
     }
-  | { type: WrapAction.WRAP_DONE };
+  | { type: WrapAction.WRAP_DONE }
+  | {
+      type: WrapAction.NETWORK_FEES;
+      payload: {
+        networkFees: BigNumber;
+      };
+    };
 
 export function initialState(token: string, custodianContractAddress: string) {
   return {
@@ -96,6 +106,7 @@ export function initialState(token: string, custodianContractAddress: string) {
     amountToWrap: new BigNumber(0),
     connected: false,
     custodianContractAddress,
+    networkFees: new BigNumber(0),
   };
 }
 
@@ -108,10 +119,11 @@ const tryReady = (state: WrapState): WrapState => {
   ) {
     return { ...state, status: WrapStatus.NOT_READY };
   }
-  const newState = state.amountToWrap.lte(state.currentAllowance)
+  const newStatus = state.amountToWrap.lte(state.currentAllowance)
     ? WrapStatus.READY_TO_WRAP
     : WrapStatus.READY_TO_CONFIRM;
-  return { ...state, status: newState };
+
+  return { ...state, status: newStatus };
 };
 
 export function reducer(state: WrapState, action: Action): WrapState {
@@ -151,6 +163,11 @@ export function reducer(state: WrapState, action: Action): WrapState {
       return {
         ...state,
         status: WrapStatus.WAITING_FOR_WRAP,
+      };
+    case WrapAction.NETWORK_FEES:
+      return {
+        ...state,
+        networkFees: action.payload.networkFees,
       };
     case WrapAction.WRAP_DONE: {
       return {
@@ -282,6 +299,31 @@ export function useWrap() {
     return startWrapping();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   };
+
+  useEffect(() => {
+    const computeNetworkFees = async () => {
+      const { status, contract, amountToWrap } = state;
+      if (
+        status !== WrapStatus.READY_TO_WRAP ||
+        contract == null ||
+        ethLibrary == null
+      ) {
+        return;
+      }
+      const networkFees = await contract.networkFees(amountToWrap, ethLibrary);
+      dispatch({ type: WrapAction.NETWORK_FEES, payload: { networkFees } });
+    };
+
+    let tryNumber = 0;
+    try {
+      computeNetworkFees();
+    } catch (e) {
+      if (tryNumber === 1) {
+        setTimeout(computeNetworkFees, 1000);
+        tryNumber++;
+      }
+    }
+  }, [state.status]);
 
   useEffect(() => {
     const loadMetadata = async () => {

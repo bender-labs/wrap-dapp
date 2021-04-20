@@ -29,6 +29,7 @@ export type WrapConfirmStepProps = {
   currentAllowance: BigNumber;
   onAuthorize: () => void;
   onWrap: () => void;
+  networkFees: BigNumber;
 };
 
 export default function WrapConfirmStep({
@@ -42,6 +43,7 @@ export default function WrapConfirmStep({
   recipientAddress,
   onAuthorize,
   onWrap,
+  networkFees,
 }: WrapConfirmStepProps) {
   const currentFees = wrapFees(amount, fees);
   return (
@@ -79,9 +81,11 @@ export default function WrapConfirmStep({
         />
         <LabelAndAsset
           label={'Network fees'}
-          decimals={token.decimals}
-          value={currentFees}
-          symbol={token.tezosSymbol}
+          decimals={18}
+          value={networkFees}
+          symbol={'ETH'}
+          emptyState={networkFees.lte(0)}
+          emptyStatePlaceHolder={'Awaiting for allowance'}
         />
       </PaperContent>
 
