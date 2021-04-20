@@ -76,8 +76,8 @@ export const initialConfig: Record<string, InitialConfig> = {
     },
     tezos: {
       rpcUrl: process.env.REACT_APP_TZ_RPC_TESTNET || '',
-      networkId: NetworkType.EDONET,
-      networkName: 'Edo2net',
+      networkId: NetworkType.FLORENCENET,
+      networkName: 'Florence',
     },
   },
   [Environment.MAINNET]: {
