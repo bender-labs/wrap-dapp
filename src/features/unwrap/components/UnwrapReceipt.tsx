@@ -56,7 +56,7 @@ function unwrapStatus(
     case OperationStatusType.NEW:
       return (
         <CircularProgressWithLabel
-          label={label('Waiting for indexer')}
+          label={label('Waiting for confirmations')}
           value={step * 2}
         />
       );
@@ -143,7 +143,9 @@ export default function UnwrapReceipt({
           fontSize: '20px',
           fontWeight: 'bold',
           paddingTop: '20px',
-          boxShadow: 'inset 0 -7px 9px -7px rgba(0,0,0,0.4)'}}>
+          boxShadow: 'inset 0 -7px 9px -7px rgba(0,0,0,0.4)',
+        }}
+      >
         <PaperNav />
         <PaperTitle>Releasing</PaperTitle>
         <PaperActions />
@@ -167,10 +169,13 @@ export default function UnwrapReceipt({
         />
       </PaperContent>
       <PaperContent>
-        <div>{unwrapStatus(operation, 10, 2, onRelease, status, walletStatus)}</div>
+        <div>
+          {unwrapStatus(operation, 10, 2, onRelease, status, walletStatus)}
+        </div>
       </PaperContent>
-      <PaperContent style={{ minHeight: '200px', borderRadius: '0 0 10px 10px'}}>
-      </PaperContent>
+      <PaperContent
+        style={{ minHeight: '200px', borderRadius: '0 0 10px 10px' }}
+      ></PaperContent>
     </>
   );
 }
