@@ -65,10 +65,7 @@ const useStyles = makeStyles((theme) =>
       '& > *': {
         marginRight: theme.spacing(5),
       },
-      
-      
     },
-
     menuButton: {
       marginRight: theme.spacing(),
       [theme.breakpoints.up('sm')]: {
@@ -77,7 +74,6 @@ const useStyles = makeStyles((theme) =>
     },
   })
 );
-
 
 const Render = () => {
 

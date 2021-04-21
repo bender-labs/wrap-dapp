@@ -95,7 +95,7 @@ export default function WrapInitialStep({
       {/*}*/}
       {/*{ !amount.isZero() &&*/}
 
-      <PaperContent style={{ borderRadius: '0 0 10px 10px', minHeight: '70px', padding: '60px 30px'}}>
+      <PaperContent style={{ borderRadius: '0 0 10px 10px', minHeight: '40px', padding: '50px 30px'}}>
 
 
         {connected && (

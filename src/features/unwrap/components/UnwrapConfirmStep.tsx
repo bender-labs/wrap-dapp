@@ -87,7 +87,7 @@ export default function UnwrapConfirmStep({
           symbol={token.ethereumSymbol}
         />
       </PaperContent>
-      <PaperContent style={{ borderRadius: '0 0 10px 10px', minHeight: '70px', padding: '20px 90px'}}>
+      <PaperContent style={{ borderRadius: '0 0 10px 10px', minHeight: '60px', padding: '20px 90px'}}>
 
         <UnwrapActions onUnwrap={onUnwrap} status={status} />
       </PaperContent>

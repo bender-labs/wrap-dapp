@@ -181,7 +181,7 @@ export default function UnwrapReceipt({
         </div>
       </PaperContent>
       <PaperContent
-        style={{ minHeight: '200px', borderRadius: '0 0 10px 10px' }}
+        style={{ minHeight: '160px', borderRadius: '0 0 10px 10px' }}
       />
     </>
   );
