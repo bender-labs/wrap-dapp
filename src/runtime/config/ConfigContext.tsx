@@ -1,23 +1,11 @@
 import React, { PropsWithChildren, useEffect, useMemo, useState } from 'react';
-import { Config, ConfigStatus, Environment, initialConfig } from '../../config';
+import { Config, ConfigStatus, initialConfig } from '../../config';
 import LoadingScreen from '../../screens/LoadingScreen';
 import IndexerApi from '../../features/indexer/indexerApi';
 import { Token } from '../../features/swap/token';
 
 type ContextValue = undefined | Config;
-type EnvironmentSelectorValue =
-  | undefined
-  | {
-      setEnvironment: (env: Environment) => void;
-      environmentOptions: Array<{
-        environment: Environment;
-        name: string;
-      }>;
-    };
 const ConfigContext = React.createContext<ContextValue>(undefined);
-const EnvironmentSelectorContext = React.createContext<EnvironmentSelectorValue>(
-  undefined
-);
 
 export function useEthereumConfig() {
   const config = React.useContext(ConfigContext);
@@ -40,15 +28,6 @@ export function useConfig() {
   return config;
 }
 
-export function useEnvironmentSelectorContext() {
-  const selector = React.useContext(EnvironmentSelectorContext);
-  if (selector == null)
-    throw new Error(
-      'selector context consumer must be used within a config provider'
-    );
-  return selector;
-}
-
 export function useIndexerApi() {
   const { indexerUrl } = useConfig();
   return useMemo(() => new IndexerApi(indexerUrl), [indexerUrl]);
@@ -57,35 +36,16 @@ export function useIndexerApi() {
 const getTimeFromRetryCounter = (counter: number) => Math.pow(2, counter) - 1;
 
 export default function Provider({ children }: PropsWithChildren<{}>) {
-  const [environment, setEnvironment] = useState<Environment>(
-    Environment.TESTNET
-  );
   const [configStatus, setConfigStatus] = useState<ConfigStatus>(
     ConfigStatus.UNINITIALIZED
   );
   const [config, setConfig] = useState<ContextValue>();
   const [retryTime, setRetryTime] = useState<number>(0);
 
-  const environmentOptions = useMemo(
-    () => ({
-      setEnvironment,
-      environmentOptions: [
-        {
-          environment: Environment.MAINNET,
-          name: initialConfig[Environment.MAINNET].environmentName,
-        },
-        {
-          environment: Environment.TESTNET,
-          name: initialConfig[Environment.TESTNET].environmentName,
-        },
-      ],
-    }),
-    []
-  );
-
   useEffect(() => {
+    const initConfig = initialConfig;
     setConfigStatus(ConfigStatus.LOADING);
-    const localConfigKey = `config-${environment}`;
+    const localConfigKey = `config-${initConfig.environmentName}`;
     const localConfig = localStorage.getItem(localConfigKey);
 
     if (localConfig != null) {
@@ -93,11 +53,9 @@ export default function Provider({ children }: PropsWithChildren<{}>) {
       setConfigStatus(ConfigStatus.LOADED);
     }
 
-    const initConfig = initialConfig[environment];
     const indexerApi = new IndexerApi(initConfig.indexerUrl);
 
     const loadConfig = async () => {
-      const initConfig = initialConfig[environment];
       const indexerConfig = await indexerApi.fetchConfig();
       const config = {
         environmentName: initConfig.environmentName,
@@ -145,10 +103,10 @@ export default function Provider({ children }: PropsWithChildren<{}>) {
     };
 
     loadingWithRetries();
-  }, [environment]);
+  }, []);
 
   return (
-    <EnvironmentSelectorContext.Provider value={environmentOptions}>
+    <>
       {configStatus !== ConfigStatus.LOADED ? (
         <LoadingScreen retryTime={retryTime} />
       ) : (
@@ -156,6 +114,6 @@ export default function Provider({ children }: PropsWithChildren<{}>) {
           {children}
         </ConfigContext.Provider>
       )}
-    </EnvironmentSelectorContext.Provider>
+    </>
   );
 }

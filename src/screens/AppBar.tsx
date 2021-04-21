@@ -1,28 +1,19 @@
 import {
   AppBar,
   Box,
-  Button,
   createStyles,
   Link,
   makeStyles,
-  Menu,
-  MenuItem,
   Toolbar,
   Typography,
 } from '@material-ui/core';
-import Grid from '@material-ui/core/Grid'
+import Grid from '@material-ui/core/Grid';
 import Hidden from '@material-ui/core/Hidden';
 import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
-import DrawerComp from './DrawerComp'
-import React, { useState } from 'react';
+import DrawerComp from './DrawerComp';
+import React from 'react';
 import { Link as RouterLink } from 'react-router-dom';
-import {
-  useConfig,
-  useEnvironmentSelectorContext,
-} from '../runtime/config/ConfigContext';
-import { Environment } from '../config';
-import SwapHorizIcon from '@material-ui/icons/SwapHoriz';
 import logo from './logo.png';
 import EthWalletConnection from '../components/ethereum/WalletConnection';
 import TezosWalletConnection from '../components/tezos/WalletConnection';
@@ -38,7 +29,7 @@ const useStyles = makeStyles((theme) =>
         marginLeft: theme.spacing(4),
       },
     },
-    first:{
+    first: {
       flex: 1,
     },
     second: {
@@ -58,7 +49,7 @@ const useStyles = makeStyles((theme) =>
       '& > *': {
         marginRight: theme.spacing(2),
         borderRadius: '25px',
-        padding: '3px 25px'
+        padding: '3px 25px',
       },
     },
     menuSpace: {
@@ -76,14 +67,6 @@ const useStyles = makeStyles((theme) =>
 );
 
 const Render = () => {
-
-  const config = useConfig();
-
-  const {
-    setEnvironment,
-    environmentOptions,
-  } = useEnvironmentSelectorContext();
-
   const {
     ethereum: {
       activate: ethActivate,
@@ -102,67 +85,59 @@ const Render = () => {
 
   const classes = useStyles();
 
-  const [
-    anchorEnvSelector,
-    setAnchorEnvSelector,
-  ] = useState<null | HTMLElement>(null);
-
-  const open = Boolean(anchorEnvSelector);
-
-  const openEnvSelector = (event: React.MouseEvent<HTMLElement>) =>
-    setAnchorEnvSelector(event.currentTarget);
-
-  const closeEnvSelector = () => setAnchorEnvSelector(null);
-
-  const handleEnvSelection = (env: Environment) => {
-    setEnvironment(env);
-    closeEnvSelector();
-  };
-
   const [mobileOpen, setMobileOpen] = React.useState(true);
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };
 
-
-
   return (
     <>
-      <AppBar position="static" style={{ background: 'transparent', boxShadow: 'none'}}>
-
-          <Toolbar className={classes.toolbar}>
-
-            <Grid
-              className={classes.first}
-              container
-              direction="row"
-              justify="flex-start"
-              alignItems="center"
-              >
-
+      <AppBar
+        position="static"
+        style={{ background: 'transparent', boxShadow: 'none' }}
+      >
+        <Toolbar className={classes.toolbar}>
+          <Grid
+            className={classes.first}
+            container
+            direction="row"
+            justify="flex-start"
+            alignItems="center"
+          >
+            <Grid item>
+              <img src={logo} className={classes.logo} alt="Logo" />
+            </Grid>
+            <Hidden xsDown>
               <Grid item>
-                <img src={logo} className={classes.logo} alt="Logo" />
+                <Typography
+                  variant="h6"
+                  component="h1"
+                  className={classes.title}
+                >
+                  <Link component={RouterLink} color="inherit" to={paths.WRAP}>
+                    Wrap
+                  </Link>
+                </Typography>
               </Grid>
-              <Hidden xsDown>
-                <Grid item>
-
-                  <Typography variant="h6" component="h1" className={classes.title}>
-                    <Link component={RouterLink} color="inherit" to={paths.WRAP}>
-                      Wrap
-                    </Link>
-                  </Typography>
-                </Grid>
-              </Hidden>
-              <Hidden xsDown>
+            </Hidden>
+            <Hidden xsDown>
               <Grid item>
-                <Typography variant="h6" component="h1" className={classes.title}>
-                  <Link component={RouterLink} color="inherit" to={paths.HISTORY}>
+                <Typography
+                  variant="h6"
+                  component="h1"
+                  className={classes.title}
+                >
+                  <Link
+                    component={RouterLink}
+                    color="inherit"
+                    to={paths.HISTORY}
+                  >
                     History
                   </Link>
                 </Typography>
               </Grid>
-              </Hidden>
+            </Hidden>
           </Grid>
 
           <Grid
@@ -171,93 +146,48 @@ const Render = () => {
             direction="row"
             justify="flex-end"
             alignItems="center"
-            >
+          >
             <Hidden smDown>
-            <Grid item>
-              <OperationHistoryDialog />
-            </Grid>
-            </Hidden>
-            <Hidden xsDown>
-            <Grid item>
-            <Box className={classes.wallets}>
-                    
-                <TezosWalletConnection
-                  account={tzAccount}
-                  activate={tzActivate}
-                  deactivate={tzDeactivate}
-                  connectionStatus={tzConnectionStatus}
-                />
-              </Box>
-            </Grid>
-            </Hidden>
-            <Hidden xsDown>
-            <Grid item>
-              <Box className={classes.wallets}>
-                <EthWalletConnection
-                  account={ethAccount}
-                  activate={ethActivate}
-                  deactivate={ethDeactivate}
-                  connectors={connectors}
-                  connectionStatus={ethConnectionStatus}
-                />
-              </Box>
-            </Grid>
-            </Hidden>
-            <Hidden smDown>
-            
-            <Grid item className={classes.menuSpace}>
-            
-              <Button
-                aria-label="Environment selector"
-                aria-controls="env-selector-appbar"
-                aria-haspopup="true"
-                onClick={openEnvSelector}
-                color="inherit"
-                size="small"
-                variant="text"
-                startIcon={<SwapHorizIcon />}
-                >
-                  {config.environmentName}
-              </Button>
+              <Grid item>
+                <OperationHistoryDialog />
               </Grid>
             </Hidden>
-            </Grid>
-
-            <Menu
-              id="env-selector-appbar"
-              anchorEl={anchorEnvSelector}
-              anchorOrigin={{
-                vertical: 'top',
-                horizontal: 'left',
-              }}
-              keepMounted
-              transformOrigin={{
-                vertical: 'top',
-                horizontal: 'left',
-              }}
-              open={open}
-              onClose={closeEnvSelector}
-            >
-              {environmentOptions.map(({ name, environment }) => (
-                <MenuItem
-                  key={environment}
-                  onClick={() => handleEnvSelection(environment)}
-                >
-                  {name}
-                </MenuItem>
-              ))}
-            </Menu>
-            <IconButton
-              color="inherit"
-              aria-label="open drawer"
-              edge="start"
-              onClick={handleDrawerToggle}
-              className={classes.menuButton}
-            >
-              <MenuIcon />
-            </IconButton>
-          </Toolbar>
-
+            <Hidden xsDown>
+              <Grid item>
+                <Box className={classes.wallets}>
+                  <TezosWalletConnection
+                    account={tzAccount}
+                    activate={tzActivate}
+                    deactivate={tzDeactivate}
+                    connectionStatus={tzConnectionStatus}
+                  />
+                </Box>
+              </Grid>
+            </Hidden>
+            <Hidden xsDown>
+              <Grid item>
+                <Box className={classes.wallets}>
+                  <EthWalletConnection
+                    account={ethAccount}
+                    activate={ethActivate}
+                    deactivate={ethDeactivate}
+                    connectors={connectors}
+                    connectionStatus={ethConnectionStatus}
+                  />
+                </Box>
+              </Grid>
+            </Hidden>
+          </Grid>
+          <IconButton
+            color="inherit"
+            aria-label="open drawer"
+            edge="start"
+            onClick={handleDrawerToggle}
+            className={classes.menuButton}
+          >
+            <MenuIcon />
+          </IconButton>
+        </Toolbar>
       </AppBar>
       <DrawerComp open={mobileOpen} onClose={handleDrawerToggle} />
     </>

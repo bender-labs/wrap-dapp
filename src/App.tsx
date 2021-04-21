@@ -1,5 +1,5 @@
 import React from 'react';
-import './App.css'
+import './App.css';
 import { Web3ReactProvider } from '@web3-react/core';
 import { getLibrary as getEthLibrary } from './features/ethereum/web3React';
 import { getLibrary as getTezosLibrary } from './features/tezos/beacon';
@@ -16,10 +16,9 @@ import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import AppBar from './screens/AppBar';
 import { mainPaths, paths } from './screens/routes';
 import MainScreen from './screens/MainScreen';
+import DisplayEnvironment from './components/configuration/DisplayEnvironment';
 
 const theme = createMuiTheme(themeOptions);
-
-
 
 function App() {
   return (
@@ -35,17 +34,10 @@ function App() {
                     <AppBar />
                     <Container maxWidth="xs">
                       <Switch>
-                        <Route path={paths.HISTORY}>
-                          <HistoryScreen />
-                        </Route>
-
-                          <Route
-                            exact
-                            path={mainPaths}
-                            component={MainScreen}
-                          />
-
+                        <Route path={paths.HISTORY} component={HistoryScreen} />
+                        <Route exact path={mainPaths} component={MainScreen} />
                       </Switch>
+                      <DisplayEnvironment />
                     </Container>
                   </SnackbarProvider>
                 </Router>
