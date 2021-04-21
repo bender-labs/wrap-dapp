@@ -21,7 +21,7 @@ type OperationsHistoryState = {
   burns: UnwrapErc20Operation[];
 };
 
-export const useOperationsHistory = () => {
+export const usePendingOperationsHistory = () => {
   const {
     ethereum: { account: ethAccount },
     tezos: { account: tzAccount },
@@ -46,8 +46,8 @@ export const useOperationsHistory = () => {
       }
 
       const [pendingWrap, pendingUnwrap] = await Promise.all([
-        indexerApi.fetchPendingWrap(ethAccount, tzAccount),
-        indexerApi.fetchPendingUnwrap(ethAccount, tzAccount),
+        indexerApi.fetchPendingWraps(ethAccount, tzAccount),
+        indexerApi.fetchPendingUnwraps(ethAccount, tzAccount),
       ]);
       const mintsFromIndexer = wrapsToOperations(
         fees,
