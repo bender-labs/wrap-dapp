@@ -8,7 +8,6 @@ const useStyles = makeStyles(() =>
   createStyles({
     bg: {
       color: 'white',
-      textTransform: 'lowercase',
       marginBottom: '10px'
     }
 

@@ -79,10 +79,7 @@ export default function WrapInitialStep({
           displayBalance={connected}
         />
       </PaperContent>
-      {/*{ !amount.isZero() &&*/}
-      {/*{if(!amount.isZero()) {*/}
 
-      {/*}}*/}
       <PaperContent style={{ padding: '16px 0'}}>
         <AssetSummary
           label={'You will receive'}
@@ -92,11 +89,7 @@ export default function WrapInitialStep({
         />
       </PaperContent>
 
-      {/*}*/}
-      {/*{ !amount.isZero() &&*/}
-
       <PaperContent style={{ borderRadius: '0 0 10px 10px', minHeight: '40px', padding: '50px 30px'}}>
-
 
         {connected && (
 
@@ -118,7 +111,7 @@ export default function WrapInitialStep({
 
     
     </PaperContent>
-      {/*}*/}
+
     </>
   );
 }
