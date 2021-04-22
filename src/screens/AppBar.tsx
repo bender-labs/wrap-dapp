@@ -26,7 +26,19 @@ const useStyles = makeStyles((theme) =>
     title: {
       flexGrow: 1,
       '& > *': {
-        marginLeft: theme.spacing(4),
+        marginLeft: theme.spacing(3),
+      },
+      fontSize: '1rem',
+      fontWeight: 900,
+      '& > a': {
+        lineHeight: '19px',
+        borderRadius: '20px',
+        border: '1px solid transparent',
+        padding: '6px 10px',
+        '&:hover': {
+          textDecoration: 'none',
+          border: '1px solid #FFD000',
+        },
       },
     },
     first: {
