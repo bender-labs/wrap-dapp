@@ -59,10 +59,13 @@ const useStyles = makeStyles((theme) =>
     },
     wallets: {
       '& > *': {
-        marginRight: theme.spacing(2),
+        marginRight: theme.spacing(3),
         borderRadius: '25px',
         padding: '3px 25px',
       },
+    },
+    pendingButton: {
+      marginRight: theme.spacing(1),
     },
     menuSpace: {
       '& > *': {
@@ -161,7 +164,9 @@ const Render = () => {
           >
             <Hidden smDown>
               <Grid item>
-                <OperationHistoryDialog />
+                <Box className={classes.pendingButton}>
+                  <OperationHistoryDialog />
+                </Box>
               </Grid>
             </Hidden>
             <Hidden xsDown>
