@@ -20,6 +20,8 @@ import DisplayEnvironment from './components/configuration/DisplayEnvironment';
 
 const theme = createMuiTheme(themeOptions);
 
+
+
 function App() {
   return (
     <ConfigProvider>
@@ -32,13 +34,11 @@ function App() {
                   <SnackbarProvider autoHideDuration={6000}>
                     <CssBaseline />
                     <AppBar />
-                    <Container maxWidth="xs">
-                      <Switch>
-                        <Route path={paths.HISTORY} component={HistoryScreen} />
-                        <Route exact path={mainPaths} component={MainScreen} />
+                    <Switch>
+                      <Route path={paths.HISTORY} component={HistoryScreen} />
+                      <Route exact path={mainPaths} component={MainScreen} />
                       </Switch>
-                      <DisplayEnvironment />
-                    </Container>
+                    <DisplayEnvironment />
                   </SnackbarProvider>
                 </Router>
               </RecoilRoot>
