@@ -63,24 +63,19 @@ export enum ConfigStatus {
   LOADED,
 }
 
-export const initialConfig: Record<string, InitialConfig> = {
-  [Environment.TESTNET]: {
-    environmentName: 'Testnet',
-    indexerUrl: process.env.REACT_APP_INDEXER_TESTNET || '',
-    ethereum: {
-      rpcUrl: process.env.REACT_APP_ETH_RPC_TESTNET || '',
-      networkId: 4,
-      networkName: 'Rinkeby',
-      formaticApiKey: process.env.REACT_APP_FORTMATIC_API_KEY || '',
-      portisDAppId: process.env.REACT_APP_PORTIS_DAPP_ID || '',
-    },
-    tezos: {
-      rpcUrl: process.env.REACT_APP_TZ_RPC_TESTNET || '',
-      networkId: NetworkType.FLORENCENET,
-      networkName: 'Florence',
-    },
+export const initialConfig: InitialConfig = {
+  environmentName: process.env.REACT_APP_WRAP_ENVIRONMENT!,
+  indexerUrl: process.env.REACT_APP_INDEXER!,
+  ethereum: {
+    rpcUrl: process.env.REACT_APP_ETH_RPC!,
+    networkId: +process.env.REACT_APP_ETH_NETWORK_ID!,
+    networkName: process.env.REACT_APP_ETH_NETWORK_NAME!,
+    formaticApiKey: process.env.REACT_APP_FORTMATIC_API_KEY!,
+    portisDAppId: process.env.REACT_APP_PORTIS_DAPP_ID!,
   },
-  [Environment.MAINNET]: {
-    environmentName: 'Mainnet',
-  } as InitialConfig,
+  tezos: {
+    rpcUrl: process.env.REACT_APP_TZ_RPC!,
+    networkId: process.env.REACT_APP_TZ_NETWORK_ID! as NetworkType,
+    networkName: process.env.REACT_APP_TZ_NETWORK_NAME!,
+  },
 };
