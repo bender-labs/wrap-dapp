@@ -11,9 +11,12 @@ const useStyles = makeStyles(() =>
     history: {
       color: 'white',
       textAlign: 'center',
-      padding: '0px',
-      fontSize: '20px',
-    },
+      width: '75%',
+      padding: '6px',
+      fontSize: '0.875rem',
+      borderBottom: '3px solid red'
+},
+
   })
 );
 
