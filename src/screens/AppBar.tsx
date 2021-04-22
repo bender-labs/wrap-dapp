@@ -26,7 +26,19 @@ const useStyles = makeStyles((theme) =>
     title: {
       flexGrow: 1,
       '& > *': {
-        marginLeft: theme.spacing(4),
+        marginLeft: theme.spacing(3),
+      },
+      fontSize: '1rem',
+      fontWeight: 900,
+      '& > a': {
+        lineHeight: '19px',
+        borderRadius: '20px',
+        border: '1px solid transparent',
+        padding: '6px 10px',
+        '&:hover': {
+          textDecoration: 'none',
+          border: '1px solid #FFD000',
+        },
       },
     },
     first: {
@@ -47,10 +59,13 @@ const useStyles = makeStyles((theme) =>
     },
     wallets: {
       '& > *': {
-        marginRight: theme.spacing(2),
+        marginRight: theme.spacing(3),
         borderRadius: '25px',
         padding: '3px 25px',
       },
+    },
+    pendingButton: {
+      marginRight: theme.spacing(1),
     },
     menuSpace: {
       '& > *': {
@@ -121,7 +136,7 @@ const Render = () => {
                 </Typography>
               </Grid>
             </Hidden>
-            <Hidden xsDown>
+            {/*<Hidden xsDown>
               <Grid item>
                 <Typography
                   variant="h6"
@@ -137,7 +152,7 @@ const Render = () => {
                   </Link>
                 </Typography>
               </Grid>
-            </Hidden>
+            </Hidden>*/}
           </Grid>
 
           <Grid
@@ -149,7 +164,9 @@ const Render = () => {
           >
             <Hidden smDown>
               <Grid item>
-                <OperationHistoryDialog />
+                <Box className={classes.pendingButton}>
+                  <OperationHistoryDialog />
+                </Box>
               </Grid>
             </Hidden>
             <Hidden xsDown>
