@@ -18,6 +18,8 @@ export const useAllOperationsHistory = () => {
     tezos: { account: tzAccount },
   } = useWalletContext();
 
+  const { fungibleTokens } = useConfig();
+
   const indexerApi = useIndexerApi();
   const { fees, wrapSignatureThreshold } = useConfig();
   const [canFetch, setCanFetch] = useState(false);
@@ -65,5 +67,5 @@ export const useAllOperationsHistory = () => {
     [tzAccount, ethAccount]
   );
 
-  return { operations, canFetch };
+  return { operations, canFetch, fungibleTokens };
 };
