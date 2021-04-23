@@ -15,12 +15,21 @@ import Amount from '../../../components/formatting/Amount';
 const StyledTableCell = withStyles((theme: Theme) =>
   createStyles({
     head: {
-      backgroundColor: theme.palette.common.black,
-      color: theme.palette.common.white,
+      backgroundColor: '#e5e5e5',
+      color: 'black',
+      padding: '0px',
+      fontWeight: 'bold'
     },
     body: {
       fontSize: 14,
       padding: '20px',
+      backgroundColor: 'white',
+      '&:first-child': {
+        borderRadius: '20px 0 0 20px'
+      },
+      '&:last-child': {
+        borderRadius: '0 20px 20px 0'
+      },
     },
   })
 )(TableCell);
@@ -36,7 +45,15 @@ const StyledTableRow = withStyles((theme: Theme) =>
 const useStyles = makeStyles({
   table: {
     minWidth: 700,
+    borderSpacing: '0 5px !important',
+    borderCollapse: 'separate',
+    backgroundColor: '#e5e5e5'
   },
+  wrapper: {
+    padding: '20px',
+    backgroundColor: '#e5e5e5',
+    borderRadius: '0 0 10px 10px'
+  }
 });
 
 export type HistoryProps = {
@@ -66,6 +83,7 @@ export default function History({
     <div style={{ width: '100%' }}>
       {!canFetch && <span>Connect at least one of your wallet</span>}
       {canFetch && (
+        <div className={classes.wrapper}>
         <TableContainer component={Paper}>
           <Table className={classes.table} aria-label="customized table">
             <TableHead>
@@ -123,6 +141,7 @@ export default function History({
             </TableBody>
           </Table>
         </TableContainer>
+        </div>
       )}
     </div>
   );
