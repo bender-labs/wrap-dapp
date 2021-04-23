@@ -13,12 +13,21 @@ import { withStyles, Theme, makeStyles, createStyles, Typography } from '@materi
 const StyledTableCell = withStyles((theme: Theme) =>
   createStyles({
     head: {
-      backgroundColor: theme.palette.common.black,
-      color: theme.palette.common.white,
+      backgroundColor: '#e5e5e5',
+      color: 'black',
+      padding: '0px'
     },
     body: {
       fontSize: 14,
       padding: '20px',
+      backgroundColor: 'white',
+      '&:first-child': {
+        borderRadius: '20px 0 0 20px',
+      },
+      '&:last-child': {
+        borderRadius: '0 20px 20px 0',
+      }
+
 
     },
   }),
@@ -27,20 +36,32 @@ const StyledTableCell = withStyles((theme: Theme) =>
 const StyledTableRow = withStyles((theme: Theme) =>
   createStyles({
     root: {
-      backgroundColor: '#e5e5e5',
+      margin: '50px'
+
+
     },
 
 
   }),
 )(TableRow);
 
-const useStyles = makeStyles({
-  table: {
-    minWidth:700,
+const useStyles = makeStyles((theme) =>
+  createStyles({
+    table: {
+      minWidth:700,
+      backgroundColor: '#e5e5e5',
+      boxShadow: 'none',
+      borderSpacing: '0 5px !important',
+      borderCollapse: 'separate'
+    },
+    wrapper: {
+      padding: '20px',
+      backgroundColor: '#e5e5e5',
+      borderRadius: '0 0 10px 10px'
+    }
 
-  },
-
-});
+  })
+)
 
 
 
@@ -56,7 +77,9 @@ export default function History({ operations, canFetch }: HistoryProps) {
   return (
     <div style={{width: '100%'}}>
       {!canFetch && <span>Connect at least one of your wallet</span>}
-      {canFetch && <TableContainer component={Paper}>
+      {canFetch &&
+      <div className={classes.wrapper}>
+      <TableContainer component={Paper}>
         <Table className={classes.table} aria-label="customized table">
           <TableHead>
             <TableRow>
@@ -96,7 +119,9 @@ export default function History({ operations, canFetch }: HistoryProps) {
             ))}
           </TableBody>
         </Table>
-      </TableContainer>}
+      </TableContainer>
+      </div>
+      }
     </div>
 
   );

@@ -9,19 +9,19 @@ const useStyles = makeStyles(() =>
   createStyles({
     main: {
       display: 'flex',
-      justifyContent: 'center'
+
     },
     history: {
       color: 'white',
+      justifyContent: 'flex-start',
       alignItems: 'center',
       textAlign: 'center',
-      width: '55%',
+      width: '35%',
       marginBottom: '10px',
       padding: '3px 0 10px 0',
       fontSize: '0.875rem',
       borderBottom: '2px solid #FFD000'
-},
-
+    },
   })
 );
 
