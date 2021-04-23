@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Button, Chip, makeStyles } from '@material-ui/core';
+import { Button, makeStyles } from '@material-ui/core';
 import {
   humanizeSupportedBlockchain,
   ProviderList,
@@ -7,21 +7,32 @@ import {
 } from '../../features/wallet/blockchain';
 import { ConnectionStatus } from '../../features/wallet/connectionStatus';
 import ProviderSelectionDialog from './ProviderSelectionDialog';
-// import { ellipsizeAddress } from '../../features/wallet/address';
 import EthereumIcon from '../ethereum/Icon';
 import TezosIcon from '../tezos/Icon';
+import ConnectIcon from './icons/ConnectIcon';
+import CheckIcon from '@material-ui/icons/Check';
 
-const useStyles = makeStyles(() => ({
-  disabledConnectionButton: {
+const useStyles = makeStyles((theme) => ({
+  connectionButton: {
+    backgroundColor: '#FFFFFF',
+    textTransform: 'none',
+    fontWeight: 900,
+    fontSize: '1rem',
+    borderRadius: '25px',
+    padding: '3px 25px',
+    '&:hover': {
+      backgroundColor: theme.palette.primary.main,
+    },
     '&.Mui-disabled': {
-      borderColor: '#616161',
-      color: '#616161',
+      color: '#B1B1B1',
     },
   },
-  chip: {
-    background: "#FFD000",
-    padding: "5px 10px"
-  }
+  connectedConnectionButton: {
+    backgroundColor: theme.palette.primary.main,
+    '&:hover': {
+      backgroundColor: theme.palette.primary.main,
+    },
+  },
 }));
 
 const blockchainIcon = (blockchain: SupportedBlockchain) =>
@@ -38,6 +49,7 @@ type Props = {
   onSelectedProvider: (key: string) => void;
   onDisconnection: () => void;
   account: string | null | undefined;
+  withConnectionStatus: boolean;
 };
 
 const WalletConnectionCard = ({
@@ -47,6 +59,7 @@ const WalletConnectionCard = ({
   onSelectedProvider,
   onDisconnection,
   account,
+  withConnectionStatus,
 }: Props) => {
   const classes = useStyles();
   const [isOpen, setOpen] = useState(false);
@@ -66,20 +79,22 @@ const WalletConnectionCard = ({
   return (
     <React.Fragment>
       {connectionStatus === ConnectionStatus.CONNECTED && account != null ? (
-        <Chip
-          icon={blockchainIcon(blockchain)}
-          label={"Connected"}
-          onDelete={handleDisconnection}
-          className={classes.chip}
-        />
+        <Button
+          size="small"
+          className={`${classes.connectionButton} ${classes.connectedConnectionButton}`}
+          startIcon={blockchainIcon(blockchain)}
+          endIcon={withConnectionStatus ? <CheckIcon /> : null}
+          onClick={handleDisconnection}
+        >
+          Connect
+        </Button>
       ) : (
         <Button
-          variant="outlined"
           size="small"
-          color="inherit"
-          classes={{ disabled: classes.disabledConnectionButton }}
+          className={classes.connectionButton}
           disabled={connectionStatus === ConnectionStatus.CONNECTING}
           startIcon={blockchainIcon(blockchain)}
+          endIcon={withConnectionStatus ? <ConnectIcon /> : null}
           onClick={handleClick}
         >
           Connect

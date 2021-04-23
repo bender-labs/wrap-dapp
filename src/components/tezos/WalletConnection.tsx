@@ -9,6 +9,7 @@ type Props = {
   connectionStatus: ConnectionStatus;
   activate: () => Promise<void>;
   deactivate: () => Promise<void>;
+  withConnectionStatus: boolean;
 };
 
 export default function WalletConnection({
@@ -16,6 +17,7 @@ export default function WalletConnection({
   connectionStatus,
   activate,
   deactivate,
+  withConnectionStatus,
 }: Props) {
   const { enqueueSnackbar } = useSnackbar();
 
@@ -40,6 +42,7 @@ export default function WalletConnection({
         onSelectedProvider={handleConnection}
         onDisconnection={handleDisconnection}
         account={account}
+        withConnectionStatus={withConnectionStatus}
       />
     </React.Fragment>
   );

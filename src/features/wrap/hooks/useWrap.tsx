@@ -323,7 +323,7 @@ export function useWrap() {
         tryNumber++;
       }
     }
-  }, [state.status]);
+  }, [state, ethLibrary]);
 
   useEffect(() => {
     const loadMetadata = async () => {

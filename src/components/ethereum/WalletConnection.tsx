@@ -15,6 +15,7 @@ type Props = {
   account: string | null | undefined;
   connectors: EthConnectors;
   connectionStatus: ConnectionStatus;
+  withConnectionStatus: boolean;
 };
 
 export default function WalletConnection({
@@ -23,6 +24,7 @@ export default function WalletConnection({
   account,
   connectors,
   connectionStatus,
+  withConnectionStatus,
 }: Props) {
   const { enqueueSnackbar } = useSnackbar();
   const providers: ProviderList = Object.entries(connectors).map<{
@@ -51,6 +53,7 @@ export default function WalletConnection({
         onSelectedProvider={onStartConnection}
         onDisconnection={onDisconnect}
         account={account}
+        withConnectionStatus={withConnectionStatus}
       />
     </React.Fragment>
   );

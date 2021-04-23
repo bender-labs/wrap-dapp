@@ -23,11 +23,9 @@ const useStyles = makeStyles((theme: Theme) =>
       [theme.breakpoints.up('sm')]: {
         width: drawerWidth,
         flexShrink: 0,
-        
       },
-      
     },
-    
+
     menuButton: {
       marginRight: theme.spacing(2),
       [theme.breakpoints.up('sm')]: {
@@ -38,14 +36,14 @@ const useStyles = makeStyles((theme: Theme) =>
     toolbar: theme.mixins.toolbar,
     drawerPaper: {
       width: drawerWidth,
-      background: "#E5E5E5"
+      background: '#E5E5E5',
     },
     button: {
       border: 'none',
-      background: "#E5E5E5",
+      background: '#E5E5E5',
       '&:focus': {
-        outline: 0
-      }
+        outline: 0,
+      },
     },
     link: {
       color: '#000000',
@@ -54,7 +52,7 @@ const useStyles = makeStyles((theme: Theme) =>
       flexGrow: 1,
       padding: theme.spacing(3),
     },
-  }),
+  })
 );
 
 interface Props {
@@ -64,47 +62,51 @@ interface Props {
    */
   window?: () => Window;
   open: boolean;
-  onClose: () => void
+  onClose: () => void;
 }
-
 
 export default function DrawerComp(props: Props) {
   const { window, open, onClose } = props;
   const classes = useStyles();
-  const infoText = "Unfortunately our app does not work on mobile just yet, For the best experience, use desktop"
+  const infoText =
+    'Unfortunately this dapp does not work on mobile just yet, For the best experience, use desktop';
 
   const drawer = (
     <div>
       <div className={classes.toolbar} />
-      <button className={classes.button} onClick={onClose}><CloseIcon /></button>
+      <button className={classes.button} onClick={onClose}>
+        <CloseIcon />
+      </button>
       <List>
         <ListItem>
-          <Link className={classes.link} component={RouterLink} to={paths.WRAP} onClick={onClose}>
+          <Link
+            className={classes.link}
+            component={RouterLink}
+            to={paths.WRAP}
+            onClick={onClose}
+          >
             Wrap
           </Link>
-
-          </ListItem>
-        <ListItem>
-          <Link className={classes.link} component={RouterLink} to={paths.HISTORY} onClick={onClose}>
-            History
-          </Link>
         </ListItem>
+        {/*<ListItem>*/}
+        {/*  <Link className={classes.link} component={RouterLink} to={paths.HISTORY} onClick={onClose}>*/}
+        {/*    History*/}
+        {/*  </Link>*/}
+        {/*</ListItem>*/}
       </List>
       <Divider />
       <ListItem>
-        <ListItemText>{infoText}</ListItemText>
+        <ListItemText secondary={infoText} />
       </ListItem>
-      <List>
-
-      </List>
+      <List></List>
     </div>
   );
 
-  const container = window !== undefined ? () => window().document.body : undefined;
+  const container =
+    window !== undefined ? () => window().document.body : undefined;
 
   return (
     <div className={classes.root}>
-
       <nav className={classes.drawer}>
         <Hidden smUp implementation="css">
           <Drawer
@@ -122,9 +124,7 @@ export default function DrawerComp(props: Props) {
             {drawer}
           </Drawer>
         </Hidden>
-      
       </nav>
-
     </div>
   );
 }
