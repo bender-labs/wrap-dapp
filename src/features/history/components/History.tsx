@@ -22,7 +22,6 @@ const StyledTableCell = withStyles((theme: Theme) =>
     },
     body: {
       fontSize: 14,
-      padding: '20px',
       backgroundColor: 'white',
       '&:first-child': {
         borderRadius: '20px 0 0 20px'
@@ -88,19 +87,15 @@ export default function History({
           <Table className={classes.table} aria-label="customized table">
             <TableHead>
               <TableRow>
-                <StyledTableCell align="center">Token</StyledTableCell>
                 <StyledTableCell align="center">Amount</StyledTableCell>
-                <StyledTableCell align="center">Type</StyledTableCell>
-                <StyledTableCell align="center">Treatment</StyledTableCell>
-                <StyledTableCell align="center">Date</StyledTableCell>
+                <StyledTableCell align="center">Source</StyledTableCell>
+                <StyledTableCell align="center">Destination</StyledTableCell>
+                <StyledTableCell align="center">Status</StyledTableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               {operations.mints.map((row) => (
                 <StyledTableRow key={row.hash}>
-                  <StyledTableCell align="center" scope="row">
-                    {row.token}
-                  </StyledTableCell>
                   <StyledTableCell align="center">
                     <Amount
                       symbol={tokensByEthAddress[row.token].ethereumSymbol}
@@ -109,35 +104,40 @@ export default function History({
                     />
                   </StyledTableCell>
                   <StyledTableCell align="center">
-                    {row.type === 0 ? 'Wrap' : 'Unwrap'}
+                    {row.source}
                   </StyledTableCell>
                   <StyledTableCell align="center">
                     {row.destination}
                   </StyledTableCell>
-                  <StyledTableCell align="center">{row.hash}</StyledTableCell>
+                  <StyledTableCell align="center">
+                    {row.status.type}
+                  </StyledTableCell>
                 </StyledTableRow>
               ))}
-              {operations.burns.map((row) => (
-                <StyledTableRow key={row.hash}>
-                  <StyledTableCell align="center" scope="row">
-                    {row.token}
-                  </StyledTableCell>
-                  <StyledTableCell align="center">
-                    <Amount
-                      symbol={tokensByEthAddress[row.token].tezosSymbol}
-                      value={row.amount}
-                      decimals={tokensByEthAddress[row.token].decimals}
-                    />
-                  </StyledTableCell>
-                  <StyledTableCell align="center">
-                    {row.type === 0 ? 'Wrap' : 'Unwrap'}
-                  </StyledTableCell>
-                  <StyledTableCell align="center">
-                    {row.destination}
-                  </StyledTableCell>
-                  <StyledTableCell align="center">{row.hash}</StyledTableCell>
-                </StyledTableRow>
-              ))}
+
+
+              {/*{operations.burns.map((row) => (*/}
+              {/*  <StyledTableRow key={row.hash}>*/}
+              {/*    <StyledTableCell align="center" scope="row">*/}
+              {/*      {row.token}*/}
+              {/*    </StyledTableCell>*/}
+              {/*    <StyledTableCell align="center">*/}
+              {/*      <Amount*/}
+              {/*        symbol={tokensByEthAddress[row.token].tezosSymbol}*/}
+              {/*        value={row.amount}*/}
+              {/*        decimals={tokensByEthAddress[row.token].decimals}*/}
+              {/*      />*/}
+              {/*    </StyledTableCell>*/}
+              {/*    <StyledTableCell align="center">*/}
+              {/*      {row.type === 0 ? 'Wrap' : 'Unwrap'}*/}
+              {/*    </StyledTableCell>*/}
+              {/*    <StyledTableCell align="center">*/}
+              {/*      {row.destination}*/}
+              {/*    </StyledTableCell>*/}
+              {/*    <StyledTableCell align="center">{row.hash}</StyledTableCell>*/}
+              {/*  </StyledTableRow>*/}
+              {/*))}*/}
+
             </TableBody>
           </Table>
         </TableContainer>

@@ -42,21 +42,23 @@ export default function HistoryDoneOperations() {
     <>
       <div className={classes.main}>
         <p className={classes.history}>HISTORY</p>
+          <div>
         <Tabs
           value='placeholeder'
           onChange={onTabChange}
           className={classes.tabs}
         >
-          <Tab
+            <Tab
             label='wraps'
             value='wraps'
           />
-          <Tab
+            <Tab
             label='Unwraps'
             value='Unwraps'
           />
 
-        </Tabs>
+          </Tabs>
+          </div>
       </div>
       <History
         operations={operations}
