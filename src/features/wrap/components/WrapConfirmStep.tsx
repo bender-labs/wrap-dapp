@@ -48,8 +48,14 @@ export default function WrapConfirmStep({
   const currentFees = wrapFees(amount, fees);
   return (
     <>
-      <PaperHeader style={{ backgroundColor: '#E5E5E5',
-      fontSize: '20px', fontWeight: 'bold', boxShadow: 'inset 0 -7px 9px -7px rgba(0,0,0,0.4)'}}>
+      <PaperHeader
+        style={{
+          backgroundColor: '#E5E5E5',
+          fontSize: '20px',
+          fontWeight: 'bold',
+          boxShadow: 'inset 0 -7px 9px -7px rgba(0,0,0,0.4)',
+        }}
+      >
         <PaperNav>
           <IconButton onClick={onPrevious}>
             <ArrowBackIcon />
@@ -59,9 +65,13 @@ export default function WrapConfirmStep({
         <PaperActions />
       </PaperHeader>
 
-
       <PaperContent>
-        <Typography variant={'body2'} style={{ paddingLeft: '20px', fontWeight: 'bold'}}>Details</Typography>
+        <Typography
+          variant={'body2'}
+          style={{ paddingLeft: '20px', fontWeight: 'bold' }}
+        >
+          Details
+        </Typography>
         <LabelAndAsset
           label={'Send'}
           decimals={token.decimals}
@@ -71,8 +81,13 @@ export default function WrapConfirmStep({
         <LabelAndValue label={'From'} value={sendingAddress} />
         <LabelAndValue label={'To'} value={recipientAddress} />
       </PaperContent>
-      <PaperContent style={{ backgroundColor: '#C4C4C4'}}>
-        <Typography variant={'body2'} style={{ paddingLeft: '20px', fontWeight: 'bold'}}>Fees</Typography>
+      <PaperContent style={{ backgroundColor: '#C4C4C4' }}>
+        <Typography
+          variant={'body2'}
+          style={{ paddingLeft: '20px', fontWeight: 'bold' }}
+        >
+          Fees
+        </Typography>
         <LabelAndAsset
           label={'Wrap fees'}
           decimals={token.decimals}
@@ -91,7 +106,7 @@ export default function WrapConfirmStep({
 
       <PaperContent style={{ padding: '0' }}>
         <AssetSummary
-          label={'Receive'}
+          label={'You will receive'}
           value={amount.minus(currentFees)}
           decimals={token.decimals}
           symbol={token.tezosSymbol}
