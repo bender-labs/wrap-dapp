@@ -11,10 +11,28 @@ export const themeOptions: ThemeOptions = {
   },
   overrides: {
     MuiSelect: {
+      select: {
+        '&:focus': {
+          backgroundColor: '#FFFFFF',
+        },
+      },
       root: {
         '&.MuiFilledInput-input': {
+          backgroundColor: '#FFFFFF',
           padding: '10px 12px 10px',
         },
+      },
+    },
+    MuiFilledInput: {
+      root: {
+        backgroundColor: '#FFFFFF',
+        '&.MuiFocused': {
+          backgroundColor: '#FFFFFF',
+        },
+      },
+      input: {
+        padding: '10px 12px 10px',
+        backgroundColor: '#FFFFFF',
       },
     },
   },

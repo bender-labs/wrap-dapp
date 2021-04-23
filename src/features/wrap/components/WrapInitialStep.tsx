@@ -13,7 +13,7 @@ import AssetSummary from '../../../components/formatting/AssetSummary';
 import { WrapStatus } from '../hooks/useWrap';
 import MultiConnect from '../../wallet/MultiConnect';
 
-const useStyles = makeStyles(() =>
+const useStyles = makeStyles((theme) =>
   createStyles({
     buttonStyle: {
       color: 'black',
@@ -21,6 +21,16 @@ const useStyles = makeStyles(() =>
       width: '40%',
       borderRadius: '25px',
       float: 'right',
+      boxShadow: 'none',
+      textTransform: 'none',
+      fontWeight: 900,
+      '&:active': {
+        boxShadow: 'none',
+      },
+      '&:hover': {
+        backgroundColor: theme.palette.primary.main,
+        boxShadow: 'none',
+      },
     },
   })
 );
@@ -113,7 +123,8 @@ export default function WrapInitialStep({
               status !== WrapStatus.READY_TO_WRAP
             }
           >
-            NEXT <ArrowRightAltIcon />
+            Next{'  '}
+            <ArrowRightAltIcon />
           </Button>
         )}
       </PaperContent>
