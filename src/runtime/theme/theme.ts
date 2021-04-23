@@ -10,6 +10,11 @@ export const themeOptions: ThemeOptions = {
     },
   },
   overrides: {
+    MuiDialog: {
+      paper: {
+        backgroundColor: '#191919',
+      },
+    },
     MuiSelect: {
       select: {
         '&:focus': {
