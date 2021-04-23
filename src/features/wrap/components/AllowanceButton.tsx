@@ -36,22 +36,23 @@ export default function AllowanceButton({
     ? {
         color: 'primary',
         disabled: true,
-        text: `Allowed ${formatAmount(symbol, currentAllowance, decimals)}`,
+        text: `Allow`,
       }
     : {
         color: 'secondary',
         disabled: false,
-        text: `Allow ${formatAmount(symbol, balanceToWrap, decimals)}`,
+        text: `Allow`,
       };
 
   return (
-    <LoadableButton
-      loading={loading}
-      onClick={onAuthorize}
-      disabled={disabled}
-      text={text}
-      color={color}
-    >
+    <>
+      <LoadableButton
+        loading={loading}
+        onClick={onAuthorize}
+        disabled={disabled}
+        text={text}
+        color={color}
+      />
       <Typography variant="caption" className={classes.helperText}>
         Current Allowance: {formatAmount(symbol, currentAllowance, decimals)}
       </Typography>
@@ -59,6 +60,6 @@ export default function AllowanceButton({
         The locking contract will be allowed to spend{' '}
         {formatAmount(symbol, balanceToWrap, decimals)} on your behalf.
       </Typography>
-    </LoadableButton>
+    </>
   );
 }

@@ -31,10 +31,12 @@ const useStyle = makeStyles((theme) => ({
     textAlign: 'center',
     fontWeight: 'bold',
   },
-  otherMain: {
-    textAlign: 'center',
+  title: {
     backgroundColor: '#191919',
-    color: 'white',
+    color: '#FFFFFF',
+    fontSize: 20,
+    fontWeight: 700,
+    textAlign: 'center',
   },
   other: {
     textAlign: 'center',
@@ -44,8 +46,12 @@ const useStyle = makeStyles((theme) => ({
       backgroundColor: '#4d4d4d',
     },
   },
-  yellow: {
+  secondary: {
     color: theme.palette.primary.main,
+    fontWeight: 700,
+  },
+  divider: {
+    backgroundColor: '#444444',
   },
 }));
 
@@ -97,9 +103,13 @@ export default function OperationHistoryDialog() {
             gotoOp(operation);
           }}
         >
-          <ListItemText primary={primary} secondary={secondary} />
+          <ListItemText
+            primaryTypographyProps={{ variant: 'body2' }}
+            primary={primary}
+            secondary={secondary}
+          />
         </ListItem>
-        {!isLast && <Divider />}
+        {!isLast && <Divider className={classes.divider} />}
       </React.Fragment>
     );
   };
@@ -120,13 +130,13 @@ export default function OperationHistoryDialog() {
       switch (operation.status.type) {
         case OperationStatusType.NEW:
           return (
-            <Typography className={classes.yellow}>
+            <Typography className={classes.secondary} variant={'body2'}>
               Waiting for operation to be included
             </Typography>
           );
         case OperationStatusType.WAITING_FOR_CONFIRMATIONS:
           return (
-            <Typography>
+            <Typography variant={'body2'} className={classes.secondary}>
               Pending... {operation.status.confirmations} /{' '}
               {operation.status.confirmationsThreshold} confirmations
             </Typography>
@@ -136,15 +146,15 @@ export default function OperationHistoryDialog() {
             <React.Fragment>
               <Typography
                 component="p"
-                variant={'caption'}
-                className={classes.yellow}
+                variant={'body2'}
+                className={classes.secondary}
               >
                 Waiting for signatures
               </Typography>
               <Typography
                 component="p"
-                variant={'caption'}
-                className={classes.yellow}
+                variant={'body2'}
+                className={classes.secondary}
               >
                 {`(${
                   Object.keys(operation.status.signatures).length
@@ -154,7 +164,9 @@ export default function OperationHistoryDialog() {
           );
         case OperationStatusType.READY:
           return (
-            <Typography className={classes.yellow}>Ready to mint</Typography>
+            <Typography variant={'body2'} className={classes.secondary}>
+              Ready to mint
+            </Typography>
           );
       }
     };
@@ -178,13 +190,13 @@ export default function OperationHistoryDialog() {
       switch (operation.status.type) {
         case OperationStatusType.NEW:
           return (
-            <Typography className={classes.yellow}>
+            <Typography className={classes.secondary}>
               Waiting for operation to be included
             </Typography>
           );
         case OperationStatusType.WAITING_FOR_CONFIRMATIONS:
           return (
-            <Typography className={classes.yellow}>
+            <Typography className={classes.secondary}>
               Pending... {operation.status.confirmations} /{' '}
               {operation.status.confirmationsThreshold} confirmations
             </Typography>
@@ -194,15 +206,15 @@ export default function OperationHistoryDialog() {
             <React.Fragment>
               <Typography
                 component="p"
-                variant={'caption'}
-                className={classes.yellow}
+                variant={'body2'}
+                className={classes.secondary}
               >
                 Waiting for signatures
               </Typography>
               <Typography
                 component="p"
-                variant={'caption'}
-                className={classes.yellow}
+                variant={'body2'}
+                className={classes.secondary}
               >
                 {`(${
                   Object.keys(operation.status.signatures).length
@@ -212,7 +224,9 @@ export default function OperationHistoryDialog() {
           );
         case OperationStatusType.READY:
           return (
-            <Typography className={classes.yellow}>Ready to release</Typography>
+            <Typography variant={'body2'} className={classes.secondary}>
+              Ready to release
+            </Typography>
           );
       }
     };
@@ -229,7 +243,7 @@ export default function OperationHistoryDialog() {
         }}
       />
       <Dialog open={open} onBackdropClick={() => setOpen(false)} fullWidth>
-        <DialogTitle className={classes.otherMain}>
+        <DialogTitle disableTypography={true} className={classes.title}>
           Pending operations
         </DialogTitle>
         {!canFetch && (
@@ -253,7 +267,6 @@ export default function OperationHistoryDialog() {
                 <ListItemText>No pending minting operation</ListItemText>
               </ListItem>
             )}
-            <Divider />
             <ListSubheader className={classes.subHeader}>
               Release operations
             </ListSubheader>
