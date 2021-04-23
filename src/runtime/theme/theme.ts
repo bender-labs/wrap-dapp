@@ -9,4 +9,13 @@ export const themeOptions: ThemeOptions = {
       main: '#000000',
     },
   },
+  overrides: {
+    MuiSelect: {
+      root: {
+        '&.MuiFilledInput-input': {
+          padding: '10px 12px 10px',
+        },
+      },
+    },
+  },
 };

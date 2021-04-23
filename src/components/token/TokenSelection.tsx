@@ -7,6 +7,8 @@ import {
 import React from 'react';
 import { TokenMetadata } from '../../features/swap/token';
 import { SupportedBlockchain } from '../../features/wallet/blockchain';
+import EthereumTokenIcon from './ethereum/EthereumTokenIcon';
+import TezosTokenIcon from './tezos/TezosTokenIcon';
 
 type Props = {
   token: string;
@@ -22,6 +24,18 @@ const itemLabel = (
   blockchainTarget === SupportedBlockchain.Ethereum
     ? `${tokenMetadata.ethereumName} (${tokenMetadata.ethereumSymbol})`
     : `${tokenMetadata.tezosName} (${tokenMetadata.tezosSymbol})`;
+
+const itemIcon = (
+  blockchainTarget: SupportedBlockchain,
+  tokenMetadata: TokenMetadata
+) =>
+  blockchainTarget === SupportedBlockchain.Ethereum ? (
+    <EthereumTokenIcon
+      contractAddress={tokenMetadata.ethereumContractAddress}
+    />
+  ) : (
+    <TezosTokenIcon ipfsUrl={tokenMetadata.thumbnailUri} />
+  );
 
 export default function TokenSelection({
   token,
@@ -48,11 +62,9 @@ export default function TokenSelection({
           id: 'token-selector',
         }}
       >
-        <MenuItem value="" disabled>
-          Please select
-        </MenuItem>
         {tokenList.map(([key, token]) => (
           <MenuItem value={key} key={key}>
+            {itemIcon(blockchainTarget, token)}
             {itemLabel(blockchainTarget, token)}
           </MenuItem>
         ))}

@@ -84,20 +84,14 @@ export default function UnwrapInitialStep({
           displayBalance={connected}
         />
       </PaperContent>
-      {/*{!amount.isZero() &&*/}
-      {/*<>*/}
-      {/*  <SpacedDivider />*/}
       <PaperContent style={{ padding: '16px 0' }}>
         <AssetSummary
           label={'You will receive'}
           value={amount.minus(currentFees)}
-          symbol={token.tezosSymbol}
+          symbol={token.ethereumSymbol}
           decimals={token.decimals}
         />
       </PaperContent>
-      {/*</>*/}
-      {/*}*/}
-      {/*{ !amount.isZero() &&*/}
       <PaperContent
         style={{
           borderRadius: '0 0 10px 10px',
@@ -117,7 +111,6 @@ export default function UnwrapInitialStep({
           </Button>
         )}
       </PaperContent>
-      {/*}*/}
     </>
   );
 }
