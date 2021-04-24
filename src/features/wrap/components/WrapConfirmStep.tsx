@@ -12,11 +12,11 @@ import { TokenMetadata } from '../../swap/token';
 import { wrapFees } from '../../fees/fees';
 import { Fees } from '../../../config';
 import WrapActions from './WrapActions';
-import { WrapStatus } from '../hooks/useWrap';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import LabelAndAsset from '../../../components/formatting/LabelAndAsset';
 import AssetSummary from '../../../components/formatting/AssetSummary';
 import LabelAndValue from '../../../components/formatting/LabelAndValue';
+import { WrapStatus } from '../hooks/reducer';
 
 export type WrapConfirmStepProps = {
   token: TokenMetadata;

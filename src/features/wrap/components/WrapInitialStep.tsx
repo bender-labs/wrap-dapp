@@ -10,8 +10,8 @@ import { Fees } from '../../../config';
 import { Button, makeStyles, createStyles } from '@material-ui/core';
 import { wrapFees } from '../../fees/fees';
 import AssetSummary from '../../../components/formatting/AssetSummary';
-import { WrapStatus } from '../hooks/useWrap';
 import MultiConnect from '../../wallet/MultiConnect';
+import { WrapStatus } from '../hooks/reducer';
 
 const useStyles = makeStyles((theme) =>
   createStyles({

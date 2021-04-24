@@ -2,9 +2,9 @@ import { Step, StepButton, Stepper } from '@material-ui/core';
 import React from 'react';
 import AllowanceButton from './AllowanceButton';
 import BigNumber from 'bignumber.js';
-import { WrapStatus } from '../hooks/useWrap';
 import LoadableButton from '../../../components/button/LoadableButton';
 import AllowanceLabel from './AllowanceLabel';
+import { WrapStatus } from '../hooks/reducer';
 
 export type WrapActionsProp = {
   currentAllowance: BigNumber;
