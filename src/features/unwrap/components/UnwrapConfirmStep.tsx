@@ -94,7 +94,7 @@ export default function UnwrapConfirmStep({
       </PaperContent>
       <PaperContent style={{ padding: '0' }}>
         <AssetSummary
-          label={'Receive'}
+          label={'You will receive'}
           value={amount.minus(currentFees)}
           decimals={token.decimals}
           symbol={token.ethereumSymbol}
