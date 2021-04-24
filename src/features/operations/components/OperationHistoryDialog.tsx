@@ -190,13 +190,13 @@ export default function OperationHistoryDialog() {
       switch (operation.status.type) {
         case OperationStatusType.NEW:
           return (
-            <Typography className={classes.secondary}>
+            <Typography variant={'body2'} className={classes.secondary}>
               Waiting for operation to be included
             </Typography>
           );
         case OperationStatusType.WAITING_FOR_CONFIRMATIONS:
           return (
-            <Typography className={classes.secondary}>
+            <Typography variant={'body2'} className={classes.secondary}>
               Pending... {operation.status.confirmations} /{' '}
               {operation.status.confirmationsThreshold} confirmations
             </Typography>
