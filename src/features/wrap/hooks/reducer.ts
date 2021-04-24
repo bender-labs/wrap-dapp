@@ -46,7 +46,7 @@ export function initialState(token: string, custodianContractAddress: string) {
     contract: null,
     currentBalance: new BigNumber(0),
     currentAllowance: new BigNumber(0),
-    amountToWrap: new BigNumber(0),
+    amountToWrap: new BigNumber(''),
     connected: false,
     custodianContractAddress,
     networkFees: new BigNumber(0),

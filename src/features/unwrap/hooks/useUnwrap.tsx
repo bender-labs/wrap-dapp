@@ -16,7 +16,7 @@ import {
 import { connectStore, createStore } from '../../types';
 
 function getFirstTokenByName(tokens: Record<string, TokenMetadata>) {
-  return Object.entries(tokens).sort(([key1, metadata1], [key2, metadata2]) => {
+  return Object.entries(tokens).sort(([key1, metadata1], [, metadata2]) => {
     if (metadata1.ethereumName > metadata2.ethereumName) return 1;
     if (metadata1.ethereumName < metadata2.ethereumName) return -1;
     return 0;
@@ -54,7 +54,7 @@ export function useUnwrap() {
     contract: null,
     minterContractAddress,
     currentBalance: new BigNumber(0),
-    amountToUnwrap: new BigNumber(0),
+    amountToUnwrap: new BigNumber(''),
     fees,
   });
 
@@ -68,6 +68,7 @@ export function useUnwrap() {
       return;
     }
     effectDispatch(estimateFees.started({}));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state.status]);
 
   const selectToken = useCallback((token: string) => {
@@ -119,6 +120,7 @@ export function useUnwrap() {
         })
       );
     };
+    // noinspection JSIgnoredPromiseFromCall
     loadMetadata();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state.token, state.contractFactory]);

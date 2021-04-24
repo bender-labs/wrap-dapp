@@ -47,7 +47,9 @@ function UnwrapForm() {
       await addOperation(operation);
       history.push(unwrapPage(operation));
     };
+    // noinspection JSIgnoredPromiseFromCall
     nextStep();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [status, operation]);
 
   useEffect(() => {

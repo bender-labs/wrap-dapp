@@ -30,6 +30,7 @@ export default function AmountToWrapInput({
       setUserError([false, '']);
       return;
     }
+
     if (amountToWrap.gt(balance)) {
       setUserError([
         true,
@@ -61,7 +62,7 @@ export default function AmountToWrapInput({
   return (
     <>
       <AmountInput
-        value={amountToWrap.shiftedBy(-decimals).toString()}
+        value={amountToWrap?.shiftedBy(-decimals).toString()}
         decimals={decimals}
         symbol={symbol}
         onChange={handleOnChange}

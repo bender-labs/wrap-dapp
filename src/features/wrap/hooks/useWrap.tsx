@@ -24,7 +24,7 @@ import { initialState, reducer, WrapStatus } from './reducer';
 import { TokenMetadata } from '../../swap/token';
 
 function getFirstTokenByName(tokens: Record<string, TokenMetadata>) {
-  return Object.entries(tokens).sort(([key1, metadata1], [key2, metadata2]) => {
+  return Object.entries(tokens).sort(([key1, metadata1], [, metadata2]) => {
     if (metadata1.ethereumName > metadata2.ethereumName) return 1;
     if (metadata1.ethereumName < metadata2.ethereumName) return -1;
     return 0;
@@ -148,6 +148,7 @@ export function useWrap() {
 
     let tryNumber = 0;
     try {
+      // noinspection JSIgnoredPromiseFromCall
       computeNetworkFees();
     } catch (e) {
       if (tryNumber === 1) {
