@@ -1,7 +1,6 @@
 import BigNumber from 'bignumber.js';
 import { TokenMetadata } from '../../swap/token';
 import { Fees } from '../../../config';
-import { UnwrapStatus } from '../hooks/useUnwrap';
 import React, { useEffect, useState } from 'react';
 import { wrapFees } from '../../fees/fees';
 import { PaperContent } from '../../../components/paper/Paper';
@@ -12,6 +11,7 @@ import AssetSummary from '../../../components/formatting/AssetSummary';
 import { Button, createStyles, makeStyles } from '@material-ui/core';
 import MultiConnect from '../../wallet/MultiConnect';
 import ArrowRightAltIcon from '@material-ui/icons/ArrowRightAlt';
+import { UnwrapStatus } from '../hooks/reducer';
 
 const useStyles = makeStyles(() =>
   createStyles({

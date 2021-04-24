@@ -363,8 +363,7 @@ export const useOperation = (
       payload: { tzStatus, ethStatus },
     });
   }, [tzStatus, ethStatus]);
-
-  const tokensByEthAddress = useMemo(
+  useMemo(
     () =>
       Object.entries(fungibleTokens).reduce<Record<string, TokenMetadata>>(
         (acc, [, metadata]) => {
@@ -375,7 +374,6 @@ export const useOperation = (
       ),
     [fungibleTokens]
   );
-
   useEffect(() => {
     if (state.status !== ReceiptStatus.NEED_REFRESH) {
       return;

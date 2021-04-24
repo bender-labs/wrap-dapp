@@ -3,12 +3,13 @@ import React, { useEffect, useState } from 'react';
 import { usePendingOperationsActions } from '../features/operations/state/pendingOperations';
 import { useHistory } from 'react-router';
 import UnwrapInitialStep from '../features/unwrap/components/UnwrapInitialStep';
-import { UnwrapStatus, useUnwrap } from '../features/unwrap/hooks/useUnwrap';
+import { useUnwrap } from '../features/unwrap/hooks/useUnwrap';
 import UnwrapConfirmStep from '../features/unwrap/components/UnwrapConfirmStep';
 import { paths, unwrapPage } from './routes';
 import { Route } from 'react-router-dom';
 import OperationScreen from './OperationScreen';
 import { OperationType } from '../features/operations/state/types';
+import { UnwrapStatus } from '../features/unwrap/hooks/reducer';
 
 enum Step {
   AMOUNT,
@@ -30,6 +31,7 @@ function UnwrapForm() {
     amountToUnwrap,
     tzAccount,
     ethAccount,
+    operation,
   } = useUnwrap();
 
   const { addOperation } = usePendingOperationsActions();
@@ -43,6 +45,17 @@ function UnwrapForm() {
     history.push(unwrapPage(op));
     return op;
   };
+
+  useEffect(() => {
+    if (status !== UnwrapStatus.READY_TO_UNWRAP || !operation) {
+      return;
+    }
+    const nextStep = async () => {
+      await addOperation(operation);
+      history.push(unwrapPage(operation));
+    };
+    nextStep();
+  }, [status, operation]);
 
   useEffect(() => {
     if (status === UnwrapStatus.NOT_READY && step === Step.CONFIRM) {

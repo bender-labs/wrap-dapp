@@ -1,0 +1,185 @@
+import BigNumber from 'bignumber.js';
+import {
+  TezosUnwrapApi,
+  TezosUnwrapApiBuilder,
+  TezosUnwrapApiFactory,
+} from '../../tezos/TezosUnwrapApi';
+import { Fees } from '../../../config';
+import { Action, Dispatch, Store } from '../../types';
+import { isType } from 'typescript-fsa';
+import {
+  amountToUnwrapChange,
+  fetchMetadata,
+  runUnwrap,
+  tokenSelect,
+  userBalanceChange,
+  walletChange,
+} from './actions';
+import { OptionsObject, SnackbarKey, SnackbarMessage } from 'notistack';
+import {
+  Operation,
+  OperationStatusType,
+  OperationType,
+  UnwrapErc20Operation,
+} from '../../operations/state/types';
+import { unwrapFees } from '../../fees/fees';
+
+type UnwrapState = {
+  status: UnwrapStatus;
+  token: string;
+  contract: TezosUnwrapApi | null;
+  currentBalance: BigNumber;
+  amountToUnwrap: BigNumber;
+  connected: boolean;
+  minterContractAddress: string;
+  fees: Fees;
+  contractFactory?: TezosUnwrapApiFactory;
+  operation?: Operation;
+};
+
+export enum UnwrapStatus {
+  UNINITIALIZED,
+  NOT_READY,
+  READY_TO_UNWRAP,
+  WAITING_FOR_UNWRAP,
+}
+
+const tryReady = (state: UnwrapState): UnwrapState => {
+  if (
+    !state.connected ||
+    state.amountToUnwrap.isZero() ||
+    state.amountToUnwrap.isNaN() ||
+    state.amountToUnwrap.isGreaterThan(state.currentBalance)
+  ) {
+    return { ...state, status: UnwrapStatus.NOT_READY };
+  }
+  return {
+    ...state,
+    status: state.amountToUnwrap.lte(state.currentBalance)
+      ? UnwrapStatus.READY_TO_UNWRAP
+      : UnwrapStatus.NOT_READY,
+  };
+};
+
+export function reducer(state: UnwrapState, action: Action): UnwrapState {
+  if (isType(action, tokenSelect)) {
+    return {
+      ...state,
+      status: UnwrapStatus.NOT_READY,
+      ...action.payload,
+      currentBalance: new BigNumber(0),
+      amountToUnwrap: new BigNumber(0),
+    };
+  }
+  if (isType(action, userBalanceChange)) {
+    return tryReady({ ...state, ...action.payload });
+  }
+  if (isType(action, amountToUnwrapChange)) {
+    const { amountToUnwrap } = action.payload;
+    return tryReady({ ...state, amountToUnwrap });
+  }
+  if (isType(action, runUnwrap.started)) {
+    return {
+      ...state,
+      status: UnwrapStatus.WAITING_FOR_UNWRAP,
+    };
+  }
+  if (isType(action, runUnwrap.done)) {
+    return {
+      ...state,
+      operation: action.payload.result,
+      status: UnwrapStatus.READY_TO_UNWRAP,
+    };
+  }
+  if (isType(action, walletChange)) {
+    const { ethAccount, tezosAccount, tezosLibrary } = action.payload;
+    const contractFactory =
+      ethAccount && tezosAccount && tezosLibrary
+        ? TezosUnwrapApiBuilder.withProvider(tezosLibrary)
+            .forMinterContract(state.minterContractAddress)
+            .forAccount(ethAccount, tezosAccount)
+            .forFees(state.fees)
+            .createFactory()
+        : undefined;
+    return {
+      ...state,
+      contractFactory,
+      status: contractFactory ? state.status : UnwrapStatus.NOT_READY,
+      connected: ethAccount !== undefined && tezosAccount !== undefined,
+    };
+  }
+  return state;
+}
+
+export function sideEffectReducer(
+  enqueueSnackbar: (
+    message: SnackbarMessage,
+    options?: OptionsObject
+  ) => SnackbarKey
+) {
+  return ({ getState, dispatch }: Store<UnwrapState>, action: Action) => {
+    const state = getState();
+    return async (next: Dispatch) => {
+      if (isType(action, fetchMetadata)) {
+        if (!state.contractFactory) {
+          return;
+        }
+        const {
+          ethereumContract,
+          tezosContract,
+          tezosTokenId,
+        } = action.payload;
+        const contract = state.contractFactory.forFa20(
+          ethereumContract,
+          tezosContract,
+          tezosTokenId
+        );
+        const currentBalance = await contract.balanceOf();
+        dispatch(
+          userBalanceChange({
+            currentBalance,
+            contract,
+          })
+        );
+      }
+      if (isType(action, runUnwrap.started)) {
+        const { contract, amountToUnwrap } = state;
+        if (contract == null) return;
+        next(action);
+        const {
+          ethAccount,
+          ethereumContract,
+          fees,
+          tezosAccount,
+        } = action.payload;
+        try {
+          const operationHash = await contract.unwrap(amountToUnwrap);
+
+          const op: UnwrapErc20Operation = {
+            operationHash,
+            hash: operationHash,
+            source: ethAccount,
+            destination: tezosAccount,
+            status: { type: OperationStatusType.NEW },
+            type: OperationType.UNWRAP,
+            amount: amountToUnwrap,
+            token: ethereumContract,
+            fees: unwrapFees(amountToUnwrap, fees),
+          };
+          dispatch(runUnwrap.done({ params: action.payload, result: op }));
+        } catch (e) {
+          enqueueSnackbar('Error while calling unwrap', { variant: 'error' });
+          dispatch(
+            runUnwrap.failed({
+              params: action.payload,
+              error: 'Unwrap failure',
+            })
+          );
+        }
+
+        return;
+      }
+      next(action);
+    };
+  };
+}
