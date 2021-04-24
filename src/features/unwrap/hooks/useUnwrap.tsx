@@ -17,6 +17,7 @@ import {
 } from '../../operations/state/types';
 import { unwrapFees } from '../../fees/fees';
 import { useSnackbar } from 'notistack';
+import { TokenMetadata } from '../../swap/token';
 
 export enum UnwrapAction {
   WALLET_CHANGE,
@@ -135,6 +136,14 @@ function reducer(state: UnwrapState, action: Action): UnwrapState {
   return state;
 }
 
+function getFirstTokenByName(tokens: Record<string, TokenMetadata>) {
+  return Object.entries(tokens).sort(([key1, metadata1], [key2, metadata2]) => {
+    if (metadata1.ethereumName > metadata2.ethereumName) return 1;
+    if (metadata1.ethereumName < metadata2.ethereumName) return -1;
+    return 0;
+  })[0];
+}
+
 export function useUnwrap() {
   const { enqueueSnackbar } = useSnackbar();
 
@@ -163,7 +172,7 @@ export function useUnwrap() {
 
   const [state, dispatch] = useReducer<typeof reducer>(reducer, {
     status: UnwrapStatus.UNINITIALIZED,
-    token: Object.keys(fungibleTokens)[0] || '',
+    token: getFirstTokenByName(fungibleTokens)[0] || '',
     connected: false,
     contract: null,
     minterContractAddress,

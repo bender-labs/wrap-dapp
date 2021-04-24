@@ -37,13 +37,23 @@ const itemIcon = (
     <TezosTokenIcon ipfsUrl={tokenMetadata.thumbnailUri} />
   );
 
+function orderTokens(
+  tokens: Record<string, TokenMetadata>
+): [string, TokenMetadata][] {
+  return Object.entries(tokens).sort(([key1, metadata1], [key2, metadata2]) => {
+    if (metadata1.ethereumName > metadata2.ethereumName) return 1;
+    if (metadata1.ethereumName < metadata2.ethereumName) return -1;
+    return 0;
+  });
+}
+
 export default function TokenSelection({
   token,
   tokens,
   blockchainTarget,
   onTokenSelect,
 }: Props) {
-  const tokenList = Object.entries(tokens);
+  const tokenList = orderTokens(tokens);
 
   const handleTokenSelect = (event: React.ChangeEvent<{ value: unknown }>) => {
     event.preventDefault();

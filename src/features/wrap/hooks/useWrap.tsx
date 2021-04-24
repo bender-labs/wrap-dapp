@@ -21,6 +21,15 @@ import {
   wrapDone,
 } from './actions';
 import { initialState, reducer, WrapStatus } from './reducer';
+import { TokenMetadata } from '../../swap/token';
+
+function getFirstTokenByName(tokens: Record<string, TokenMetadata>) {
+  return Object.entries(tokens).sort(([key1, metadata1], [key2, metadata2]) => {
+    if (metadata1.ethereumName > metadata2.ethereumName) return 1;
+    if (metadata1.ethereumName < metadata2.ethereumName) return -1;
+    return 0;
+  })[0];
+}
 
 export function useWrap() {
   const { enqueueSnackbar } = useSnackbar();
@@ -38,7 +47,10 @@ export function useWrap() {
 
   const [state, dispatch] = useReducer<typeof reducer>(
     reducer,
-    initialState(Object.keys(fungibleTokens)[0], custodianContractAddress)
+    initialState(
+      getFirstTokenByName(fungibleTokens)[0],
+      custodianContractAddress
+    )
   );
 
   useEffect(() => {

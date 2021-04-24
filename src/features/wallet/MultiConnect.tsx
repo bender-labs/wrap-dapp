@@ -43,10 +43,6 @@ const useCustomStepIconStyles = makeStyles((theme) => ({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  active: {
-    backgroundColor:
-      'linear-gradient( 136deg, rgb(242,113,33) 0%, rgb(233,64,87) 50%, rgb(138,35,135) 100%)',
-  },
   completed: {
     backgroundColor: theme.palette.primary.main,
   },
@@ -54,7 +50,7 @@ const useCustomStepIconStyles = makeStyles((theme) => ({
 
 function CustomStepIcon(props: StepIconProps) {
   const classes = useCustomStepIconStyles();
-  const { active, completed } = props;
+  const { completed } = props;
 
   const icons: { [index: string]: React.ReactElement } = {
     1: completed ? <CheckIcon /> : <span>1</span>,
@@ -64,7 +60,6 @@ function CustomStepIcon(props: StepIconProps) {
   return (
     <div
       className={clsx(classes.root, {
-        [classes.active]: active,
         [classes.completed]: completed,
       })}
     >

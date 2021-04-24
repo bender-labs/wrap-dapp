@@ -86,7 +86,7 @@ const WalletConnectionCard = ({
           endIcon={withConnectionStatus ? <CheckIcon /> : null}
           onClick={handleDisconnection}
         >
-          Connect
+          Connected
         </Button>
       ) : (
         <Button
