@@ -80,7 +80,7 @@ export default function UnwrapConfirmStep({
       <PaperContent style={{ backgroundColor: '#C4C4C4' }}>
         <Typography variant={'body2'}>Fees</Typography>
         <LabelAndAsset
-          label={'Wrap fees'}
+          label={'Unwrap fees'}
           decimals={token.decimals}
           value={currentFees}
           symbol={token.tezosSymbol}
