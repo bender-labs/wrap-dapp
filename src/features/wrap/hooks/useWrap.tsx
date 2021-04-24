@@ -155,7 +155,7 @@ export function useWrap() {
         tryNumber++;
       }
     }
-  }, [state, ethLibrary]);
+  }, [state.status]);
 
   useEffect(() => {
     const loadMetadata = async () => {
