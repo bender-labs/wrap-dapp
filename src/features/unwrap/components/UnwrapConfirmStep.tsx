@@ -24,6 +24,7 @@ export type UnwrapConfirmStepProps = {
   sendingAddress: string;
   recipientAddress: string;
   amount: BigNumber;
+  networkCost?: number;
   onPrevious: () => void;
   status: UnwrapStatus;
   onUnwrap: () => void;
@@ -38,6 +39,7 @@ export default function UnwrapConfirmStep({
   sendingAddress,
   recipientAddress,
   onUnwrap,
+  networkCost,
 }: UnwrapConfirmStepProps) {
   const currentFees = wrapFees(amount, fees);
   return (
@@ -85,9 +87,9 @@ export default function UnwrapConfirmStep({
         />
         <LabelAndAsset
           label={'Network fees'}
-          decimals={token.decimals}
-          value={currentFees}
-          symbol={token.tezosSymbol}
+          decimals={6}
+          value={new BigNumber(networkCost || 0)}
+          symbol={'tez'}
         />
       </PaperContent>
       <PaperContent style={{ padding: '0' }}>

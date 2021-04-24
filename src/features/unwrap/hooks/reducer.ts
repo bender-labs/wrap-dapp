@@ -9,6 +9,7 @@ import { Action, Dispatch, Store } from '../../types';
 import { isType } from 'typescript-fsa';
 import {
   amountToUnwrapChange,
+  estimateFees,
   fetchMetadata,
   runUnwrap,
   tokenSelect,
@@ -33,6 +34,7 @@ type UnwrapState = {
   connected: boolean;
   minterContractAddress: string;
   fees: Fees;
+  costEstimate?: number;
   contractFactory?: TezosUnwrapApiFactory;
   operation?: Operation;
 };
@@ -42,6 +44,7 @@ export enum UnwrapStatus {
   NOT_READY,
   READY_TO_UNWRAP,
   WAITING_FOR_UNWRAP,
+  UNWRAP_DONE,
 }
 
 const tryReady = (state: UnwrapState): UnwrapState => {
@@ -88,7 +91,13 @@ export function reducer(state: UnwrapState, action: Action): UnwrapState {
     return {
       ...state,
       operation: action.payload.result,
-      status: UnwrapStatus.READY_TO_UNWRAP,
+      status: UnwrapStatus.UNWRAP_DONE,
+    };
+  }
+  if (isType(action, estimateFees.done)) {
+    return {
+      ...state,
+      costEstimate: action.payload.result,
     };
   }
   if (isType(action, walletChange)) {
@@ -141,6 +150,7 @@ export function sideEffectReducer(
             contract,
           })
         );
+        return;
       }
       if (isType(action, runUnwrap.started)) {
         const { contract, amountToUnwrap } = state;
@@ -178,6 +188,15 @@ export function sideEffectReducer(
         }
 
         return;
+      }
+      if (isType(action, estimateFees.started)) {
+        next(action);
+
+        const { contract, amountToUnwrap } = state;
+        const estimate = await contract?.estimateUnwrapNetworkFees(
+          amountToUnwrap
+        );
+        dispatch(estimateFees.done({ result: estimate?.totalCost || 0 }));
       }
       next(action);
     };

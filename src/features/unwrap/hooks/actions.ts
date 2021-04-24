@@ -41,3 +41,5 @@ export const fetchMetadata = actionCreator<{
   ethereumContract: string;
   tezosTokenId: number;
 }>('FETCH_METADATA');
+
+export const estimateFees = actionCreator.async<any, number>('ESTIMATE_FEES');

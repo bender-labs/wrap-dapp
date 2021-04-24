@@ -68,6 +68,30 @@ function reducer(state: State, action: Action): State {
   }
 }
 
+// noinspection JSUnusedGlobalSymbols,JSUnusedLocalSymbols,ES6ShorthandObjectProperty
+const fakeSigner = (account: string) => ({
+  publicKey(): Promise<string> {
+    return Promise.reject('Noop signer');
+  },
+  publicKeyHash(): Promise<string> {
+    return Promise.resolve(account);
+  },
+  secretKey(): Promise<string | undefined> {
+    return Promise.reject('Noop signer');
+  },
+  sign(
+    op: {},
+    magicByte: Uint8Array | undefined
+  ): Promise<{
+    bytes: string;
+    sig: string;
+    prefixSig: string;
+    sbytes: string;
+  }> {
+    return Promise.reject('Noop signer');
+  },
+});
+
 function _activate(dispatch: Dispatch<Action>) {
   return (client: BeaconWallet) => async (request: RequestPermissionInput) => {
     const library = new TezosToolkit(request.network?.rpcUrl || '');
@@ -75,6 +99,7 @@ function _activate(dispatch: Dispatch<Action>) {
     await client.requestPermissions(request);
     library.setWalletProvider(client);
     const account = await client.getPKH();
+    library.setSignerProvider(fakeSigner(account));
     dispatch({
       type: ActionType.CONNECTED,
       payload: {
@@ -93,6 +118,7 @@ function _reactivate(dispatch: Dispatch<Action>) {
     library.addExtension(new Tzip16Module());
     library.setWalletProvider(client);
     const account = await client.getPKH();
+    library.setSignerProvider(fakeSigner(account));
     dispatch({
       type: ActionType.CONNECTED,
       payload: {

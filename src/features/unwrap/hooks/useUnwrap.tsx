@@ -7,6 +7,7 @@ import { TokenMetadata } from '../../swap/token';
 import { reducer, sideEffectReducer, UnwrapStatus } from './reducer';
 import {
   amountToUnwrapChange,
+  estimateFees,
   fetchMetadata,
   runUnwrap,
   tokenSelect,
@@ -35,7 +36,6 @@ export function useUnwrap() {
     ethereum: { library: ethLibrary, account: ethAccount },
     tezos: { account: tzAccount, library: tezosLibrary },
   } = useWalletContext();
-
   useEffect(() => {
     dispatch(
       walletChange({
@@ -62,6 +62,13 @@ export function useUnwrap() {
     createStore(state, dispatch),
     sideEffectReducer(enqueueSnackbar)
   );
+
+  useEffect(() => {
+    if (state.status !== UnwrapStatus.READY_TO_UNWRAP) {
+      return;
+    }
+    effectDispatch(estimateFees.started({}));
+  }, [state.status]);
 
   const selectToken = useCallback((token: string) => {
     dispatch(

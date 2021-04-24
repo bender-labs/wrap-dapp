@@ -2,6 +2,7 @@ import { TezosToolkit } from '@taquito/taquito';
 import { tzip16 } from '@taquito/tzip16';
 import BigNumber from 'bignumber.js';
 import { Fees } from '../../config';
+import { Estimate } from '@taquito/taquito/dist/types/contract/estimate';
 
 export type TezosAddress = string;
 export type EthereumAddress = string;
@@ -39,20 +40,29 @@ export class TezosUnwrapApi {
     );
   }
 
-  async unwrap(amount: BigNumber) {
+  private async unwrap_call(amount: BigNumber) {
     const contract = await this.tzToolkit.wallet.at(this.minterContract);
     const totalFees = amount
       .div(10000)
       .multipliedBy(this.fees.erc20UnwrappingFees);
-    const result = await contract.methods
-      .unwrap_erc20(
-        this.erc20ContractAddress.toLowerCase().substring(2),
-        amount.toString(10),
-        totalFees.toString(10),
-        this.ethAccountAddress.toLowerCase().substring(2)
-      )
-      .send();
+    return contract.methods.unwrap_erc20(
+      this.erc20ContractAddress.toLowerCase().substring(2),
+      amount.toString(10),
+      totalFees.toString(10),
+      this.ethAccountAddress.toLowerCase().substring(2)
+    );
+  }
+
+  async unwrap(amount: BigNumber) {
+    const call = await this.unwrap_call(amount);
+    const result = await call.send();
     return result.opHash;
+  }
+
+  async estimateUnwrapNetworkFees(amount: BigNumber): Promise<Estimate> {
+    const call = await this.unwrap_call(amount);
+    const params = call.toTransferParams({ amount: 0 });
+    return await this.tzToolkit.estimate.transfer(params);
   }
 
   private readonly ethAccountAddress: EthereumAddress;

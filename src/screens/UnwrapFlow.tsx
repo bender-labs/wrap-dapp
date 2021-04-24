@@ -32,22 +32,15 @@ function UnwrapForm() {
     tzAccount,
     ethAccount,
     operation,
+    costEstimate,
   } = useUnwrap();
 
   const { addOperation } = usePendingOperationsActions();
 
-  const doLaunchUnwrap = async () => {
-    const op = await launchUnwrap();
-    if (!op) {
-      return;
-    }
-    await addOperation(op);
-    history.push(unwrapPage(op));
-    return op;
-  };
+  const history = useHistory();
 
   useEffect(() => {
-    if (status !== UnwrapStatus.READY_TO_UNWRAP || !operation) {
+    if (status !== UnwrapStatus.UNWRAP_DONE || !operation) {
       return;
     }
     const nextStep = async () => {
@@ -63,7 +56,16 @@ function UnwrapForm() {
     }
   }, [status, step]);
 
-  const history = useHistory();
+  const doLaunchUnwrap = async () => {
+    const op = await launchUnwrap();
+    if (!op) {
+      return;
+    }
+    await addOperation(op);
+    history.push(unwrapPage(op));
+    return op;
+  };
+
   // noinspection RequiredAttributes
   return (
     <>
@@ -92,6 +94,7 @@ function UnwrapForm() {
           sendingAddress={tzAccount!}
           amount={amountToUnwrap}
           fees={fees}
+          networkCost={costEstimate}
           onPrevious={() => setStep(Step.AMOUNT)}
           onUnwrap={doLaunchUnwrap}
         />
