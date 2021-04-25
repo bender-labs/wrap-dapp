@@ -63,14 +63,6 @@ export function useUnwrap() {
     sideEffectReducer(enqueueSnackbar)
   );
 
-  useEffect(() => {
-    if (state.status !== UnwrapStatus.READY_TO_UNWRAP) {
-      return;
-    }
-    effectDispatch(estimateFees.started({}));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [state.status]);
-
   const selectToken = useCallback((token: string) => {
     dispatch(
       tokenSelect({
@@ -87,19 +79,6 @@ export function useUnwrap() {
       })
     );
   }, []);
-
-  const launchUnwrap = () => {
-    const { contract } = state;
-    if (contract == null) return Promise.reject('Not ready');
-    effectDispatch(
-      runUnwrap.started({
-        ethereumContract: fungibleTokens[state.token].ethereumContractAddress,
-        fees,
-        tezosAccount: tzAccount!,
-        ethAccount: ethAccount!,
-      })
-    );
-  };
 
   useEffect(() => {
     const loadMetadata = async () => {
@@ -125,11 +104,29 @@ export function useUnwrap() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state.token, state.contractFactory]);
 
+  const launchUnwrap = () => {
+    const { contract } = state;
+    if (contract == null) return Promise.reject('Not ready');
+    effectDispatch(
+      runUnwrap.started({
+        ethereumContract: fungibleTokens[state.token].ethereumContractAddress,
+        fees,
+        tezosAccount: tzAccount!,
+        ethAccount: ethAccount!,
+      })
+    );
+  };
+
+  const runNetworkFeesEstimate = () => {
+    effectDispatch(estimateFees.started({}));
+  };
+
   return {
     ...state,
     selectToken,
     selectAmountToUnwrap: selectAmountToUnwrap,
     launchUnwrap,
+    runNetworkFeesEstimate,
     fungibleTokens,
     fees,
     tzAccount,

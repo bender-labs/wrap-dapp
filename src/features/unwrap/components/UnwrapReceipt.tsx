@@ -155,7 +155,7 @@ export default function UnwrapReceipt({
         />
         <LabelAndAsset
           label={'Receive'}
-          value={operation.amount.minus(operation.fees)}
+          value={operation.amount}
           symbol={ethereumSymbol}
           decimals={decimals}
         />

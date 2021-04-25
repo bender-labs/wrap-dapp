@@ -40,27 +40,27 @@ export class TezosUnwrapApi {
     );
   }
 
-  private async unwrap_call(amount: BigNumber) {
+  private async unwrap_call(amount: BigNumber, fees: BigNumber) {
     const contract = await this.tzToolkit.wallet.at(this.minterContract);
-    const totalFees = amount
-      .div(10000)
-      .multipliedBy(this.fees.erc20UnwrappingFees);
     return contract.methods.unwrap_erc20(
       this.erc20ContractAddress.toLowerCase().substring(2),
       amount.toString(10),
-      totalFees.toString(10),
+      fees.toString(10),
       this.ethAccountAddress.toLowerCase().substring(2)
     );
   }
 
-  async unwrap(amount: BigNumber) {
-    const call = await this.unwrap_call(amount);
+  async unwrap(amount: BigNumber, fees: BigNumber) {
+    const call = await this.unwrap_call(amount, fees);
     const result = await call.send();
     return result.opHash;
   }
 
-  async estimateUnwrapNetworkFees(amount: BigNumber): Promise<Estimate> {
-    const call = await this.unwrap_call(amount);
+  async estimateUnwrapNetworkFees(
+    amount: BigNumber,
+    fees: BigNumber
+  ): Promise<Estimate> {
+    const call = await this.unwrap_call(amount, fees);
     const params = call.toTransferParams({ amount: 0 });
     return await this.tzToolkit.estimate.transfer(params);
   }

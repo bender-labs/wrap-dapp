@@ -23,7 +23,7 @@ import {
   OperationType,
   UnwrapErc20Operation,
 } from '../../operations/state/types';
-import { unwrapFees } from '../../fees/fees';
+import { unwrapAmountsFromTotal } from '../../fees/fees';
 
 type UnwrapState = {
   status: UnwrapStatus;
@@ -169,7 +169,11 @@ export function sideEffectReducer(
           tezosAccount,
         } = action.payload;
         try {
-          const operationHash = await contract.unwrap(amountToUnwrap);
+          const [amount, feesToTake] = unwrapAmountsFromTotal(
+            amountToUnwrap,
+            fees
+          );
+          const operationHash = await contract.unwrap(amount, feesToTake);
 
           const op: UnwrapErc20Operation = {
             operationHash,
@@ -178,9 +182,9 @@ export function sideEffectReducer(
             destination: ethAccount,
             status: { type: OperationStatusType.NEW },
             type: OperationType.UNWRAP,
-            amount: amountToUnwrap,
+            amount: amount,
             token: ethereumContract,
-            fees: unwrapFees(amountToUnwrap, fees),
+            fees: feesToTake,
           };
           dispatch(runUnwrap.done({ params: action.payload, result: op }));
         } catch (e) {
@@ -198,9 +202,14 @@ export function sideEffectReducer(
       if (isType(action, estimateFees.started)) {
         next(action);
 
-        const { contract, amountToUnwrap } = state;
+        const { contract, amountToUnwrap, fees } = state;
+        const [amount, feesToTake] = unwrapAmountsFromTotal(
+          amountToUnwrap,
+          fees
+        );
         const estimate = await contract?.estimateUnwrapNetworkFees(
-          amountToUnwrap
+          amount,
+          feesToTake
         );
         dispatch(estimateFees.done({ result: estimate?.totalCost || 0 }));
       }

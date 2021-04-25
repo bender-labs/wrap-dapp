@@ -9,7 +9,7 @@ import { IconButton, Typography } from '@material-ui/core';
 import React from 'react';
 import BigNumber from 'bignumber.js';
 import { TokenMetadata } from '../../swap/token';
-import { wrapFees } from '../../fees/fees';
+import { unwrapAmountsFromTotal } from '../../fees/fees';
 import { Fees } from '../../../config';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import LabelAndAsset from '../../../components/formatting/LabelAndAsset';
@@ -41,7 +41,7 @@ export default function UnwrapConfirmStep({
   onUnwrap,
   networkCost,
 }: UnwrapConfirmStepProps) {
-  const currentFees = wrapFees(amount, fees);
+  const [, currentFees] = unwrapAmountsFromTotal(amount, fees);
   return (
     <>
       <PaperHeader

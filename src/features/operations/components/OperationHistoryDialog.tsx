@@ -181,7 +181,7 @@ export default function OperationHistoryDialog() {
       ];
       return `release ${formatAmount(
         ethereumSymbol,
-        operation.amount.minus(operation.fees),
+        operation.amount,
         decimals
       )} to ${ellipsizeAddress(operation.destination)}`;
     };

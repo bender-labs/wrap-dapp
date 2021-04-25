@@ -22,6 +22,7 @@ function UnwrapForm() {
     fees,
     fungibleTokens,
     launchUnwrap,
+    runNetworkFeesEstimate,
     selectAmountToUnwrap,
     selectToken,
     status,
@@ -68,6 +69,11 @@ function UnwrapForm() {
     return op;
   };
 
+  function next() {
+    runNetworkFeesEstimate();
+    setStep(Step.CONFIRM);
+  }
+
   // noinspection RequiredAttributes
   return (
     <>
@@ -82,7 +88,7 @@ function UnwrapForm() {
             balance={currentBalance}
             amount={amountToUnwrap}
             fees={fees}
-            onNext={() => setStep(Step.CONFIRM)}
+            onNext={next}
             onTokenChange={selectToken}
             onAmountChange={selectAmountToUnwrap}
           />
