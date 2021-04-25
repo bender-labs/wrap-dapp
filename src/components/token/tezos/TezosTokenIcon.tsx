@@ -10,6 +10,10 @@ const EthereumTokenIcon = (props: Props) => {
         props.ipfsUrl ? props.ipfsUrl.replace('ipfs://', '') : ''
       }`}
       alt={''}
+      onError={(e: any) => {
+        e.target.onerror = null;
+        e.target.src = `${process.env.PUBLIC_URL}/icons/default.png`;
+      }}
     />
   );
 };
