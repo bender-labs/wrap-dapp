@@ -10,14 +10,14 @@ import ProviderSelectionDialog from './ProviderSelectionDialog';
 import EthereumIcon from '../ethereum/Icon';
 import TezosIcon from '../tezos/Icon';
 import ConnectIcon from './icons/ConnectIcon';
-import CheckIcon from '@material-ui/icons/Check';
+import { ellipsizeAddress } from '../../features/wallet/address';
 
 const useStyles = makeStyles((theme) => ({
   connectionButton: {
     backgroundColor: '#FFFFFF',
     textTransform: 'none',
     fontWeight: 900,
-    fontSize: '1rem',
+    fontSize: '0.9rem',
     borderRadius: '25px',
     padding: '3px 25px',
     '&:hover': {
@@ -83,10 +83,10 @@ const WalletConnectionCard = ({
           size="small"
           className={`${classes.connectionButton} ${classes.connectedConnectionButton}`}
           startIcon={blockchainIcon(blockchain)}
-          endIcon={withConnectionStatus ? <CheckIcon /> : null}
+          endIcon={null}
           onClick={handleDisconnection}
         >
-          Connected
+          {ellipsizeAddress(account, 4)}
         </Button>
       ) : (
         <Button
