@@ -168,8 +168,8 @@ export function sideEffectReducer(
           const op: UnwrapErc20Operation = {
             operationHash,
             hash: operationHash,
-            source: ethAccount,
-            destination: tezosAccount,
+            source: tezosAccount,
+            destination: ethAccount,
             status: { type: OperationStatusType.NEW },
             type: OperationType.UNWRAP,
             amount: amountToUnwrap,
