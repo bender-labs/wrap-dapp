@@ -58,7 +58,7 @@ export class EthereumWrapApi {
       ethers.BigNumber.from(amount.toString(10)),
       this.tzAccountAddress,
       {
-        gasLimit: gasLimit.add(gasLimit.div(10)).toNumber(),
+        gasLimit: gasLimit.add(gasLimit.div(2)).toNumber(),
       }
     );
 
