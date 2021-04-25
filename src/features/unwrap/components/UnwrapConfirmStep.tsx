@@ -78,7 +78,12 @@ export default function UnwrapConfirmStep({
         <LabelAndValue label={'To'} value={recipientAddress} />
       </PaperContent>
       <PaperContent style={{ backgroundColor: '#C4C4C4' }}>
-        <Typography variant={'body2'}>Fees</Typography>
+        <Typography
+          variant={'body2'}
+          style={{ paddingLeft: '20px', fontWeight: 'bold' }}
+        >
+          Fees
+        </Typography>
         <LabelAndAsset
           label={'Unwrap fees'}
           decimals={token.decimals}
