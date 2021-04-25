@@ -95,7 +95,7 @@ export default function WrapConfirmStep({
           symbol={token.tezosSymbol}
         />
         <LabelAndAsset
-          label={'Network fees'}
+          label={'Network fees (est.)'}
           decimals={18}
           value={networkFees}
           symbol={'ETH'}

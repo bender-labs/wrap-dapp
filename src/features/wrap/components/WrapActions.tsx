@@ -1,10 +1,12 @@
-import { Step, StepButton, Stepper } from '@material-ui/core';
+import { Step, StepLabel, Stepper } from '@material-ui/core';
 import React from 'react';
 import AllowanceButton from './AllowanceButton';
 import BigNumber from 'bignumber.js';
 import LoadableButton from '../../../components/button/LoadableButton';
 import AllowanceLabel from './AllowanceLabel';
 import { WrapStatus } from '../hooks/reducer';
+import CustomConnector from '../../../components/stepper/CustomConnector';
+import CustomStepIcon from '../../../components/stepper/CustomStepIcon';
 
 export type WrapActionsProp = {
   currentAllowance: BigNumber;
@@ -26,7 +28,10 @@ export default function WrapActions({
   onWrap,
 }: WrapActionsProp) {
   const activeStep = () => {
-    if (status === WrapStatus.READY_TO_WRAP) {
+    if (
+      status === WrapStatus.READY_TO_WRAP ||
+      status === WrapStatus.WAITING_FOR_WRAP
+    ) {
       return 1;
     }
     return 0;
@@ -38,28 +43,28 @@ export default function WrapActions({
         alternativeLabel
         activeStep={activeStep()}
         style={{ paddingBottom: 0, backgroundColor: '#e5e5e5' }}
+        connector={<CustomConnector />}
       >
         <Step>
-          <StepButton component="div">
+          <StepLabel StepIconComponent={CustomStepIcon}>
             <AllowanceButton
               currentAllowance={currentAllowance}
               balanceToWrap={amountToWrap}
               onAuthorize={onAuthorize}
               loading={status === WrapStatus.WAITING_FOR_ALLOWANCE_APPROVAL}
             />
-          </StepButton>
+          </StepLabel>
         </Step>
         <Step>
-          <StepButton component="div">
+          <StepLabel StepIconComponent={CustomStepIcon}>
             <LoadableButton
               loading={status === WrapStatus.WAITING_FOR_WRAP}
               variant={'contained'}
               onClick={onWrap}
               disabled={status !== WrapStatus.READY_TO_WRAP}
-              text={'WRAP'}
-              color={'primary'}
+              text={'Wrap'}
             />
-          </StepButton>
+          </StepLabel>
         </Step>
       </Stepper>
       <div style={{ padding: 24 }}>

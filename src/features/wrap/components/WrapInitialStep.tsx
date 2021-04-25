@@ -4,7 +4,6 @@ import React, { useEffect, useState } from 'react';
 import TokenSelection from '../../../components/token/TokenSelection';
 import { SupportedBlockchain } from '../../wallet/blockchain';
 import BigNumber from 'bignumber.js';
-import ArrowRightAltIcon from '@material-ui/icons/ArrowRightAlt';
 import { TokenMetadata } from '../../swap/token';
 import { Fees } from '../../../config';
 import { Button, makeStyles, createStyles } from '@material-ui/core';
@@ -30,6 +29,9 @@ const useStyles = makeStyles((theme) =>
       '&:hover': {
         backgroundColor: theme.palette.primary.main,
         boxShadow: 'none',
+      },
+      '&:disabled': {
+        backgroundColor: 'rgba(0, 0, 0, 0.05)',
       },
     },
   })
@@ -114,7 +116,6 @@ export default function WrapInitialStep({
         {connected && (
           <Button
             className={classes.buttonStyle}
-            fullWidth
             variant={'contained'}
             color={'primary'}
             onClick={onNext}
@@ -123,8 +124,7 @@ export default function WrapInitialStep({
               status !== WrapStatus.READY_TO_WRAP
             }
           >
-            Next{'  '}
-            <ArrowRightAltIcon />
+            Next →
           </Button>
         )}
       </PaperContent>

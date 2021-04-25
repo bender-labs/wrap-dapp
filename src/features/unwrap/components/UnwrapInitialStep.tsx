@@ -10,17 +10,29 @@ import AmountToWrapInput from '../../../components/token/AmountToWrapInput';
 import AssetSummary from '../../../components/formatting/AssetSummary';
 import { Button, createStyles, makeStyles } from '@material-ui/core';
 import MultiConnect from '../../wallet/MultiConnect';
-import ArrowRightAltIcon from '@material-ui/icons/ArrowRightAlt';
 import { UnwrapStatus } from '../hooks/reducer';
 
-const useStyles = makeStyles(() =>
+const useStyles = makeStyles((theme) =>
   createStyles({
     buttonStyle: {
       color: 'black',
-      backgroundColor: '#FFD000',
+      backgroundColor: '#ffffff',
       width: '40%',
       borderRadius: '25px',
       float: 'right',
+      boxShadow: 'none',
+      textTransform: 'none',
+      fontWeight: 900,
+      '&:active': {
+        boxShadow: 'none',
+      },
+      '&:hover': {
+        backgroundColor: theme.palette.primary.main,
+        boxShadow: 'none',
+      },
+      '&:disabled': {
+        backgroundColor: 'rgba(0, 0, 0, 0.05)',
+      },
     },
   })
 );
@@ -107,7 +119,7 @@ export default function UnwrapInitialStep({
             onClick={onNext}
             disabled={status !== UnwrapStatus.READY_TO_UNWRAP}
           >
-            NEXT <ArrowRightAltIcon />
+            Next →
           </Button>
         )}
       </PaperContent>

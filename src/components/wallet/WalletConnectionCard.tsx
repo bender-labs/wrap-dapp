@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Button, makeStyles } from '@material-ui/core';
+import { Button, darken, makeStyles } from '@material-ui/core';
 import {
   humanizeSupportedBlockchain,
   ProviderList,
@@ -30,7 +30,7 @@ const useStyles = makeStyles((theme) => ({
   connectedConnectionButton: {
     backgroundColor: theme.palette.primary.main,
     '&:hover': {
-      backgroundColor: theme.palette.primary.main,
+      backgroundColor: darken(theme.palette.primary.main, 0.1),
     },
   },
 }));

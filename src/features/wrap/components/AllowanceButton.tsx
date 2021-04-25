@@ -15,16 +15,16 @@ export default function AllowanceButton({
   onAuthorize,
   loading,
 }: Props) {
-  const { color, disabled, text } = balanceToWrap.lte(currentAllowance)
+  const { finalized, disabled, text } = balanceToWrap.lte(currentAllowance)
     ? {
-        color: 'primary',
+        finalized: true,
         disabled: true,
-        text: `Allow`,
+        text: 'Allowed',
       }
     : {
-        color: 'secondary',
+        finalized: false,
         disabled: false,
-        text: `Allow`,
+        text: 'Allow',
       };
 
   return (
@@ -33,7 +33,7 @@ export default function AllowanceButton({
       onClick={onAuthorize}
       disabled={disabled}
       text={text}
-      color={color}
+      finalized={finalized}
     />
   );
 }

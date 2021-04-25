@@ -13,8 +13,7 @@ export default function UnwrapActions({ status, onUnwrap }: UnwrapActionsProp) {
       loading={status === UnwrapStatus.WAITING_FOR_UNWRAP}
       onClick={onUnwrap}
       disabled={status !== UnwrapStatus.READY_TO_UNWRAP}
-      text={'UNWRAP →'}
-      color={'black'}
+      text={'Unwrap'}
     />
   );
 }

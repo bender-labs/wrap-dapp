@@ -1,5 +1,4 @@
 import { Button, CircularProgress, makeStyles } from '@material-ui/core';
-import { grey } from '@material-ui/core/colors';
 import React, { PropsWithChildren } from 'react';
 
 export type LoadableButtonProps = {
@@ -7,17 +6,12 @@ export type LoadableButtonProps = {
   onClick: () => void;
   disabled: boolean;
   text: string;
-  color: string;
+  finalized?: boolean;
   variant?: 'text' | 'outlined' | 'contained';
   size?: 'small' | 'medium' | 'large';
 };
 
 const useStyles = makeStyles((theme) => ({
-  helperText: {
-    color: grey[600],
-    display: 'block',
-    margin: '5 0',
-  },
   buttonProgress: {
     position: 'absolute',
     top: '50%',
@@ -28,8 +22,31 @@ const useStyles = makeStyles((theme) => ({
   },
   wrapper: {
     margin: theme.spacing(1),
-    backgroundColor: '#F7CB16',
+    backgroundColor: '#FFFFFF',
     position: 'relative',
+    borderRadius: '25px',
+  },
+  button: {
+    textTransform: 'none',
+    boxShadow: 'none',
+    fontWeight: 900,
+    borderRadius: '25px',
+    border: 'none',
+    '&:hover': {
+      border: 'none',
+      boxShadow: 'none',
+      backgroundColor: theme.palette.primary.main,
+    },
+    backgroundColor: '#FFFFFF',
+    '&.Mui-disabled': {
+      border: 'none',
+      backgroundColor: 'rgba(0, 0, 0, 0.05)',
+    },
+  },
+  finalizedButton: {
+    '&.Mui-disabled': {
+      backgroundColor: theme.palette.primary.main,
+    },
   },
 }));
 
@@ -39,7 +56,7 @@ export default function LoadableButton({
   text,
   onClick,
   children,
-  color,
+  finalized,
   variant = 'outlined',
   size,
 }: PropsWithChildren<LoadableButtonProps>) {
@@ -57,9 +74,11 @@ export default function LoadableButton({
           variant={variant}
           fullWidth
           disabled={disabled || loading}
-          color={color as any}
           onClick={handleOnClick}
           size={size}
+          className={`${classes.button}${
+            finalized ? ' ' + classes.finalizedButton : ''
+          }`}
         >
           {text}
         </Button>

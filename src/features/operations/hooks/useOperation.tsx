@@ -291,7 +291,7 @@ const sideEffectReducer = (
         op.status.id,
         buildFullSignature(op.status.signatures),
         {
-          gasLimit: 400000,
+          gasLimit: 350000,
         }
       );
       await result.wait();
