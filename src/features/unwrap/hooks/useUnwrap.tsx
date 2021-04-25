@@ -53,7 +53,7 @@ export function useUnwrap() {
     connected: false,
     contract: null,
     minterContractAddress,
-    currentBalance: new BigNumber(0),
+    currentBalance: new BigNumber(''),
     amountToUnwrap: new BigNumber(''),
     fees,
   });

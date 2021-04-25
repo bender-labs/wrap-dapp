@@ -40,7 +40,9 @@ export default function AmountToWrapInput({
     }
     setUserError([
       false,
-      `balance: ${formatAmount(symbol, balance, decimals)}`,
+      `Balance: ${
+        balance.isNaN() ? '' : formatAmount(symbol, balance, decimals)
+      }`,
     ]);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [decimals, symbol, displayBalance, balance, error]);

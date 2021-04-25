@@ -44,12 +44,12 @@ export function initialState(token: string, custodianContractAddress: string) {
     status: WrapStatus.NOT_READY,
     token: token,
     contract: null,
-    currentBalance: new BigNumber(0),
-    currentAllowance: new BigNumber(0),
+    currentBalance: new BigNumber(''),
+    currentAllowance: new BigNumber(''),
     amountToWrap: new BigNumber(''),
     connected: false,
     custodianContractAddress,
-    networkFees: new BigNumber(0),
+    networkFees: new BigNumber(''),
   };
 }
 
@@ -75,9 +75,9 @@ export function reducer(state: WrapState, action: Action): WrapState {
       ...state,
       status: WrapStatus.NOT_READY,
       ...action.payload,
-      currentBalance: new BigNumber(0),
-      currentAllowance: new BigNumber(0),
-      amountToWrap: new BigNumber(0),
+      currentBalance: new BigNumber(''),
+      currentAllowance: new BigNumber(''),
+      amountToWrap: new BigNumber(''),
     };
   }
   if (isType(action, userBalanceChange)) {

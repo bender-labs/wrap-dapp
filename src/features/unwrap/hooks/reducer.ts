@@ -70,12 +70,14 @@ export function reducer(state: UnwrapState, action: Action): UnwrapState {
       ...state,
       status: UnwrapStatus.NOT_READY,
       ...action.payload,
-      currentBalance: new BigNumber(0),
+      currentBalance: new BigNumber(''),
       amountToUnwrap: new BigNumber(0),
     };
   }
   if (isType(action, userBalanceChange)) {
-    return tryReady({ ...state, ...action.payload });
+    if (state.token === action.meta!.token) {
+      return tryReady({ ...state, ...action.payload });
+    }
   }
   if (isType(action, amountToUnwrapChange)) {
     const { amountToUnwrap } = action.payload;
@@ -145,12 +147,16 @@ export function sideEffectReducer(
         );
         const currentBalance = await contract.balanceOf();
         dispatch(
-          userBalanceChange({
-            currentBalance,
-            contract,
-          })
+          userBalanceChange(
+            {
+              currentBalance,
+              contract,
+            },
+            {
+              token: state.token,
+            }
+          )
         );
-        return;
       }
       if (isType(action, runUnwrap.started)) {
         const { contract, amountToUnwrap } = state;
