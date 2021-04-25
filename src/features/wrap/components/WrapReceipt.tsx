@@ -14,7 +14,7 @@ import LabelAndValue from '../../../components/formatting/LabelAndValue';
 import { CircularProgressWithLabel } from '../../../components/progress/CircularProgressWithLabel';
 import LabelAndAsset from '../../../components/formatting/LabelAndAsset';
 import { TokenMetadata } from '../../swap/token';
-import { Button, Typography } from '@material-ui/core';
+import { Typography } from '@material-ui/core';
 import LoadableButton from '../../../components/button/LoadableButton';
 import { ReceiptStatus } from '../../operations/hooks/useOperation';
 import { ConnectionStatus } from '../../wallet/connectionStatus';
