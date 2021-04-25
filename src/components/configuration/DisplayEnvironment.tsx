@@ -18,9 +18,10 @@ export default function DisplayEnvironment() {
 
   return (
     <div className={classes.env}>
-      {environmentName}
+      {environmentName.charAt(0).toUpperCase() +
+        environmentName.slice(1).toLowerCase()}
       {environmentName.toLowerCase() === 'testnet'
-        ? ` ${tezos.networkName}/${ethereum.networkName}`
+        ? ` (${tezos.networkName}/${ethereum.networkName})`
         : ''}
     </div>
   );
