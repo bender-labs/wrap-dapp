@@ -8,6 +8,7 @@ export type TokenMetadata = {
   tezosTokenId: number;
   tezosSymbol: string;
   tezosName: string;
+  thumbnailUri: string;
 };
 
 export type Token = {
@@ -25,4 +26,5 @@ export const EmptyToken: Token = {
   tezosTokenId: 0,
   tezosName: '',
   tezosSymbol: '',
+  thumbnailUri: '',
 };

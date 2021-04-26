@@ -73,7 +73,6 @@ export default function AmountInput({
         autoFocus={focus}
         suffix={` ${symbol}`}
         value={value}
-        defaultValue={0}
         decimalScale={decimals}
         customInput={TextField}
         fullWidth

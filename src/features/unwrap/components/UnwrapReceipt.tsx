@@ -14,8 +14,7 @@ import LabelAndValue from '../../../components/formatting/LabelAndValue';
 import { CircularProgressWithLabel } from '../../../components/progress/CircularProgressWithLabel';
 import LabelAndAsset from '../../../components/formatting/LabelAndAsset';
 import { TokenMetadata } from '../../swap/token';
-import { Button, Typography } from '@material-ui/core';
-// import { SpacedDivider } from '../../../components/formatting/SpacedDivider';
+import { Typography } from '@material-ui/core';
 import LoadableButton from '../../../components/button/LoadableButton';
 import { ReceiptStatus } from '../../operations/hooks/useOperation';
 import { ConnectionStatus } from '../../wallet/connectionStatus';
@@ -31,7 +30,7 @@ export type UnwrapReceiptProps = {
 
 function label(value: string) {
   return (
-    <Typography variant="caption" component="div" color="textSecondary">
+    <Typography variant="caption" component="div">
       {value}
     </Typography>
   );
@@ -49,14 +48,14 @@ function unwrapStatus(
     case OperationStatusType.WAITING_FOR_RECEIPT:
       return (
         <CircularProgressWithLabel
-          label={label('Waiting to be included')}
+          label={label('Waiting to be included...')}
           value={0}
         />
       );
     case OperationStatusType.NEW:
       return (
         <CircularProgressWithLabel
-          label={label('Waiting for confirmations')}
+          label={label('Waiting for confirmations...')}
           value={step}
         />
       );
@@ -65,7 +64,7 @@ function unwrapStatus(
       return (
         <CircularProgressWithLabel
           label={label(
-            `Waiting for confirmations. (${operation.status.confirmations}/${operation.status.confirmationsThreshold})`
+            `Waiting for confirmations... (${operation.status.confirmations}/${operation.status.confirmationsThreshold})`
           )}
           value={value}
         />
@@ -76,7 +75,7 @@ function unwrapStatus(
       return (
         <CircularProgressWithLabel
           label={label(
-            `Waiting for signatures. ${signaturesCount}/${signaturesThreshold}`
+            `Waiting for signatures... (${signaturesCount}/${signaturesThreshold})`
           )}
           value={sigValue}
         />
@@ -87,11 +86,10 @@ function unwrapStatus(
           {walletStatus === ConnectionStatus.CONNECTED && (
             <LoadableButton
               variant={'contained'}
-              color={'primary'}
               disabled={false}
               loading={status === ReceiptStatus.WAITING_FOR_APPLY}
               onClick={onRelease}
-              text={'RELEASE'}
+              text={'Release'}
             />
           )}
         </PaperContent>
@@ -100,14 +98,13 @@ function unwrapStatus(
     case OperationStatusType.DONE:
       return (
         <PaperContent>
-          <Button
-            variant={'outlined'}
-            color={'primary'}
+          <LoadableButton
+            variant={'contained'}
             disabled={true}
-            fullWidth
-          >
-            Applied
-          </Button>
+            loading={false}
+            onClick={() => {}}
+            text={'Applied'}
+          />
         </PaperContent>
       );
   }
@@ -158,7 +155,7 @@ export default function UnwrapReceipt({
         />
         <LabelAndAsset
           label={'Receive'}
-          value={operation.amount.minus(operation.fees)}
+          value={operation.amount}
           symbol={ethereumSymbol}
           decimals={decimals}
         />
@@ -169,7 +166,7 @@ export default function UnwrapReceipt({
           decimals={decimals}
         />
       </PaperContent>
-      <PaperContent>
+      <PaperContent style={{ padding: '0px' }}>
         <div>
           {unwrapStatus(
             operation,

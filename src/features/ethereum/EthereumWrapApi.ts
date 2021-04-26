@@ -40,13 +40,25 @@ export class EthereumWrapApi {
     );
   }
 
+  private async gasEstimator(amount: BigNumber): Promise<ethers.BigNumber> {
+    return await this.custodianContract.estimateGas.wrapERC20(
+      this.erc20ContractAddress(),
+      ethers.BigNumber.from(amount.toString(10)),
+      this.erc20ContractAddress(),
+      {
+        gasLimit: 1000000,
+      }
+    );
+  }
+
   async wrap(amount: BigNumber): Promise<string> {
+    const gasLimit = await this.gasEstimator(amount);
     const response: ethers.providers.TransactionResponse = await this.custodianContract.wrapERC20(
       this.erc20ContractAddress(),
       ethers.BigNumber.from(amount.toString(10)),
       this.tzAccountAddress,
       {
-        gasLimit: 100000,
+        gasLimit: gasLimit.add(gasLimit.div(2)).toNumber(),
       }
     );
 
@@ -57,14 +69,7 @@ export class EthereumWrapApi {
     amount: BigNumber,
     provider: Web3Provider
   ): Promise<BigNumber> {
-    const gas = await this.custodianContract.estimateGas.wrapERC20(
-      this.erc20ContractAddress(),
-      ethers.BigNumber.from(amount.toString(10)),
-      this.erc20ContractAddress(),
-      {
-        gasLimit: 100000,
-      }
-    );
+    const gas = await this.gasEstimator(amount);
     const gasPrice = await provider.getGasPrice();
     const fees = gas.mul(gasPrice);
     return new BigNumber(fees.toString(), 10);

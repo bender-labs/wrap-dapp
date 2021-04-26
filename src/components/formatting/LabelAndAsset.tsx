@@ -32,7 +32,7 @@ export default function LabelAndAsset({
             displayType="text"
             suffix={` ${symbol}`}
             {...formatOptions}
-            value={value.shiftedBy(-decimals).toString()}
+            value={value.shiftedBy(-decimals).toString(10)}
           />
         )
       }

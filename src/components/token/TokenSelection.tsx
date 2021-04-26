@@ -7,6 +7,8 @@ import {
 import React from 'react';
 import { TokenMetadata } from '../../features/swap/token';
 import { SupportedBlockchain } from '../../features/wallet/blockchain';
+import EthereumTokenIcon from './ethereum/EthereumTokenIcon';
+import TezosTokenIcon from './tezos/TezosTokenIcon';
 
 type Props = {
   token: string;
@@ -23,13 +25,35 @@ const itemLabel = (
     ? `${tokenMetadata.ethereumName} (${tokenMetadata.ethereumSymbol})`
     : `${tokenMetadata.tezosName} (${tokenMetadata.tezosSymbol})`;
 
+const itemIcon = (
+  blockchainTarget: SupportedBlockchain,
+  tokenMetadata: TokenMetadata
+) =>
+  blockchainTarget === SupportedBlockchain.Ethereum ? (
+    <EthereumTokenIcon
+      contractAddress={tokenMetadata.ethereumContractAddress}
+    />
+  ) : (
+    <TezosTokenIcon ipfsUrl={tokenMetadata.thumbnailUri} />
+  );
+
+function orderTokens(
+  tokens: Record<string, TokenMetadata>
+): [string, TokenMetadata][] {
+  return Object.entries(tokens).sort(([key1, metadata1], [key2, metadata2]) => {
+    if (metadata1.ethereumName > metadata2.ethereumName) return 1;
+    if (metadata1.ethereumName < metadata2.ethereumName) return -1;
+    return 0;
+  });
+}
+
 export default function TokenSelection({
   token,
   tokens,
   blockchainTarget,
   onTokenSelect,
 }: Props) {
-  const tokenList = Object.entries(tokens);
+  const tokenList = orderTokens(tokens);
 
   const handleTokenSelect = (event: React.ChangeEvent<{ value: unknown }>) => {
     event.preventDefault();
@@ -48,11 +72,9 @@ export default function TokenSelection({
           id: 'token-selector',
         }}
       >
-        <MenuItem value="" disabled>
-          Please select
-        </MenuItem>
         {tokenList.map(([key, token]) => (
           <MenuItem value={key} key={key}>
+            {itemIcon(blockchainTarget, token)}
             {itemLabel(blockchainTarget, token)}
           </MenuItem>
         ))}

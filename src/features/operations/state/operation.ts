@@ -9,8 +9,8 @@ import { unwrapFees, wrapFees } from '../../fees/fees';
 import {
   Operation,
   OperationStatus,
-  OperationType,
   OperationStatusType,
+  OperationType,
   UnwrapErc20Operation,
   WrapErc20Operation,
 } from './types';
@@ -85,7 +85,7 @@ export const markAsDone = (op: Operation): Operation => {
         status: { type: OperationStatusType.DONE, id: op.status.id },
       };
     default:
-      throw new Error("Can't be marked as done");
+      return op;
   }
 };
 
@@ -94,7 +94,7 @@ export const markAsNew = (op: Operation): Operation => {
     case OperationStatusType.WAITING_FOR_RECEIPT:
       return { ...op, status: { type: OperationStatusType.NEW } };
     default:
-      throw new Error("Can't be marked as done");
+      return op;
   }
 };
 

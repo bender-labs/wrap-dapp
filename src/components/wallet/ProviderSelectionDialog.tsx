@@ -7,8 +7,24 @@ import {
   makeStyles,
 } from '@material-ui/core';
 import { ProviderList } from '../../features/wallet/blockchain';
+import React from 'react';
 
 const useStyles = makeStyles((theme) => ({
+  title: {
+    backgroundColor: '#191919',
+    color: '#FFFFFF',
+    fontSize: 20,
+    fontWeight: 700,
+    textAlign: 'center',
+  },
+  item: {
+    backgroundColor: '#191919',
+    color: '#FFFFFF',
+    borderTop: '1px solid #444444',
+    '&:hover': {
+      backgroundColor: '#4d4d4d',
+    },
+  },
   icon: {
     width: 32,
     height: 32,
@@ -33,15 +49,22 @@ const Render = ({
   return (
     <Dialog
       onClose={onClose}
-      aria-labelledby="simple-dialog-title"
+      aria-labelledby="ethereum-provider"
       open={open}
       maxWidth={'xs'}
       fullWidth={true}
     >
-      <DialogTitle>Select your wallet</DialogTitle>
-      <List>
+      <DialogTitle disableTypography={true} className={classes.title}>
+        Select your wallet
+      </DialogTitle>
+      <List style={{ padding: '0px' }}>
         {providers.map(({ name, key, icon }) => (
-          <ListItem button onClick={() => onSelectedValue(key)} key={key}>
+          <ListItem
+            button
+            onClick={() => onSelectedValue(key)}
+            key={key}
+            className={classes.item}
+          >
             <ListItemText primary={name} />
             <img
               className={classes.icon}

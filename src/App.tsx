@@ -7,7 +7,7 @@ import TezosProvider from './features/tezos/TezosContext';
 import ConfigProvider from './runtime/config/ConfigContext';
 import WalletProvider from './runtime/wallet/WalletContext';
 import { SnackbarProvider } from 'notistack';
-import { Container, createMuiTheme, CssBaseline } from '@material-ui/core';
+import { createMuiTheme, CssBaseline } from '@material-ui/core';
 import HistoryScreen from './screens/HistoryScreen';
 import { ThemeProvider } from '@material-ui/core/styles';
 import { themeOptions } from './runtime/theme/theme';
@@ -19,8 +19,6 @@ import MainScreen from './screens/MainScreen';
 import DisplayEnvironment from './components/configuration/DisplayEnvironment';
 
 const theme = createMuiTheme(themeOptions);
-
-
 
 function App() {
   return (
@@ -37,7 +35,7 @@ function App() {
                     <Switch>
                       <Route path={paths.HISTORY} component={HistoryScreen} />
                       <Route exact path={mainPaths} component={MainScreen} />
-                      </Switch>
+                    </Switch>
                     <DisplayEnvironment />
                   </SnackbarProvider>
                 </Router>

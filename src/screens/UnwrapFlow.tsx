@@ -3,12 +3,13 @@ import React, { useEffect, useState } from 'react';
 import { usePendingOperationsActions } from '../features/operations/state/pendingOperations';
 import { useHistory } from 'react-router';
 import UnwrapInitialStep from '../features/unwrap/components/UnwrapInitialStep';
-import { UnwrapStatus, useUnwrap } from '../features/unwrap/hooks/useUnwrap';
+import { useUnwrap } from '../features/unwrap/hooks/useUnwrap';
 import UnwrapConfirmStep from '../features/unwrap/components/UnwrapConfirmStep';
 import { paths, unwrapPage } from './routes';
 import { Route } from 'react-router-dom';
 import OperationScreen from './OperationScreen';
 import { OperationType } from '../features/operations/state/types';
+import { UnwrapStatus } from '../features/unwrap/hooks/reducer';
 
 enum Step {
   AMOUNT,
@@ -21,6 +22,7 @@ function UnwrapForm() {
     fees,
     fungibleTokens,
     launchUnwrap,
+    runNetworkFeesEstimate,
     selectAmountToUnwrap,
     selectToken,
     status,
@@ -30,9 +32,32 @@ function UnwrapForm() {
     amountToUnwrap,
     tzAccount,
     ethAccount,
+    operation,
+    costEstimate,
   } = useUnwrap();
 
   const { addOperation } = usePendingOperationsActions();
+
+  const history = useHistory();
+
+  useEffect(() => {
+    if (status !== UnwrapStatus.UNWRAP_DONE || !operation) {
+      return;
+    }
+    const nextStep = async () => {
+      await addOperation(operation);
+      history.push(unwrapPage(operation));
+    };
+    // noinspection JSIgnoredPromiseFromCall
+    nextStep();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [status, operation]);
+
+  useEffect(() => {
+    if (status === UnwrapStatus.NOT_READY && step === Step.CONFIRM) {
+      setStep(Step.AMOUNT);
+    }
+  }, [status, step]);
 
   const doLaunchUnwrap = async () => {
     const op = await launchUnwrap();
@@ -44,13 +69,11 @@ function UnwrapForm() {
     return op;
   };
 
-  useEffect(() => {
-    if (status === UnwrapStatus.NOT_READY && step === Step.CONFIRM) {
-      setStep(Step.AMOUNT);
-    }
-  }, [status, step]);
+  function next() {
+    runNetworkFeesEstimate();
+    setStep(Step.CONFIRM);
+  }
 
-  const history = useHistory();
   // noinspection RequiredAttributes
   return (
     <>
@@ -65,7 +88,7 @@ function UnwrapForm() {
             balance={currentBalance}
             amount={amountToUnwrap}
             fees={fees}
-            onNext={() => setStep(Step.CONFIRM)}
+            onNext={next}
             onTokenChange={selectToken}
             onAmountChange={selectAmountToUnwrap}
           />
@@ -79,6 +102,7 @@ function UnwrapForm() {
           sendingAddress={tzAccount!}
           amount={amountToUnwrap}
           fees={fees}
+          networkCost={costEstimate}
           onPrevious={() => setStep(Step.AMOUNT)}
           onUnwrap={doLaunchUnwrap}
         />

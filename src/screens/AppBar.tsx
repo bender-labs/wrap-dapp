@@ -26,7 +26,7 @@ const useStyles = makeStyles((theme) =>
     title: {
       flexGrow: 1,
       '& > *': {
-        marginLeft: theme.spacing(3),
+        marginLeft: theme.spacing(2),
       },
       fontSize: '1rem',
       fontWeight: 900,
@@ -49,8 +49,6 @@ const useStyles = makeStyles((theme) =>
     },
     logo: {
       width: 50,
-      backgroundColor: '#FFD000',
-      borderRadius: '12px',
       marginLeft: theme.spacing(4),
     },
     toolbar: {
@@ -60,8 +58,6 @@ const useStyles = makeStyles((theme) =>
     wallets: {
       '& > *': {
         marginRight: theme.spacing(3),
-        borderRadius: '25px',
-        padding: '3px 25px',
       },
     },
     pendingButton: {
@@ -177,6 +173,7 @@ const Render = () => {
                     activate={tzActivate}
                     deactivate={tzDeactivate}
                     connectionStatus={tzConnectionStatus}
+                    withConnectionStatus={true}
                   />
                 </Box>
               </Grid>
@@ -190,6 +187,7 @@ const Render = () => {
                     deactivate={ethDeactivate}
                     connectors={connectors}
                     connectionStatus={ethConnectionStatus}
+                    withConnectionStatus={true}
                   />
                 </Box>
               </Grid>

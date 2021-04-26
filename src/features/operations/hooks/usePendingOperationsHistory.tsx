@@ -67,7 +67,7 @@ export const usePendingOperationsHistory = () => {
     };
     // noinspection JSIgnoredPromiseFromCall
     loadPendingWrap();
-    const intervalId = setInterval(loadPendingWrap, 5000);
+    const intervalId = setInterval(loadPendingWrap, 20000);
     return () => clearInterval(intervalId);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ethAccount, tzAccount]);
