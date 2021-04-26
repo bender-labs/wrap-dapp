@@ -1,5 +1,4 @@
 import { InjectedConnector } from '@web3-react/injected-connector';
-import { WalletConnectConnector } from '@web3-react/walletconnect-connector';
 import { FortmaticConnector } from '@web3-react/fortmatic-connector';
 import { PortisConnector } from '@web3-react/portis-connector';
 import { EthereumConfig } from '../../config';
@@ -13,7 +12,6 @@ export type EthConnector = {
 
 export type EthConnectors = {
   injected: EthConnector;
-  walletConnect: EthConnector;
   fortmatic: EthConnector;
   portis: EthConnector;
 };
@@ -33,16 +31,6 @@ export default function connectorsFactory({
         supportedChainIds: [networkId],
       }),
       iconName: isMetamask ? 'metamask.png' : 'arrow-right.svg',
-    },
-    walletConnect: {
-      name: 'WalletConnect',
-      connector: new WalletConnectConnector({
-        rpc: { 1: rpcUrl },
-        qrcode: true,
-        bridge: 'https://bridge.walletconnect.org',
-        pollingInterval: 15000,
-      }),
-      iconName: 'walletConnectIcon.svg',
     },
     fortmatic: {
       name: 'Fortmatic',

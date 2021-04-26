@@ -1,7 +1,8 @@
 import React from 'react';
 import BigNumber from 'bignumber.js';
 import LabelAndValue from './LabelAndValue';
-import Amount from './Amount';
+import { formatOptions } from './numberFormat';
+import NumberFormat from 'react-number-format';
 
 export type LabelAndAssetProps = {
   label: string;
@@ -27,7 +28,12 @@ export default function LabelAndAsset({
         emptyState ? (
           emptyStatePlaceHolder
         ) : (
-          <Amount symbol={symbol} value={value} decimals={decimals} />
+          <NumberFormat
+            displayType="text"
+            suffix={` ${symbol}`}
+            {...formatOptions}
+            value={value.shiftedBy(-decimals).toString(10)}
+          />
         )
       }
     />

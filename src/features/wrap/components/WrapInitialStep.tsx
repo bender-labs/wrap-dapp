@@ -4,28 +4,38 @@ import React, { useEffect, useState } from 'react';
 import TokenSelection from '../../../components/token/TokenSelection';
 import { SupportedBlockchain } from '../../wallet/blockchain';
 import BigNumber from 'bignumber.js';
-import ArrowRightAltIcon from '@material-ui/icons/ArrowRightAlt';
 import { TokenMetadata } from '../../swap/token';
 import { Fees } from '../../../config';
 import { Button, makeStyles, createStyles } from '@material-ui/core';
 import { wrapFees } from '../../fees/fees';
 import AssetSummary from '../../../components/formatting/AssetSummary';
-import { WrapStatus } from '../hooks/useWrap';
 import MultiConnect from '../../wallet/MultiConnect';
+import { WrapStatus } from '../hooks/reducer';
 
-const useStyles = makeStyles(() =>
+const useStyles = makeStyles((theme) =>
   createStyles({
     buttonStyle: {
       color: 'black',
       backgroundColor: '#ffffff',
-      width: "40%",
+      width: '40%',
       borderRadius: '25px',
-      float: 'right'
-
+      float: 'right',
+      boxShadow: 'none',
+      textTransform: 'none',
+      fontWeight: 900,
+      '&:active': {
+        boxShadow: 'none',
+      },
+      '&:hover': {
+        backgroundColor: theme.palette.primary.main,
+        boxShadow: 'none',
+      },
+      '&:disabled': {
+        backgroundColor: 'rgba(0, 0, 0, 0.05)',
+      },
     },
-
   })
-)
+);
 
 export type WrapInitialStepProps = {
   status: WrapStatus;
@@ -54,16 +64,23 @@ export default function WrapInitialStep({
 }: WrapInitialStepProps) {
   const [currentFees, setCurrentFees] = useState(new BigNumber(0));
 
-  const classes = useStyles()
+  const classes = useStyles();
 
   useEffect(() => setCurrentFees(wrapFees(amount, fees)), [amount, fees]);
 
   return (
     <>
-      <PaperContent>
-        {!connected && <MultiConnect />}
-      </PaperContent>
-      <PaperContent style={{ padding: '0 50px' }}>
+      {!connected && (
+        <PaperContent
+          style={{
+            borderBottom: '3px solid #E0E0E0',
+            boxShadow: '0px 5px 10px rgba(0, 0, 0, 0.25)',
+          }}
+        >
+          <MultiConnect />
+        </PaperContent>
+      )}
+      <PaperContent style={{ padding: '34px 50px 0 50px' }}>
         <TokenSelection
           token={token.ethereumSymbol}
           onTokenSelect={onTokenChange}
@@ -80,7 +97,7 @@ export default function WrapInitialStep({
         />
       </PaperContent>
 
-      <PaperContent style={{ padding: '16px 0'}}>
+      <PaperContent style={{ padding: '16px 0' }}>
         <AssetSummary
           label={'You will receive'}
           value={amount.minus(currentFees)}
@@ -89,29 +106,28 @@ export default function WrapInitialStep({
         />
       </PaperContent>
 
-      <PaperContent style={{ borderRadius: '0 0 10px 10px', minHeight: '40px', padding: '50px 30px'}}>
-
+      <PaperContent
+        style={{
+          borderRadius: '0 0 10px 10px',
+          minHeight: '40px',
+          padding: '50px 30px',
+        }}
+      >
         {connected && (
-
-        <Button
-        className={classes.buttonStyle}
-        fullWidth
-        variant={'contained'}
-        color={'primary'}
-        onClick={onNext}
-        disabled={
-        status !== WrapStatus.READY_TO_CONFIRM &&
-        status !== WrapStatus.READY_TO_WRAP
-      }
-        >
-        NEXT <ArrowRightAltIcon />
-        </Button>
-
-      )}
-
-    
-    </PaperContent>
-
+          <Button
+            className={classes.buttonStyle}
+            variant={'contained'}
+            color={'primary'}
+            onClick={onNext}
+            disabled={
+              status !== WrapStatus.READY_TO_CONFIRM &&
+              status !== WrapStatus.READY_TO_WRAP
+            }
+          >
+            Next →
+          </Button>
+        )}
+      </PaperContent>
     </>
   );
 }

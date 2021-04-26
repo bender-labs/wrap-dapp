@@ -6,12 +6,17 @@ const UNWRAP_FINALIZE = '/unwrap/:transactionHash';
 const UNWRAP = '/unwrap';
 const HISTORY = '/history';
 
+const HISTORY_WRAP = '/history/wrap';
+const HISTORY_UNWRAP = '/history/unwrap';
+
 export const paths = {
   WRAP,
   UNWRAP,
   WRAP_FINALIZE,
   UNWRAP_FINALIZE,
   HISTORY,
+  HISTORY_WRAP,
+  HISTORY_UNWRAP
 };
 
 export const mainPaths = ['/', WRAP, UNWRAP, WRAP_FINALIZE, UNWRAP_FINALIZE];

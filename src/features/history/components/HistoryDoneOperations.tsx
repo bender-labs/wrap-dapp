@@ -3,6 +3,8 @@ import History from './History';
 import { createStyles, makeStyles, Tab, Tabs } from '@material-ui/core';
 import { useAllOperationsHistory } from '../../operations/hooks/useAllOperationsHistory';
 import { useHistory } from 'react-router';
+import { useRouteMatch } from 'react-router-dom';
+import { paths } from '../../../screens/routes'
 
 const useStyles = makeStyles(() =>
   createStyles({
@@ -31,6 +33,7 @@ const useStyles = makeStyles(() =>
 export default function HistoryDoneOperations() {
   const classes = useStyles();
   const history = useHistory();
+  const { path } = useRouteMatch()
   const { operations, canFetch, fungibleTokens } = useAllOperationsHistory();
   const onTabChange = useCallback(
     (event: React.ChangeEvent<{}>, newPath: string) => {
@@ -44,17 +47,18 @@ export default function HistoryDoneOperations() {
         <p className={classes.history}>HISTORY</p>
           <div>
         <Tabs
-          value='placeholeder'
+          value={path}
           onChange={onTabChange}
           className={classes.tabs}
+          indicatorColor="primary"
         >
             <Tab
             label='wraps'
-            value='completed-Wraps'
+            value={paths.HISTORY_WRAP}
           />
             <Tab
             label='Unwraps'
-            value='completed-Unwraps'
+            value={paths.HISTORY_UNWRAP}
           />
 
           </Tabs>

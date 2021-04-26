@@ -43,7 +43,7 @@ export interface IndexerConfigPayload {
     tezosTokenId: string | null;
     tezosSymbol: string;
     tezosName: string;
-    thumbnailUri: string | null;
+    thumbnailUri: string;
   }>;
   fees: {
     erc20WrappingFees: number;

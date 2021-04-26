@@ -3,7 +3,7 @@ import {
   useConfig,
   useIndexerApi,
 } from '../../../runtime/config/ConfigContext';
-import { useEffect, useMemo, useReducer } from 'react';
+import { useEffect, useReducer } from 'react';
 import { Operation, OperationStatusType, OperationType } from '../state/types';
 import {
   markAsDone,
@@ -14,7 +14,6 @@ import {
 import { ethers } from 'ethers';
 import CUSTODIAN_ABI from '../../ethereum/custodianContractAbi';
 import ERC20_ABI from '../../ethereum/erc20Abi';
-import { TokenMetadata } from '../../swap/token';
 import IndexerApi, {
   IndexerUnwrapPayload,
   IndexerWrapPayload,
@@ -26,7 +25,6 @@ import { TransactionReceipt } from '@ethersproject/abstract-provider';
 import { ConnectionStatus } from '../../wallet/connectionStatus';
 
 enum ReceiptAction {
-  INITIALIZE,
   FETCH_RECEIPT,
   RECEIPT_FETCHED,
   RELOAD,
@@ -56,7 +54,6 @@ type ReceiptState = {
 };
 
 type Action =
-  | { type: ReceiptAction.INITIALIZE; payload: { operation: Operation } }
   | {
       type: ReceiptAction.FETCH_RECEIPT;
       payload: {
@@ -119,10 +116,10 @@ type Action =
 
 const toReceiptStatus = (opStatus: OperationStatusType): ReceiptStatus => {
   switch (opStatus) {
-    case OperationStatusType.NEW:
-      return ReceiptStatus.NEED_REFRESH;
     case OperationStatusType.WAITING_FOR_RECEIPT:
       return ReceiptStatus.NEED_RECEIPT;
+    case OperationStatusType.NEW:
+      return ReceiptStatus.NEED_REFRESH;
     case OperationStatusType.WAITING_FOR_CONFIRMATIONS:
     case OperationStatusType.WAITING_FOR_SIGNATURES:
       return ReceiptStatus.NEED_REFRESH;
@@ -292,7 +289,10 @@ const sideEffectReducer = (
         0,
         data,
         op.status.id,
-        buildFullSignature(op.status.signatures)
+        buildFullSignature(op.status.signatures),
+        {
+          gasLimit: 350000,
+        }
       );
       await result.wait();
       dispatch({
@@ -339,6 +339,7 @@ export const useOperation = (
 
   useEffect(() => {
     if (typeof initialValue === 'string') {
+      // noinspection JSIgnoredPromiseFromCall
       effectsDispatch({
         type: ReceiptAction.RELOAD,
         payload: {
@@ -349,6 +350,7 @@ export const useOperation = (
         },
       });
     } else {
+      // noinspection JSIgnoredPromiseFromCall
       effectsDispatch({
         type: ReceiptAction.UPDATE,
         payload: { operation: initialValue },
@@ -358,23 +360,13 @@ export const useOperation = (
   }, [initialValue]);
 
   useEffect(() => {
+    // noinspection JSIgnoredPromiseFromCall
     effectsDispatch({
       type: ReceiptAction.WALLET_CHANGE,
       payload: { tzStatus, ethStatus },
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tzStatus, ethStatus]);
-
-  const tokensByEthAddress = useMemo(
-    () =>
-      Object.entries(fungibleTokens).reduce<Record<string, TokenMetadata>>(
-        (acc, [, metadata]) => {
-          acc[metadata.ethereumContractAddress] = metadata;
-          return acc;
-        },
-        {}
-      ),
-    [fungibleTokens]
-  );
 
   useEffect(() => {
     if (state.status !== ReceiptStatus.NEED_REFRESH) {
@@ -399,6 +391,7 @@ export const useOperation = (
     return () => {
       clearInterval(intervalId);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state.status]);
 
   useEffect(() => {
@@ -423,6 +416,7 @@ export const useOperation = (
     return () => {
       clearInterval(intervalId);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state.status, ethLibrary, tzLibrary]);
 
   const mintErc20 = () =>

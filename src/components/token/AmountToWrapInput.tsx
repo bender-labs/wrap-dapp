@@ -30,6 +30,7 @@ export default function AmountToWrapInput({
       setUserError([false, '']);
       return;
     }
+
     if (amountToWrap.gt(balance)) {
       setUserError([
         true,
@@ -39,7 +40,9 @@ export default function AmountToWrapInput({
     }
     setUserError([
       false,
-      `balance: ${formatAmount(symbol, balance, decimals)}`,
+      `Balance: ${
+        balance.isNaN() ? '' : formatAmount(symbol, balance, decimals)
+      }`,
     ]);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [decimals, symbol, displayBalance, balance, error]);
@@ -61,7 +64,7 @@ export default function AmountToWrapInput({
   return (
     <>
       <AmountInput
-        value={amountToWrap.shiftedBy(-decimals).toString()}
+        value={amountToWrap?.shiftedBy(-decimals).toString()}
         decimals={decimals}
         symbol={symbol}
         onChange={handleOnChange}

@@ -17,18 +17,19 @@ const StyledTableCell = withStyles((theme: Theme) =>
     head: {
       backgroundColor: '#e5e5e5',
       color: 'black',
-      padding: '0px',
-      fontWeight: 'bold'
+      padding: '0px'
     },
     body: {
       fontSize: 14,
+      padding: '20px',
       backgroundColor: 'white',
       '&:first-child': {
-        borderRadius: '20px 0 0 20px'
+        borderRadius: '20px 0 0 20px',
       },
       '&:last-child': {
-        borderRadius: '0 20px 20px 0'
-      },
+        borderRadius: '0 20px 20px 0',
+      }
+
     },
   })
 )(TableCell);
@@ -36,24 +37,32 @@ const StyledTableCell = withStyles((theme: Theme) =>
 const StyledTableRow = withStyles((theme: Theme) =>
   createStyles({
     root: {
-      backgroundColor: '#e5e5e5',
+      margin: '50px'
+
+
     },
   })
 )(TableRow);
 
-const useStyles = makeStyles({
-  table: {
-    minWidth: 700,
-    borderSpacing: '0 5px !important',
-    borderCollapse: 'separate',
-    backgroundColor: '#e5e5e5'
-  },
-  wrapper: {
-    padding: '20px',
-    backgroundColor: '#e5e5e5',
-    borderRadius: '0 0 10px 10px'
-  }
-});
+
+const useStyles = makeStyles((theme) =>
+  createStyles({
+    table: {
+      minWidth:700,
+      backgroundColor: '#e5e5e5',
+      boxShadow: 'none',
+      borderSpacing: '0 5px !important',
+      borderCollapse: 'separate'
+    },
+    wrapper: {
+      padding: '20px',
+      backgroundColor: '#e5e5e5',
+      borderRadius: '0 0 10px 10px'
+    }
+
+  })
+)
+
 
 export type HistoryProps = {
   operations: AllOperationsHistoryState;
@@ -81,6 +90,7 @@ export default function History({
   return (
     <div style={{ width: '100%' }}>
       {!canFetch && <span>Connect at least one of your wallet</span>}
+
       {canFetch && (
         <div className={classes.wrapper}>
         <TableContainer component={Paper}>
@@ -104,8 +114,8 @@ export default function History({
                     />
                   </StyledTableCell>
                   <StyledTableCell align="center">
-                    {row.source}
-                  </StyledTableCell>
+                  {row.source}
+                </StyledTableCell>
                   <StyledTableCell align="center">
                     {row.destination}
                   </StyledTableCell>
@@ -116,27 +126,7 @@ export default function History({
               ))}
 
 
-              {/*{operations.burns.map((row) => (*/}
-              {/*  <StyledTableRow key={row.hash}>*/}
-              {/*    <StyledTableCell align="center" scope="row">*/}
-              {/*      {row.token}*/}
-              {/*    </StyledTableCell>*/}
-              {/*    <StyledTableCell align="center">*/}
-              {/*      <Amount*/}
-              {/*        symbol={tokensByEthAddress[row.token].tezosSymbol}*/}
-              {/*        value={row.amount}*/}
-              {/*        decimals={tokensByEthAddress[row.token].decimals}*/}
-              {/*      />*/}
-              {/*    </StyledTableCell>*/}
-              {/*    <StyledTableCell align="center">*/}
-              {/*      {row.type === 0 ? 'Wrap' : 'Unwrap'}*/}
-              {/*    </StyledTableCell>*/}
-              {/*    <StyledTableCell align="center">*/}
-              {/*      {row.destination}*/}
-              {/*    </StyledTableCell>*/}
-              {/*    <StyledTableCell align="center">{row.hash}</StyledTableCell>*/}
-              {/*  </StyledTableRow>*/}
-              {/*))}*/}
+
 
             </TableBody>
           </Table>

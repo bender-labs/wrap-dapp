@@ -1,8 +1,10 @@
-import { Step, StepButton, Stepper } from '@material-ui/core';
+import { Step, StepLabel, Stepper } from '@material-ui/core';
 import TezosWalletConnection from '../../components/tezos/WalletConnection';
 import EthWalletConnection from '../../components/ethereum/WalletConnection';
 import React from 'react';
 import { useWalletContext } from '../../runtime/wallet/WalletContext';
+import CustomConnector from '../../components/stepper/CustomConnector';
+import CustomStepIcon from '../../components/stepper/CustomStepIcon';
 
 export default function MultiConnect() {
   const {
@@ -32,27 +34,37 @@ export default function MultiConnect() {
   };
 
   return (
-    <Stepper style={ {backgroundColor: '#E5E5E5'}} alternativeLabel activeStep={activeStep()}>
+    <Stepper
+      style={{
+        backgroundColor: '#E5E5E5',
+        padding: '24px 0px',
+      }}
+      alternativeLabel
+      activeStep={activeStep()}
+      connector={<CustomConnector />}
+    >
       <Step>
-        <StepButton component={'div'}>
+        <StepLabel StepIconComponent={CustomStepIcon}>
           <TezosWalletConnection
             account={tzAccount}
             activate={tzActivate}
             deactivate={tzDeactivate}
             connectionStatus={tzConnectionStatus}
+            withConnectionStatus={false}
           />
-        </StepButton>
+        </StepLabel>
       </Step>
       <Step>
-        <StepButton component={'div'}>
+        <StepLabel StepIconComponent={CustomStepIcon}>
           <EthWalletConnection
             account={ethAccount}
             activate={ethActivate}
             deactivate={ethDeactivate}
             connectors={ethConnectors}
             connectionStatus={ethConnectionStatus}
+            withConnectionStatus={false}
           />
-        </StepButton>
+        </StepLabel>
       </Step>
     </Stepper>
   );

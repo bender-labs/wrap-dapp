@@ -1,6 +1,6 @@
 import { SwapDirectionTab } from '../features/swap/SwapDirectionTab';
 import WrapInitialStep from '../features/wrap/components/WrapInitialStep';
-import { useWrap, WrapStatus } from '../features/wrap/hooks/useWrap';
+import { useWrap } from '../features/wrap/hooks/useWrap';
 import React, { useEffect, useState } from 'react';
 import WrapConfirmStep from '../features/wrap/components/WrapConfirmStep';
 import { usePendingOperationsActions } from '../features/operations/state/pendingOperations';
@@ -9,6 +9,7 @@ import { paths, wrapPage } from './routes';
 import { Route } from 'react-router-dom';
 import OperationScreen from './OperationScreen';
 import { OperationType } from '../features/operations/state/types';
+import { WrapStatus } from '../features/wrap/hooks/reducer';
 
 enum Step {
   AMOUNT,
