@@ -50,11 +50,11 @@ export default function HistoryDoneOperations() {
         >
             <Tab
             label='wraps'
-            value='wraps'
+            value='completed-Wraps'
           />
             <Tab
             label='Unwraps'
-            value='Unwraps'
+            value='completed-Unwraps'
           />
 
           </Tabs>
