@@ -70,7 +70,7 @@ export type HistoryProps = {
   fungibleTokens: Record<string, TokenMetadata>;
 };
 
-export default function History({
+export default function HistoryWrap({
   operations,
   canFetch,
   fungibleTokens,
