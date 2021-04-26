@@ -9,8 +9,8 @@ import { unwrapFees, wrapFees } from '../../fees/fees';
 import {
   Operation,
   OperationStatus,
-  OperationType,
   OperationStatusType,
+  OperationType,
   UnwrapErc20Operation,
   WrapErc20Operation,
 } from './types';
