@@ -93,7 +93,7 @@ export default function HistoryWrap({
 
       {canFetch && (
         <div className={classes.wrapper}>
-        <TableContainer component={Paper}>
+        <TableContainer  >
           <Table className={classes.table} aria-label="customized table">
             <TableHead>
               <TableRow>

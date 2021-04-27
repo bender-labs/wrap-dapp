@@ -12,20 +12,11 @@ const useStyles = makeStyles(() =>
       display: 'flex',
 
     },
-    history: {
-      color: 'white',
-      justifyContent: 'flex-start',
-      alignItems: 'center',
-      textAlign: 'center',
-      width: '35%',
-      marginBottom: '10px',
-      padding: '3px 0 9px 0',
-      fontSize: '0.875rem',
-      borderBottom: '2px solid #FFD000',
-    },
+
     tabs: {
       color: 'white',
-      justifyContent: 'flex-end'
+      marginBottom: '10px',
+
     }
   })
 );
@@ -44,7 +35,6 @@ export default function HistoryDoneOperations() {
   return (
     <>
       <div className={classes.main}>
-        <p className={classes.history}>HISTORY</p>
         <div>
           <Tabs
             value={path}

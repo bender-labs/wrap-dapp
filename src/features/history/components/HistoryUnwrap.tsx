@@ -93,7 +93,7 @@ export default function History({
 
       {canFetch && (
         <div className={classes.wrapper}>
-          <TableContainer component={Paper}>
+          <TableContainer >
             <Table className={classes.table} aria-label="customized table">
               <TableHead>
                 <TableRow>
@@ -108,7 +108,7 @@ export default function History({
                   <StyledTableRow key={row.hash}>
                     <StyledTableCell align="center">
                       <Amount
-                        symbol={tokensByEthAddress[row.token].ethereumSymbol}
+                        symbol={tokensByEthAddress[row.token].tezosSymbol}
                         value={row.amount}
                         decimals={tokensByEthAddress[row.token].decimals}
                       />
