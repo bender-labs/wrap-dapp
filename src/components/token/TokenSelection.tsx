@@ -10,6 +10,8 @@ import { SupportedBlockchain } from '../../features/wallet/blockchain';
 import EthereumTokenIcon from './ethereum/EthereumTokenIcon';
 import TezosTokenIcon from './tezos/TezosTokenIcon';
 
+
+
 type Props = {
   token: string;
   onTokenSelect: (token: string) => void;
@@ -31,10 +33,10 @@ const itemIcon = (
 ) =>
   blockchainTarget === SupportedBlockchain.Ethereum ? (
     <EthereumTokenIcon
-      contractAddress={tokenMetadata.ethereumContractAddress}
+      tokenMetadata={tokenMetadata}
     />
   ) : (
-    <TezosTokenIcon ipfsUrl={tokenMetadata.thumbnailUri} />
+    <TezosTokenIcon tokenMetadata={tokenMetadata} />
   );
 
 function orderTokens(
@@ -83,3 +85,7 @@ export default function TokenSelection({
     </FormControl>
   );
 }
+
+
+
+

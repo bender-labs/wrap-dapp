@@ -4,6 +4,7 @@ import { createStyles, makeStyles, Tab, Tabs } from '@material-ui/core';
 import { useAllOperationsHistory } from '../../operations/hooks/useAllOperationsHistory';
 import { useHistory } from 'react-router';
 import { useRouteMatch } from 'react-router-dom';
+import { useWrap } from '../../wrap/hooks/useWrap';
 import { paths } from '../../../screens/routes';
 
 const useStyles = makeStyles(() =>
@@ -24,6 +25,7 @@ const useStyles = makeStyles(() =>
 export default function HistoryWrapOperations() {
   const classes = useStyles();
   const history = useHistory();
+  // const { token } = useWrap()
   const { path } = useRouteMatch();
   const { operations, canFetch, fungibleTokens } = useAllOperationsHistory();
   const onTabChange = useCallback(
@@ -56,6 +58,7 @@ export default function HistoryWrapOperations() {
         </div>
       </div>
       <HistoryWrap
+        // token={fungibleTokens[token]}
         operations={operations}
         canFetch={canFetch}
         fungibleTokens={fungibleTokens}

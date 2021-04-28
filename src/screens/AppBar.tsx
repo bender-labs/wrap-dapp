@@ -132,7 +132,7 @@ const Render = () => {
                 </Typography>
               </Grid>
             </Hidden>
-            {/*<Hidden xsDown>
+            <Hidden xsDown>
               <Grid item>
                 <Typography
                   variant="h6"
@@ -148,7 +148,7 @@ const Render = () => {
                   </Link>
                 </Typography>
               </Grid>
-            </Hidden>*/}
+            </Hidden>
           </Grid>
 
           <Grid

@@ -7,17 +7,20 @@ import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
-import Paper from '@material-ui/core/Paper';
 import { createStyles, makeStyles, Theme, withStyles } from '@material-ui/core';
 import { TokenMetadata } from '../../swap/token';
 import Amount from '../../../components/formatting/Amount';
+import IconSelect from './HistoryTokenSelection';
+import { SupportedBlockchain } from '../../wallet/blockchain';
+import { ellipsizeAddress } from '../../wallet/address';
 
 const StyledTableCell = withStyles((theme: Theme) =>
   createStyles({
     head: {
       backgroundColor: '#e5e5e5',
       color: 'black',
-      padding: '0px'
+      padding: '0px',
+      fontWeight: 'bold'
     },
     body: {
       fontSize: 14,
@@ -101,12 +104,18 @@ export default function HistoryWrap({
                 <StyledTableCell align="center">Source</StyledTableCell>
                 <StyledTableCell align="center">Destination</StyledTableCell>
                 <StyledTableCell align="center">Status</StyledTableCell>
+                <StyledTableCell align="center">Transaction Hash</StyledTableCell>
+
               </TableRow>
             </TableHead>
             <TableBody>
               {operations.mints.map((row) => (
                 <StyledTableRow key={row.hash}>
                   <StyledTableCell align="center">
+                   <IconSelect
+                     blockchainTarget={SupportedBlockchain.Ethereum}
+                     tokenMetadata={tokensByEthAddress[row.token]}
+                   />
                     <Amount
                       symbol={tokensByEthAddress[row.token].ethereumSymbol}
                       value={row.amount}
@@ -121,6 +130,9 @@ export default function HistoryWrap({
                   </StyledTableCell>
                   <StyledTableCell align="center">
                     {row.status.type}
+                  </StyledTableCell>
+                  <StyledTableCell align="center">
+                    {ellipsizeAddress(row.hash)}
                   </StyledTableCell>
                 </StyledTableRow>
               ))}
