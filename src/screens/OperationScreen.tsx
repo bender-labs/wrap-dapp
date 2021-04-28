@@ -37,7 +37,7 @@ export default function OperationScreen({ type }: OperationScreenProps) {
           walletStatus={tzStatus}
           operation={operation}
           tokens={fungibleTokens}
-          onMint={() => mintErc20()}
+          onMint={mintErc20}
         />
       );
     case OperationType.UNWRAP:
@@ -48,7 +48,7 @@ export default function OperationScreen({ type }: OperationScreenProps) {
           walletStatus={ethStatus}
           operation={operation}
           tokens={fungibleTokens}
-          onRelease={() => unlockErc20().then(() => {})}
+          onRelease={unlockErc20}
         />
       );
   }
