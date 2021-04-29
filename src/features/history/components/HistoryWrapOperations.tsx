@@ -4,7 +4,6 @@ import { createStyles, makeStyles, Tab, Tabs } from '@material-ui/core';
 import { useAllOperationsHistory } from '../../operations/hooks/useAllOperationsHistory';
 import { useHistory } from 'react-router';
 import { useRouteMatch } from 'react-router-dom';
-import { useWrap } from '../../wrap/hooks/useWrap';
 import { paths } from '../../../screens/routes';
 
 const useStyles = makeStyles(() =>

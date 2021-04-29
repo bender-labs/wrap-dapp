@@ -7,7 +7,7 @@ import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
-import { createStyles, makeStyles, Theme, withStyles } from '@material-ui/core';
+import { createStyles, Link, makeStyles, Theme, withStyles } from '@material-ui/core';
 import { TokenMetadata } from '../../swap/token';
 import Amount from '../../../components/formatting/Amount';
 import IconSelect from './HistoryTokenSelection';
@@ -96,7 +96,7 @@ export default function HistoryWrap({
 
       {canFetch && (
         <div className={classes.wrapper}>
-        <TableContainer  >
+        <TableContainer>
           <Table className={classes.table} aria-label="customized table">
             <TableHead>
               <TableRow>
@@ -111,7 +111,7 @@ export default function HistoryWrap({
             <TableBody>
               {operations.mints.map((row) => (
                 <StyledTableRow key={row.hash}>
-                  <StyledTableCell align="center">
+                  <StyledTableCell align="left">
                    <IconSelect
                      blockchainTarget={SupportedBlockchain.Ethereum}
                      tokenMetadata={tokensByEthAddress[row.token]}
@@ -132,7 +132,15 @@ export default function HistoryWrap({
                     {row.status.type}
                   </StyledTableCell>
                   <StyledTableCell align="center">
-                    {ellipsizeAddress(row.hash)}
+                    <Link
+                      href={`https://etherscan.io/tx/${row.hash}`}
+                      rel="noreferrer"
+                      target="_blank"
+                      color="inherit"
+                    >
+                      {ellipsizeAddress(row.hash)}
+                    </Link>
+
                   </StyledTableCell>
                 </StyledTableRow>
               ))}

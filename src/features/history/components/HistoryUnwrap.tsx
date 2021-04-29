@@ -7,7 +7,7 @@ import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
-import { createStyles, makeStyles, Theme, withStyles } from '@material-ui/core';
+import { createStyles, Link, makeStyles, Theme, withStyles } from '@material-ui/core';
 import { TokenMetadata } from '../../swap/token';
 import Amount from '../../../components/formatting/Amount';
 import IconSelect from './HistoryTokenSelection';
@@ -61,6 +61,9 @@ const useStyles = makeStyles((theme) =>
       padding: '20px',
       backgroundColor: '#e5e5e5',
       borderRadius: '0 0 10px 10px'
+    },
+    icon: {
+      padding: "20px"
     }
 
   })
@@ -110,16 +113,19 @@ export default function History({
               <TableBody>
                 {operations.burns.map((row) => (
                   <StyledTableRow key={row.hash}>
-                    <StyledTableCell align="center">
-                      <IconSelect
-                        blockchainTarget={SupportedBlockchain.Tezos}
-                        tokenMetadata={tokensByEthAddress[row.token]}
-                      />
-                      <Amount
-                        symbol={tokensByEthAddress[row.token].tezosSymbol}
-                        value={row.amount}
-                        decimals={tokensByEthAddress[row.token].decimals}
-                      />
+                    <StyledTableCell align="left">
+
+                        <IconSelect
+
+                          blockchainTarget={SupportedBlockchain.Tezos}
+                          tokenMetadata={tokensByEthAddress[row.token]}
+                        />
+                        <Amount
+                          symbol={tokensByEthAddress[row.token].tezosSymbol}
+                          value={row.amount}
+                          decimals={tokensByEthAddress[row.token].decimals}
+                        />
+
                     </StyledTableCell>
                     <StyledTableCell align="center">
                       {row.source}
@@ -131,7 +137,14 @@ export default function History({
                       {row.status.type}
                     </StyledTableCell>
                     <StyledTableCell align="center">
+                      <Link
+                        href={`https://tzkt.io/${row.hash}`}
+                        rel="noreferrer"
+                        color="inherit"
+                        target="_blank"
+                      >
                       {ellipsizeAddress(row.hash)}
+                      </Link>
                     </StyledTableCell>
 
                   </StyledTableRow>
