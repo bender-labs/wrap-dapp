@@ -1,8 +1,8 @@
 import React from 'react';
 import BigNumber from 'bignumber.js';
+import LabelAndValue from './LabelAndValue';
 import { formatOptions } from './numberFormat';
 import NumberFormat from 'react-number-format';
-import LabelAndValue from './LabelAndValue';
 
 export type LabelAndAssetProps = {
   label: string;
