@@ -3,7 +3,7 @@ import {
   useConfig,
   useIndexerApi,
 } from '../../../runtime/config/ConfigContext';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import {
   Operation,
   OperationType,
@@ -12,8 +12,6 @@ import {
 } from '../state/types';
 import { unwrapToOperations, wrapsToOperations } from '../state/operation';
 import { useHistory } from 'react-router';
-import { useRecoilCallback } from 'recoil';
-import { operationByHashState } from '../state/pendingOperations';
 import { unwrapPage, wrapPage } from '../../../screens/routes';
 
 type OperationsHistoryState = {
@@ -72,17 +70,19 @@ export const usePendingOperationsHistory = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ethAccount, tzAccount]);
 
-  const selectOperation = useRecoilCallback(({ set }) => (op: Operation) => {
-    set(operationByHashState(op.hash), op);
-    switch (op.type) {
-      case OperationType.WRAP:
-        history.push(wrapPage(op));
-        break;
-      case OperationType.UNWRAP:
-        history.push(unwrapPage(op));
-        break;
-    }
-  });
+  const selectOperation = useCallback(
+    (op: Operation) => {
+      switch (op.type) {
+        case OperationType.WRAP:
+          history.push(wrapPage(op));
+          break;
+        case OperationType.UNWRAP:
+          history.push(unwrapPage(op));
+          break;
+      }
+    },
+    [history]
+  );
 
   useEffect(() => setCount(operations.burns.length + operations.mints.length), [
     operations,

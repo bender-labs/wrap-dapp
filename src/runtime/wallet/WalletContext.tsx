@@ -73,7 +73,6 @@ export default function Provider({ children }: PropsWithChildren<{}>) {
   const activateTzConnection = (
     activation: (request: RequestPermissionInput) => Promise<string>
   ) => {
-    tzDispatchConnectionAction({ type: ConnectionActions.launchingConnection });
     return activation({
       network: {
         type: networkId,

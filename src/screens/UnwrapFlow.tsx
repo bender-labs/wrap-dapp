@@ -1,6 +1,5 @@
 import { SwapDirectionTab } from '../features/swap/SwapDirectionTab';
 import React, { useEffect, useState } from 'react';
-import { usePendingOperationsActions } from '../features/operations/state/pendingOperations';
 import { useHistory } from 'react-router';
 import UnwrapInitialStep from '../features/unwrap/components/UnwrapInitialStep';
 import { useUnwrap } from '../features/unwrap/hooks/useUnwrap';
@@ -10,6 +9,7 @@ import { Route } from 'react-router-dom';
 import OperationScreen from './OperationScreen';
 import { OperationType } from '../features/operations/state/types';
 import { UnwrapStatus } from '../features/unwrap/hooks/reducer';
+import { usePendingOperationsActions } from '../features/operations/hooks/useOperation';
 
 enum Step {
   AMOUNT,
