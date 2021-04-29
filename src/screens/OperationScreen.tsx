@@ -4,8 +4,7 @@ import { OperationType } from '../features/operations/state/types';
 import WrapReceipt from '../features/wrap/components/WrapReceipt';
 import React from 'react';
 import UnwrapReceipt from '../features/unwrap/components/UnwrapReceipt';
-import { useRecoilValue } from 'recoil';
-import { operationByHashState } from '../features/operations/state/pendingOperations';
+import { useWalletContext } from '../runtime/wallet/WalletContext';
 
 export type OperationScreenProps = {
   type: OperationType;
@@ -13,7 +12,11 @@ export type OperationScreenProps = {
 
 export default function OperationScreen({ type }: OperationScreenProps) {
   const { transactionHash } = useParams() as { transactionHash: string };
-  const maybeOperation = useRecoilValue(operationByHashState(transactionHash));
+  const {
+    ethereum: { status: ethStatus },
+    tezos: { status: tzStatus },
+  } = useWalletContext();
+
   const {
     state,
     fungibleTokens,
@@ -23,8 +26,8 @@ export default function OperationScreen({ type }: OperationScreenProps) {
       wrap: wrapSignaturesThreshold,
       unwrap: unwrapSignaturesThreshold,
     },
-  } = useOperation(maybeOperation || transactionHash, type);
-  const { operation, status, tzStatus, ethStatus } = state;
+  } = useOperation(transactionHash, type);
+  const { operation, status } = state;
   if (!operation) {
     return <div>Loading</div>;
   }
@@ -52,4 +55,5 @@ export default function OperationScreen({ type }: OperationScreenProps) {
         />
       );
   }
+  return <></>;
 }

@@ -3,18 +3,35 @@ import {
   useConfig,
   useIndexerApi,
 } from '../../../runtime/config/ConfigContext';
-import { useEffect, useReducer } from 'react';
+import { useEffect } from 'react';
 import { Operation, OperationType } from '../state/types';
-import { ReceiptStatus, reducer, sideEffectReducer } from './reducer';
-import { connectStore, createStore } from '../../types';
 import {
-  fetchReceipt,
-  mint,
-  release,
-  reload,
-  update,
-  walletChange,
-} from './actions';
+  ReceiptState,
+  ReceiptStatus,
+  reducer,
+  sideEffectReducer,
+} from './reducer';
+import { Action, connectStore, createStore } from '../../types';
+import { fetchReceipt, mint, release, reload, update } from './actions';
+import { atomFamily, useRecoilCallback, useRecoilState } from 'recoil';
+
+const receiptByHash = atomFamily<ReceiptState, string>({
+  key: 'OPS_BY_HASH',
+  default: {
+    status: ReceiptStatus.UNINITIALIZED,
+  },
+});
+
+export function usePendingOperationsActions() {
+  const addOperation = useRecoilCallback(({ set }) => async (o: Operation) => {
+    set(
+      receiptByHash(o.hash),
+      reducer({ status: ReceiptStatus.UNINITIALIZED }, update({ operation: o }))
+    );
+  });
+
+  return { addOperation };
+}
 
 const extractHash = (value: string | Operation): string =>
   typeof value === 'string' ? value : value.hash;
@@ -24,8 +41,8 @@ export const useOperation = (
   type: OperationType
 ) => {
   const {
-    tezos: { library: tzLibrary, status: tzStatus },
-    ethereum: { library: ethLibrary, status: ethStatus },
+    tezos: { library: tzLibrary },
+    ethereum: { library: ethLibrary },
   } = useWalletContext();
 
   const indexerApi = useIndexerApi();
@@ -39,12 +56,11 @@ export const useOperation = (
     ethereum: { custodianContractAddress },
   } = useConfig();
 
-  const [state, dispatch] = useReducer<typeof reducer>(reducer, {
-    status: ReceiptStatus.UNINITIALIZED,
-    tzStatus,
-    ethStatus,
-  });
+  const [state, setState] = useRecoilState(
+    receiptByHash(extractHash(initialValue))
+  );
 
+  const dispatch = (a: Action) => setState(reducer(state, a));
   const effectsDispatch = connectStore(
     createStore(state, dispatch),
     sideEffectReducer(indexerApi)
@@ -67,12 +83,6 @@ export const useOperation = (
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [initialValue]);
-
-  useEffect(() => {
-    // noinspection JSIgnoredPromiseFromCall
-    effectsDispatch(walletChange({ tzStatus, ethStatus }));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [tzStatus, ethStatus]);
 
   useEffect(() => {
     if (state.status !== ReceiptStatus.NEED_REFRESH) {

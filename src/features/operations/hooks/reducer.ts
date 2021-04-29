@@ -1,5 +1,4 @@
 import { Operation, OperationStatusType, OperationType } from '../state/types';
-import { ConnectionStatus } from '../../wallet/connectionStatus';
 import {
   markAsDone,
   markAsNew,
@@ -18,7 +17,6 @@ import {
   update,
   updateUnwrap,
   updateWrap,
-  walletChange,
 } from './actions';
 import IndexerApi from '../../indexer/indexerApi';
 import { ethers } from 'ethers';
@@ -37,8 +35,6 @@ export enum ReceiptStatus {
 export type ReceiptState = {
   status: ReceiptStatus;
   operation?: Operation;
-  tzStatus: ConnectionStatus;
-  ethStatus: ConnectionStatus;
 };
 
 const toReceiptStatus = (opStatus: OperationStatusType): ReceiptStatus => {
@@ -98,15 +94,6 @@ export const reducer = (state: ReceiptState, action: Action): ReceiptState => {
       ...state,
       operation: updatedOp,
       status: toReceiptStatus(updatedOp.status.type),
-    };
-  }
-
-  if (isType(action, walletChange)) {
-    const { ethStatus, tzStatus } = action.payload;
-    return {
-      ...state,
-      ethStatus,
-      tzStatus,
     };
   }
 

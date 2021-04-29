@@ -3,7 +3,6 @@ import { Operation, OperationType } from '../state/types';
 import { Web3Provider } from '@ethersproject/providers';
 import { TezosToolkit } from '@taquito/taquito';
 import { Fees } from '../../../config';
-import { ConnectionStatus } from '../../wallet/connectionStatus';
 import {
   IndexerUnwrapPayload,
   IndexerWrapPayload,
@@ -27,11 +26,6 @@ export const reload = actionCreator<{
 }>('RELOAD');
 
 export const update = actionCreator<{ operation: Operation }>('UPDATE');
-
-export const walletChange = actionCreator<{
-  tzStatus: ConnectionStatus;
-  ethStatus: ConnectionStatus;
-}>('WALLET_CHANGE');
 
 export const updateWrap = actionCreator<{
   data: IndexerWrapPayload;
