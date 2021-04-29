@@ -3,13 +3,13 @@ import WrapInitialStep from '../features/wrap/components/WrapInitialStep';
 import { useWrap } from '../features/wrap/hooks/useWrap';
 import React, { useEffect, useState } from 'react';
 import WrapConfirmStep from '../features/wrap/components/WrapConfirmStep';
-import { usePendingOperationsActions } from '../features/operations/state/pendingOperations';
 import { useHistory } from 'react-router';
 import { paths, wrapPage } from './routes';
 import { Route } from 'react-router-dom';
 import OperationScreen from './OperationScreen';
 import { OperationType } from '../features/operations/state/types';
 import { WrapStatus } from '../features/wrap/hooks/reducer';
+import { usePendingOperationsActions } from '../features/operations/hooks/useOperation';
 
 enum Step {
   AMOUNT,

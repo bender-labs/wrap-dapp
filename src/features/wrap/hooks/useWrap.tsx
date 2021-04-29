@@ -92,10 +92,10 @@ export function useWrap() {
             );
             return;
           } else {
-            if (counter > 60) throw new Error('Timeout');
+            if (counter > 1000) throw new Error('Timeout');
             refreshCurrentAllowance();
           }
-        }, 1500);
+        }, 2000);
       refreshCurrentAllowance();
     };
 

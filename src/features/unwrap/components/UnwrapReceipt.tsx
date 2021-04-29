@@ -16,8 +16,8 @@ import LabelAndAsset from '../../../components/formatting/LabelAndAsset';
 import { TokenMetadata } from '../../swap/token';
 import { Typography } from '@material-ui/core';
 import LoadableButton from '../../../components/button/LoadableButton';
-import { ReceiptStatus } from '../../operations/hooks/useOperation';
 import { ConnectionStatus } from '../../wallet/connectionStatus';
+import { ReceiptStatus } from '../../operations/hooks/reducer';
 
 export type UnwrapReceiptProps = {
   operation: UnwrapErc20Operation;
@@ -25,7 +25,7 @@ export type UnwrapReceiptProps = {
   signaturesThreshold: number;
   status: ReceiptStatus;
   walletStatus: ConnectionStatus;
-  onRelease: () => Promise<void>;
+  onRelease: () => void;
 };
 
 function label(value: string) {
