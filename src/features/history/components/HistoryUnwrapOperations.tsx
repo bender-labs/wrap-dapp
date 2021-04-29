@@ -1,64 +1,28 @@
-import React, { useCallback } from 'react';
-import HistoryUnwrap from './HistoryUnwrap';
-import { createStyles, makeStyles, Tab, Tabs } from '@material-ui/core';
+import React from 'react';
 import { useAllOperationsHistory } from '../../operations/hooks/useAllOperationsHistory';
-import { useHistory } from 'react-router';
-import { useRouteMatch } from 'react-router-dom';
-import { paths } from '../../../screens/routes'
+import HistoryTab from './HistoryTab';
+import Operations from './Operations';
+import ConnectWallet from '../../../components/formatting/ConnectWallet'
 
-const useStyles = makeStyles(() =>
-  createStyles({
-    main: {
-      display: 'flex',
 
-    },
-
-    tabs: {
-      color: 'white',
-      marginBottom: '10px',
-
-    }
-  })
-);
 
 export default function HistoryDoneOperations() {
-  const classes = useStyles();
-  const history = useHistory();
-  const { path } = useRouteMatch()
   const { operations, canFetch, fungibleTokens } = useAllOperationsHistory();
-  const onTabChange = useCallback(
-    (event: React.ChangeEvent<{}>, newPath: string) => {
-      history.push(newPath);
-    },
-    [history]
-  );
+
   return (
     <>
-      <div className={classes.main}>
-        <div>
-          <Tabs
-            value={path}
-            onChange={onTabChange}
-            className={classes.tabs}
-            indicatorColor="primary"
-          >
-            <Tab
-              label='wraps'
-              value={paths.HISTORY_WRAP}
-            />
-            <Tab
-              label='Unwraps'
-              value={paths.HISTORY_UNWRAP}
-            />
+      {!canFetch && <ConnectWallet />}
 
-          </Tabs>
-        </div>
-      </div>
-      <HistoryUnwrap
-        operations={operations}
+      {canFetch && (
+        <>
+      <HistoryTab />
+      <Operations
+        operations={operations.burns}
         canFetch={canFetch}
         fungibleTokens={fungibleTokens}
       />
+          </>
+      )}
     </>
   );
 }

@@ -4,3 +4,4 @@ export const formatOptions = {
   allowNegative: false,
   allowedDecimalSeparators: ['.', ','],
 };
+

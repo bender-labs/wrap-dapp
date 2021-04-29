@@ -1,67 +1,26 @@
-import React, { useCallback } from 'react';
-import HistoryWrap from './HistoryWrap';
-import { createStyles, makeStyles, Tab, Tabs } from '@material-ui/core';
+import React from 'react';
 import { useAllOperationsHistory } from '../../operations/hooks/useAllOperationsHistory';
-import { useHistory } from 'react-router';
-import { useRouteMatch } from 'react-router-dom';
-import { paths } from '../../../screens/routes';
-
-const useStyles = makeStyles(() =>
-  createStyles({
-    main: {
-      display: 'flex'
-
-    },
-
-
-    tabs: {
-      color: 'white',
-      marginBottom: '10px'
-    }
-  })
-);
+import HistoryTab from './HistoryTab';
+import Operations from './Operations';
+import ConnectWallet from '../../../components/formatting/ConnectWallet';
 
 export default function HistoryWrapOperations() {
-  const classes = useStyles();
-  const history = useHistory();
-  // const { token } = useWrap()
-  const { path } = useRouteMatch();
   const { operations, canFetch, fungibleTokens } = useAllOperationsHistory();
-  const onTabChange = useCallback(
-    (event: React.ChangeEvent<{}>, newPath: string) => {
-      history.push(newPath);
-    },
-    [history]
-  );
   return (
     <>
-      <div className={classes.main}>
+      {!canFetch && <ConnectWallet />}
 
-        <div>
-          <Tabs
-            value={path}
-            onChange={onTabChange}
-            className={classes.tabs}
-            indicatorColor='primary'
-          >
-            <Tab
-              label='Wraps'
-              value={paths.HISTORY_WRAP}
-            />
-            <Tab
-              label='Unwraps'
-              value={paths.HISTORY_UNWRAP}
-            />
+      {canFetch && (
+        <>
+          <HistoryTab />
+          <Operations
+          operations={operations.mints}
+          canFetch={canFetch}
+          fungibleTokens={fungibleTokens}
+          />
+        </>
+      )}
 
-          </Tabs>
-        </div>
-      </div>
-      <HistoryWrap
-        // token={fungibleTokens[token]}
-        operations={operations}
-        canFetch={canFetch}
-        fungibleTokens={fungibleTokens}
-      />
     </>
   );
 }
