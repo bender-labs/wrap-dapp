@@ -1,13 +1,15 @@
+import { TokenMetadata } from '../../../features/swap/token';
+
 type Props = {
-  ipfsUrl: string;
+  tokenMetadata: TokenMetadata;
 };
 
-const EthereumTokenIcon = (props: Props) => {
+const TezosTokenIcon = (props: Props) => {
   return (
     <img
       style={{ width: 28, height: 28, marginRight: 5, verticalAlign: 'middle' }}
       src={`https://cloudflare-ipfs.com/ipfs/${
-        props.ipfsUrl ? props.ipfsUrl.replace('ipfs://', '') : ''
+        props.tokenMetadata.thumbnailUri ? props.tokenMetadata.thumbnailUri.replace('ipfs://', '') : ''
       }`}
       alt={''}
       onError={(e: any) => {
@@ -17,4 +19,4 @@ const EthereumTokenIcon = (props: Props) => {
     />
   );
 };
-export default EthereumTokenIcon;
+export default TezosTokenIcon;

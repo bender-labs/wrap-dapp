@@ -14,7 +14,7 @@ import { themeOptions } from './runtime/theme/theme';
 import { RecoilRoot } from 'recoil';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import AppBar from './screens/AppBar';
-import { mainPaths, paths } from './screens/routes';
+import { mainPaths, historyPaths } from './screens/routes';
 import MainScreen from './screens/MainScreen';
 import DisplayEnvironment from './components/configuration/DisplayEnvironment';
 
@@ -33,7 +33,7 @@ function App() {
                     <CssBaseline />
                     <AppBar />
                     <Switch>
-                      <Route path={paths.HISTORY} component={HistoryScreen} />
+                      <Route exact path={historyPaths} component={HistoryScreen} />
                       <Route exact path={mainPaths} component={MainScreen} />
                     </Switch>
                     <DisplayEnvironment />
