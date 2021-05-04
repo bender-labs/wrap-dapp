@@ -10,12 +10,13 @@ import {
   userBalanceChange,
   walletChange,
   wrapDone,
+  toggleAgreement
 } from './actions';
 import BigNumber from 'bignumber.js';
 import {
   EthereumWrapApi,
   EthereumWrapApiBuilder,
-  EthereumWrapApiFactory,
+  EthereumWrapApiFactory
 } from '../../ethereum/EthereumWrapApi';
 
 type WrapState = {
@@ -36,7 +37,8 @@ export enum WrapStatus {
   READY_TO_CONFIRM,
   WAITING_FOR_ALLOWANCE_APPROVAL,
   READY_TO_WRAP,
-  WAITING_FOR_WRAP,
+  AGREEMENT_CONFIRMED,
+  WAITING_FOR_WRAP
 }
 
 export function initialState(token: string, custodianContractAddress: string) {
@@ -49,11 +51,24 @@ export function initialState(token: string, custodianContractAddress: string) {
     amountToWrap: new BigNumber(''),
     connected: false,
     custodianContractAddress,
-    networkFees: new BigNumber(''),
+    networkFees: new BigNumber('')
   };
 }
 
-const tryReady = (state: WrapState): WrapState => {
+const amountChange = (state: WrapState): WrapState => {
+  if (
+    !state.connected ||
+    state.amountToWrap.isZero() ||
+    state.amountToWrap.isNaN() ||
+    state.amountToWrap.isGreaterThan(state.currentBalance)
+  ) {
+    return { ...state, status: WrapStatus.NOT_READY };
+  }
+
+  return { ...state, status: WrapStatus.READY_TO_CONFIRM };
+};
+
+const agree = (state: WrapState): WrapState => {
   if (
     !state.connected ||
     state.amountToWrap.isZero() ||
@@ -64,7 +79,7 @@ const tryReady = (state: WrapState): WrapState => {
   }
   const newStatus = state.amountToWrap.lte(state.currentAllowance)
     ? WrapStatus.READY_TO_WRAP
-    : WrapStatus.READY_TO_CONFIRM;
+    : WrapStatus.AGREEMENT_CONFIRMED;
 
   return { ...state, status: newStatus };
 };
@@ -77,68 +92,73 @@ export function reducer(state: WrapState, action: Action): WrapState {
       ...action.payload,
       currentBalance: new BigNumber(''),
       currentAllowance: new BigNumber(''),
-      amountToWrap: new BigNumber(''),
+      amountToWrap: new BigNumber('')
     };
   }
   if (isType(action, userBalanceChange)) {
-    return tryReady({
+    return amountChange({
       ...state,
-      ...action.payload,
+      ...action.payload
     });
   }
   if (isType(action, amountToWrapChange)) {
     const { amountToWrap } = action.payload;
-    return tryReady({
+    return amountChange({
       ...state,
-      amountToWrap,
+      amountToWrap
     });
   }
   if (isType(action, runAllowance)) {
     return {
       ...state,
-      status: WrapStatus.WAITING_FOR_ALLOWANCE_APPROVAL,
+      status: WrapStatus.WAITING_FOR_ALLOWANCE_APPROVAL
     };
   }
   if (isType(action, allowanceChange)) {
     return {
       ...state,
       status: WrapStatus.READY_TO_WRAP,
-      currentAllowance: action.payload.newCurrentAllowance,
+      currentAllowance: action.payload.newCurrentAllowance
     };
   }
   if (isType(action, runWrap)) {
     return {
       ...state,
-      status: WrapStatus.WAITING_FOR_WRAP,
+      status: WrapStatus.WAITING_FOR_WRAP
     };
   }
   if (isType(action, networkFees)) {
     return {
       ...state,
-      networkFees: action.payload.networkFees,
+      networkFees: action.payload.networkFees
     };
   }
   if (isType(action, wrapDone)) {
     return {
       ...state,
-      status: WrapStatus.READY_TO_WRAP,
+      status: WrapStatus.READY_TO_WRAP
     };
   }
+
+  if (isType(action, toggleAgreement)) {
+    return action.payload ? agree(state) : {...state, status:WrapStatus.READY_TO_CONFIRM};
+  }
+
   if (isType(action, walletChange)) {
     const { ethAccount, tezosAccount, ethLibrary } = action.payload;
     const ethWrapApiFactory =
       tezosAccount && ethAccount && ethLibrary
         ? EthereumWrapApiBuilder.withProvider(ethLibrary)
-            .forCustodianContract(state.custodianContractAddress)
-            .forAccount(ethAccount, tezosAccount)
-            .createFactory()
+          .forCustodianContract(state.custodianContractAddress)
+          .forAccount(ethAccount, tezosAccount)
+          .createFactory()
         : undefined;
     return {
       ...state,
       currentBalance: new BigNumber(0),
       contractFactory: ethWrapApiFactory,
       status: ethWrapApiFactory ? state.status : WrapStatus.NOT_READY,
-      connected: ethAccount !== undefined && tezosAccount !== undefined,
+      connected: ethAccount !== undefined && tezosAccount !== undefined
     };
   }
 

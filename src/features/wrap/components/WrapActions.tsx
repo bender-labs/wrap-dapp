@@ -30,7 +30,8 @@ export default function WrapActions({
   const activeStep = () => {
     if (
       status === WrapStatus.READY_TO_WRAP ||
-      status === WrapStatus.WAITING_FOR_WRAP
+      status === WrapStatus.WAITING_FOR_WRAP ||
+      status === WrapStatus.AGREEMENT_CONFIRMED
     ) {
       return 1;
     }
@@ -51,6 +52,7 @@ export default function WrapActions({
               currentAllowance={currentAllowance}
               balanceToWrap={amountToWrap}
               onAuthorize={onAuthorize}
+              enabled={status === WrapStatus.AGREEMENT_CONFIRMED}
               loading={status === WrapStatus.WAITING_FOR_ALLOWANCE_APPROVAL}
             />
           </StepLabel>
@@ -61,7 +63,7 @@ export default function WrapActions({
               loading={status === WrapStatus.WAITING_FOR_WRAP}
               variant={'contained'}
               onClick={onWrap}
-              disabled={status !== WrapStatus.READY_TO_WRAP}
+              disabled={status !== WrapStatus.READY_TO_WRAP }
               text={'Wrap'}
             />
           </StepLabel>

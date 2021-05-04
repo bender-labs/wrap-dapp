@@ -19,6 +19,7 @@ import {
   userBalanceChange,
   walletChange,
   wrapDone,
+  toggleAgreement
 } from './actions';
 import { initialState, reducer, WrapStatus } from './reducer';
 import { TokenMetadata } from '../../swap/token';
@@ -132,6 +133,8 @@ export function useWrap() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   };
 
+  const agree = (v:boolean) => dispatch(toggleAgreement(v));
+
   useEffect(() => {
     const computeNetworkFees = async () => {
       const { status, contract, amountToWrap } = state;
@@ -191,6 +194,7 @@ export function useWrap() {
     launchAllowanceApproval,
     tzAccount,
     ethAccount,
+    agree,
     launchWrap,
   };
 }

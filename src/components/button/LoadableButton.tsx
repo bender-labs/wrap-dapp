@@ -6,6 +6,7 @@ export type LoadableButtonProps = {
   onClick: () => void;
   disabled: boolean;
   text: string;
+  isChecked?: boolean;
   finalized?: boolean;
   variant?: 'text' | 'outlined' | 'contained';
   size?: 'small' | 'medium' | 'large';

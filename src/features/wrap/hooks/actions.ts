@@ -36,3 +36,5 @@ export const wrapDone = actionCreator('WRAP_DONE');
 export const networkFees = actionCreator<{ networkFees: BigNumber }>(
   'NETWORK_FEES'
 );
+
+export const toggleAgreement = actionCreator<boolean>('TOGGLE_AGREEMENT');

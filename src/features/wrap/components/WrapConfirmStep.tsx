@@ -7,6 +7,7 @@ import {
 } from '../../../components/paper/Paper';
 import { IconButton, Typography } from '@material-ui/core';
 import React from 'react';
+import Checkbox from '@material-ui/core/Checkbox';
 import BigNumber from 'bignumber.js';
 import { TokenMetadata } from '../../swap/token';
 import { wrapFees } from '../../fees/fees';
@@ -30,7 +31,10 @@ export type WrapConfirmStepProps = {
   onAuthorize: () => void;
   onWrap: () => void;
   networkFees: BigNumber;
+  onAgreementChange: (v:boolean) => void;
 };
+
+
 
 export default function WrapConfirmStep({
   onPrevious,
@@ -44,8 +48,19 @@ export default function WrapConfirmStep({
   onAuthorize,
   onWrap,
   networkFees,
+  onAgreementChange,
 }: WrapConfirmStepProps) {
   const currentFees = wrapFees(amount, fees);
+
+  const [checked, setChecked ] = React.useState(false);
+
+  function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
+    setChecked(e.target.checked);
+    onAgreementChange(e.target.checked);
+    // this.setState({isChecked: !isChecked})
+
+    };
+
   return (
     <>
       <PaperHeader
@@ -112,7 +127,18 @@ export default function WrapConfirmStep({
           symbol={token.tezosSymbol}
         />
       </PaperContent>
+      <PaperContent style={{ display: 'flex', padding: '20px 26px 0px 26px' }}>
+        <Checkbox
 
+          checked={checked}
+          onChange={handleChange}
+        />
+        <Typography
+          variant={'caption'}
+        >
+          I acknowledge the fees and that this transaction <span style={{ fontWeight: 'bold'}}>WILL</span> require ETH/XTZ
+        </Typography>
+      </PaperContent>
       <WrapActions
         currentAllowance={currentAllowance}
         amountToWrap={amount}
@@ -121,6 +147,7 @@ export default function WrapConfirmStep({
         onWrap={onWrap}
         status={status}
         token={token.ethereumSymbol}
+
       />
     </>
   );

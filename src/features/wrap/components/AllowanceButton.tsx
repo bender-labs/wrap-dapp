@@ -7,6 +7,7 @@ type Props = {
   balanceToWrap: BigNumber;
   onAuthorize: () => void;
   loading: boolean;
+  enabled?: boolean;
 };
 
 export default function AllowanceButton({
@@ -14,16 +15,15 @@ export default function AllowanceButton({
   balanceToWrap,
   onAuthorize,
   loading,
+  enabled = true
 }: Props) {
-  const { finalized, disabled, text } = balanceToWrap.lte(currentAllowance)
+  const { finalized, text } = balanceToWrap.lte(currentAllowance)
     ? {
         finalized: true,
-        disabled: true,
         text: 'Allowed',
       }
     : {
         finalized: false,
-        disabled: false,
         text: 'Allow',
       };
 
@@ -31,7 +31,7 @@ export default function AllowanceButton({
     <LoadableButton
       loading={loading}
       onClick={onAuthorize}
-      disabled={disabled}
+      disabled={!enabled}
       text={text}
       finalized={finalized}
     />

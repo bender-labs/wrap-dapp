@@ -32,6 +32,7 @@ function WrapForm() {
     fees,
     ethAccount,
     tzAccount,
+    agree,
     networkFees,
   } = useWrap();
 
@@ -84,9 +85,11 @@ function WrapForm() {
           recipientAddress={tzAccount!}
           sendingAddress={ethAccount!}
           onWrap={doLaunchWrap}
+          onAgreementChange={agree}
           onAuthorize={launchAllowanceApproval}
           onPrevious={() => setStep(Step.AMOUNT)}
           networkFees={networkFees}
+
         />
       )}
     </>
