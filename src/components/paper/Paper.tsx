@@ -1,30 +1,57 @@
-import { Box, PaperProps, styled, makeStyles, createStyles } from '@material-ui/core';
+import {
+  Box,
+  createStyles,
+  makeStyles,
+  PaperProps,
+  styled,
+} from '@material-ui/core';
 import * as React from 'react';
+import { PropsWithChildren } from 'react';
 
-const useStyles = makeStyles(() => 
+const useStyles = makeStyles(() =>
   createStyles({
-
     card: {
-
       backgroundColor: '#E5E5E5',
-    }
-
+    },
   })
 );
 
-
 export type WrapPaperProps = PaperProps;
 
+const useHeaderStyle = makeStyles((theme) =>
+  createStyles({
+    head: {
+      display: 'flex',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      paddingTop: theme.spacing(),
+      paddingBottom: theme.spacing(),
+      paddingLeft: theme.spacing(),
+      paddingRight: theme.spacing(),
+      backgroundColor: '#E5E5E5',
+      fontSize: '20px',
+      fontWeight: 'bold',
+      boxShadow: 'inset 0 -7px 9px -7px rgba(0,0,0,0.4)',
+    },
+    padding: {
+      paddingTop: theme.spacing() * 2.5,
+    },
+  })
+);
 
-export const PaperHeader = styled('header')((theme) => ({
-  display: 'flex',
-  justifyContent: 'space-between',
-  alignItems: 'center',
-  paddingTop: theme.theme.spacing(),
-  paddingBottom: theme.theme.spacing(),
-  paddingLeft: theme.theme.spacing(),
-  paddingRight: theme.theme.spacing(),
-}));
+export const PaperHeader = ({
+  extraPadding = false,
+  children,
+}: PropsWithChildren<{ extraPadding?: boolean }>) => {
+  const classes = useHeaderStyle();
+  return (
+    <header
+      className={`${classes.head} ${extraPadding ? classes.padding : ''}`}
+    >
+      {children}
+    </header>
+  );
+};
 
 export const PaperTitle = styled('div')({
   justifySelf: 'center',
@@ -56,7 +83,6 @@ export function PaperContent(props: React.HTMLAttributes<HTMLDivElement>) {
 
   return <Box className={classes.card} p={2} {...props} />;
 }
-
 
 // what is this for?
 

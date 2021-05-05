@@ -56,14 +56,7 @@ export default function UnwrapConfirmStep({
 
   return (
     <>
-      <PaperHeader
-        style={{
-          backgroundColor: '#E5E5E5',
-          fontSize: '20px',
-          fontWeight: 'bold',
-          boxShadow: 'inset 0 -7px 9px -7px rgba(0,0,0,0.4)',
-        }}
-      >
+      <PaperHeader>
         <PaperNav>
           <IconButton onClick={onPrevious}>
             <ArrowBackIcon />

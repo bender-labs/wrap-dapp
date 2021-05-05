@@ -135,15 +135,7 @@ export default function WrapReceipt({
   ];
   return (
     <>
-      <PaperHeader
-        style={{
-          backgroundColor: '#E5E5E5',
-          fontSize: '20px',
-          fontWeight: 'bold',
-          paddingTop: '20px',
-          boxShadow: 'inset 0 -7px 9px -7px rgba(0,0,0,0.4)',
-        }}
-      >
+      <PaperHeader extraPadding>
         <PaperNav />
         <PaperTitle>Minting</PaperTitle>
         <PaperActions />
