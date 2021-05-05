@@ -51,21 +51,13 @@ export default function WrapConfirmStep({
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
     setChecked(e.target.checked);
     onAgreementChange(e.target.checked);
-    console.log(status)
-
-
-    };
-  let checkYaSelf;
-
-  if (status === WrapStatus.READY_TO_WRAP) {
-    checkYaSelf = true;
-    console.log('yo')
-  } else if (status === WrapStatus.WAITING_FOR_WRAP) {
-    checkYaSelf = true;
-
   }
+  const check = (status === WrapStatus.READY_TO_WRAP || status === WrapStatus.WAITING_FOR_WRAP);
 
 
+  React.useEffect(() => {
+    setChecked(check);
+  }, []);
 
   return (
     <>
@@ -135,7 +127,7 @@ export default function WrapConfirmStep({
       </PaperContent>
       <PaperContent style={{ display: 'flex', padding: '20px 26px 0px 26px' }}>
         <Checkbox
-          disabled={checkYaSelf}
+          disabled={check}
           checked={checked}
           onChange={handleChange}
         />

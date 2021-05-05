@@ -64,8 +64,11 @@ const amountChange = (state: WrapState): WrapState => {
   ) {
     return { ...state, status: WrapStatus.NOT_READY };
   }
+  const newStatus = state.amountToWrap.lte(state.currentAllowance)
+    ? WrapStatus.READY_TO_WRAP
+    : WrapStatus.READY_TO_CONFIRM;
 
-  return { ...state, status: WrapStatus.READY_TO_CONFIRM };
+  return { ...state, status: newStatus };
 };
 
 const agree = (state: WrapState): WrapState => {

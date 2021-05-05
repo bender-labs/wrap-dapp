@@ -30,8 +30,7 @@ export default function WrapActions({
   const activeStep = () => {
     if (
       status === WrapStatus.READY_TO_WRAP ||
-      status === WrapStatus.WAITING_FOR_WRAP ||
-      status === WrapStatus.AGREEMENT_CONFIRMED
+      status === WrapStatus.WAITING_FOR_WRAP
     ) {
 
       return 1;
