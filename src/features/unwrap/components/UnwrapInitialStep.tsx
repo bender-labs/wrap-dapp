@@ -117,7 +117,7 @@ export default function UnwrapInitialStep({
             variant={'contained'}
             color={'primary'}
             onClick={onNext}
-            disabled={status !== UnwrapStatus.READY_TO_UNWRAP}
+            disabled={status !== UnwrapStatus.READY_TO_CONFIRM}
           >
             Next →
           </Button>

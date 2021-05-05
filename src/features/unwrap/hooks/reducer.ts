@@ -15,6 +15,7 @@ import {
   tokenSelect,
   userBalanceChange,
   walletChange,
+  toggleAgreement
 } from './actions';
 import { OptionsObject, SnackbarKey, SnackbarMessage } from 'notistack';
 import {
@@ -24,6 +25,7 @@ import {
   UnwrapErc20Operation,
 } from '../../operations/state/types';
 import { unwrapAmountsFromTotal } from '../../fees/fees';
+
 
 type UnwrapState = {
   status: UnwrapStatus;
@@ -42,12 +44,14 @@ type UnwrapState = {
 export enum UnwrapStatus {
   UNINITIALIZED,
   NOT_READY,
+  READY_TO_CONFIRM,
   READY_TO_UNWRAP,
+  AGREEMENT_CONFIRMED,
   WAITING_FOR_UNWRAP,
   UNWRAP_DONE,
 }
 
-const tryReady = (state: UnwrapState): UnwrapState => {
+const amountChange = (state: UnwrapState): UnwrapState => {
   if (
     !state.connected ||
     state.amountToUnwrap.isZero() ||
@@ -56,12 +60,25 @@ const tryReady = (state: UnwrapState): UnwrapState => {
   ) {
     return { ...state, status: UnwrapStatus.NOT_READY };
   }
-  return {
-    ...state,
-    status: state.amountToUnwrap.lte(state.currentBalance)
+
+  return { ...state, status: UnwrapStatus.READY_TO_CONFIRM };
+};
+
+const agree = (state: UnwrapState): UnwrapState => {
+  if (
+    !state.connected ||
+    state.amountToUnwrap.isZero() ||
+    state.amountToUnwrap.isNaN() ||
+    state.amountToUnwrap.isGreaterThan(state.currentBalance)
+  ) {
+    return { ...state, status: UnwrapStatus.NOT_READY };
+  }
+
+  const newStatus = state.amountToUnwrap.lte(state.currentBalance)
       ? UnwrapStatus.READY_TO_UNWRAP
-      : UnwrapStatus.NOT_READY,
-  };
+      : UnwrapStatus.NOT_READY;
+
+  return { ...state, status: newStatus }
 };
 
 export function reducer(state: UnwrapState, action: Action): UnwrapState {
@@ -76,12 +93,12 @@ export function reducer(state: UnwrapState, action: Action): UnwrapState {
   }
   if (isType(action, userBalanceChange)) {
     if (state.token === action.meta!.token) {
-      return tryReady({ ...state, ...action.payload });
+      return amountChange({ ...state, ...action.payload });
     }
   }
   if (isType(action, amountToUnwrapChange)) {
     const { amountToUnwrap } = action.payload;
-    return tryReady({ ...state, amountToUnwrap });
+    return amountChange({ ...state, amountToUnwrap });
   }
   if (isType(action, runUnwrap.started)) {
     return {
@@ -102,6 +119,11 @@ export function reducer(state: UnwrapState, action: Action): UnwrapState {
       costEstimate: action.payload.result,
     };
   }
+
+  if (isType(action, toggleAgreement)) {
+    return action.payload ? agree(state) : {...state, status:UnwrapStatus.READY_TO_CONFIRM};
+  }
+
   if (isType(action, walletChange)) {
     const { ethAccount, tezosAccount, tezosLibrary } = action.payload;
     const contractFactory =

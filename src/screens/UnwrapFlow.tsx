@@ -33,6 +33,7 @@ function UnwrapForm() {
     tzAccount,
     ethAccount,
     operation,
+    agree,
     costEstimate,
   } = useUnwrap();
 
@@ -100,11 +101,13 @@ function UnwrapForm() {
           status={status}
           recipientAddress={ethAccount!}
           sendingAddress={tzAccount!}
+          onAgreementChange={agree}
           amount={amountToUnwrap}
           fees={fees}
           networkCost={costEstimate}
           onPrevious={() => setStep(Step.AMOUNT)}
           onUnwrap={doLaunchUnwrap}
+
         />
       )}
     </>

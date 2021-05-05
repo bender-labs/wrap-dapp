@@ -1,10 +1,4 @@
-import {
-  PaperActions,
-  PaperContent,
-  PaperHeader,
-  PaperNav,
-  PaperTitle,
-} from '../../../components/paper/Paper';
+import { PaperActions, PaperContent, PaperHeader, PaperNav, PaperTitle } from '../../../components/paper/Paper';
 import { IconButton, Typography } from '@material-ui/core';
 import React from 'react';
 import Checkbox from '@material-ui/core/Checkbox';
@@ -57,9 +51,21 @@ export default function WrapConfirmStep({
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
     setChecked(e.target.checked);
     onAgreementChange(e.target.checked);
-    // this.setState({isChecked: !isChecked})
+    console.log(status)
+
 
     };
+  let checkYaSelf;
+
+  if (status === WrapStatus.READY_TO_WRAP) {
+    checkYaSelf = true;
+    console.log('yo')
+  } else if (status === WrapStatus.WAITING_FOR_WRAP) {
+    checkYaSelf = true;
+
+  }
+
+
 
   return (
     <>
@@ -129,7 +135,7 @@ export default function WrapConfirmStep({
       </PaperContent>
       <PaperContent style={{ display: 'flex', padding: '20px 26px 0px 26px' }}>
         <Checkbox
-
+          disabled={checkYaSelf}
           checked={checked}
           onChange={handleChange}
         />

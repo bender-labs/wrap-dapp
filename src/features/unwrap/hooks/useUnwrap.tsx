@@ -12,6 +12,7 @@ import {
   runUnwrap,
   tokenSelect,
   walletChange,
+  toggleAgreement
 } from './actions';
 import { connectStore, createStore } from '../../types';
 
@@ -36,6 +37,7 @@ export function useUnwrap() {
     ethereum: { library: ethLibrary, account: ethAccount },
     tezos: { account: tzAccount, library: tezosLibrary },
   } = useWalletContext();
+
   useEffect(() => {
     dispatch(
       walletChange({
@@ -80,6 +82,8 @@ export function useUnwrap() {
     );
   }, []);
 
+  const agree = (v:boolean) => dispatch(toggleAgreement(v));
+
   useEffect(() => {
     const loadMetadata = async () => {
       if (!state.token || !state.contractFactory) {
@@ -117,6 +121,8 @@ export function useUnwrap() {
     );
   };
 
+
+
   const runNetworkFeesEstimate = () => {
     effectDispatch(estimateFees.started({}));
   };
@@ -125,6 +131,7 @@ export function useUnwrap() {
     ...state,
     selectToken,
     selectAmountToUnwrap: selectAmountToUnwrap,
+    agree,
     launchUnwrap,
     runNetworkFeesEstimate,
     fungibleTokens,

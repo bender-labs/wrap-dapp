@@ -7,6 +7,7 @@ import {
 } from '../../../components/paper/Paper';
 import { IconButton, Typography } from '@material-ui/core';
 import React from 'react';
+import Checkbox from '@material-ui/core/Checkbox';
 import BigNumber from 'bignumber.js';
 import { TokenMetadata } from '../../swap/token';
 import { unwrapAmountsFromTotal } from '../../fees/fees';
@@ -28,6 +29,7 @@ export type UnwrapConfirmStepProps = {
   onPrevious: () => void;
   status: UnwrapStatus;
   onUnwrap: () => void;
+  onAgreementChange: (v:boolean) => void;
 };
 
 export default function UnwrapConfirmStep({
@@ -40,8 +42,18 @@ export default function UnwrapConfirmStep({
   recipientAddress,
   onUnwrap,
   networkCost,
+  onAgreementChange
 }: UnwrapConfirmStepProps) {
   const [, currentFees] = unwrapAmountsFromTotal(amount, fees);
+
+  const [checked, setChecked ] = React.useState(false);
+
+  function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
+    setChecked(e.target.checked);
+    onAgreementChange(e.target.checked);
+
+  };
+
   return (
     <>
       <PaperHeader
@@ -105,6 +117,18 @@ export default function UnwrapConfirmStep({
           symbol={token.ethereumSymbol}
         />
       </PaperContent>
+      <PaperContent style={{ display: 'flex', padding: '20px 26px 0px 26px' }}>
+        <Checkbox
+
+          checked={checked}
+          onChange={handleChange}
+        />
+        <Typography
+          variant={'caption'}
+        >
+          I acknowledge the fees and that this transaction <span style={{ fontWeight: 'bold'}}>WILL</span> require ETH/XTZ
+        </Typography>
+      </PaperContent>
       <PaperContent
         style={{
           borderRadius: '0 0 10px 10px',
@@ -112,7 +136,10 @@ export default function UnwrapConfirmStep({
           padding: '20px 90px',
         }}
       >
-        <UnwrapActions onUnwrap={onUnwrap} status={status} />
+        <UnwrapActions
+          onUnwrap={onUnwrap}
+          status={status}
+        />
       </PaperContent>
     </>
   );

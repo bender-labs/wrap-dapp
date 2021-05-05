@@ -43,3 +43,5 @@ export const fetchMetadata = actionCreator<{
 }>('FETCH_METADATA');
 
 export const estimateFees = actionCreator.async<any, number>('ESTIMATE_FEES');
+
+export const toggleAgreement = actionCreator<boolean>('TOGGLE_AGREEMENT');

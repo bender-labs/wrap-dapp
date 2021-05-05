@@ -33,6 +33,7 @@ export default function WrapActions({
       status === WrapStatus.WAITING_FOR_WRAP ||
       status === WrapStatus.AGREEMENT_CONFIRMED
     ) {
+
       return 1;
     }
     return 0;
