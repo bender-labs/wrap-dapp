@@ -14,6 +14,13 @@ import { WrapStatus } from '../hooks/reducer';
 
 const useStyles = makeStyles((theme) =>
   createStyles({
+    title: {
+      borderBottom: '3px solid #E0E0E0',
+      boxShadow: '0px 5px 10px rgba(0, 0, 0, 0.25)'
+    },
+    bodyPadding: {
+
+    },
     buttonStyle: {
       color: 'black',
       backgroundColor: '#ffffff',
@@ -33,7 +40,8 @@ const useStyles = makeStyles((theme) =>
       '&:disabled': {
         backgroundColor: 'rgba(0, 0, 0, 0.05)',
       },
-    },
+    }
+
   })
 );
 
@@ -71,12 +79,7 @@ export default function WrapInitialStep({
   return (
     <>
       {!connected && (
-        <PaperContent
-          style={{
-            borderBottom: '3px solid #E0E0E0',
-            boxShadow: '0px 5px 10px rgba(0, 0, 0, 0.25)',
-          }}
-        >
+        <PaperContent className={classes.title}>
           <MultiConnect />
         </PaperContent>
       )}

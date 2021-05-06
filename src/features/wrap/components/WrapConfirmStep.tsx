@@ -1,5 +1,5 @@
 import { PaperActions, PaperContent, PaperHeader, PaperNav, PaperTitle } from '../../../components/paper/Paper';
-import { IconButton, Typography } from '@material-ui/core';
+import { IconButton, Typography, makeStyles, createStyles } from '@material-ui/core';
 import React from 'react';
 import Checkbox from '@material-ui/core/Checkbox';
 import BigNumber from 'bignumber.js';
@@ -12,6 +12,24 @@ import LabelAndAsset from '../../../components/formatting/LabelAndAsset';
 import AssetSummary from '../../../components/formatting/AssetSummary';
 import LabelAndValue from '../../../components/formatting/LabelAndValue';
 import { WrapStatus } from '../hooks/reducer';
+
+const useStyles = makeStyles(() =>
+  createStyles({
+    description: {
+      paddingLeft: '20px',
+      fontWeight: 'bold'
+    },
+    background: {
+      backgroundColor: '#C4C4C4'
+    },
+    paddingZero: {
+      padding: '0'
+    },
+    acknowledge: {
+
+    }
+  })
+)
 
 export type WrapConfirmStepProps = {
   token: TokenMetadata;
@@ -54,6 +72,7 @@ export default function WrapConfirmStep({
   }
   const check = (status === WrapStatus.READY_TO_WRAP || status === WrapStatus.WAITING_FOR_WRAP);
 
+  const classes = useStyles()
 
   React.useEffect(() => {
     setChecked(check);
@@ -74,7 +93,7 @@ export default function WrapConfirmStep({
       <PaperContent>
         <Typography
           variant={'body2'}
-          style={{ paddingLeft: '20px', fontWeight: 'bold' }}
+          className={classes.description}
         >
           Details
         </Typography>
@@ -87,10 +106,10 @@ export default function WrapConfirmStep({
         <LabelAndValue label={'From'} value={sendingAddress} />
         <LabelAndValue label={'To'} value={recipientAddress} />
       </PaperContent>
-      <PaperContent style={{ backgroundColor: '#C4C4C4' }}>
+      <PaperContent className={classes.background}>
         <Typography
           variant={'body2'}
-          style={{ paddingLeft: '20px', fontWeight: 'bold' }}
+          className={classes.description}
         >
           Fees
         </Typography>
@@ -110,7 +129,7 @@ export default function WrapConfirmStep({
         />
       </PaperContent>
 
-      <PaperContent style={{ padding: '0' }}>
+      <PaperContent className={classes.paddingZero}>
         <AssetSummary
           label={'You will receive'}
           value={amount.minus(currentFees)}

@@ -42,8 +42,6 @@ const StyledTableRow = withStyles(() =>
   createStyles({
     root: {
       margin: '50px'
-
-
     }
   })
 )(TableRow);
