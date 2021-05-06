@@ -1,5 +1,16 @@
-import { PaperActions, PaperContent, PaperHeader, PaperNav, PaperTitle } from '../../../components/paper/Paper';
-import { IconButton, Typography, makeStyles, createStyles } from '@material-ui/core';
+import {
+  PaperActions,
+  PaperContent,
+  PaperHeader,
+  PaperNav,
+  PaperTitle,
+} from '../../../components/paper/Paper';
+import {
+  IconButton,
+  Typography,
+  makeStyles,
+  createStyles,
+} from '@material-ui/core';
 import React from 'react';
 import Checkbox from '@material-ui/core/Checkbox';
 import BigNumber from 'bignumber.js';
@@ -17,19 +28,17 @@ const useStyles = makeStyles(() =>
   createStyles({
     description: {
       paddingLeft: '20px',
-      fontWeight: 'bold'
+      fontWeight: 'bold',
     },
     background: {
-      backgroundColor: '#C4C4C4'
+      backgroundColor: '#C4C4C4',
     },
     paddingZero: {
-      padding: '0'
+      padding: '0',
     },
-    acknowledge: {
-
-    }
+    acknowledge: {},
   })
-)
+);
 
 export type WrapConfirmStepProps = {
   token: TokenMetadata;
@@ -43,10 +52,8 @@ export type WrapConfirmStepProps = {
   onAuthorize: () => void;
   onWrap: () => void;
   networkFees: BigNumber;
-  onAgreementChange: (v:boolean) => void;
+  onAgreementChange: (v: boolean) => void;
 };
-
-
 
 export default function WrapConfirmStep({
   onPrevious,
@@ -62,20 +69,24 @@ export default function WrapConfirmStep({
   networkFees,
   onAgreementChange,
 }: WrapConfirmStepProps) {
+  const classes = useStyles();
   const currentFees = wrapFees(amount, fees);
 
-  const [checked, setChecked ] = React.useState(false);
+  const [checked, setChecked] = React.useState(false);
+  const [disabled, setDisabled] = React.useState(false);
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
     setChecked(e.target.checked);
     onAgreementChange(e.target.checked);
   }
-  const check = (status === WrapStatus.READY_TO_WRAP || status === WrapStatus.WAITING_FOR_WRAP);
-
-  const classes = useStyles()
 
   React.useEffect(() => {
+    const check =
+      status === WrapStatus.READY_TO_WRAP ||
+      status === WrapStatus.WAITING_FOR_WRAP;
     setChecked(check);
+    setDisabled(check);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
@@ -91,10 +102,7 @@ export default function WrapConfirmStep({
       </PaperHeader>
 
       <PaperContent>
-        <Typography
-          variant={'body2'}
-          className={classes.description}
-        >
+        <Typography variant={'body2'} className={classes.description}>
           Details
         </Typography>
         <LabelAndAsset
@@ -107,10 +115,7 @@ export default function WrapConfirmStep({
         <LabelAndValue label={'To'} value={recipientAddress} />
       </PaperContent>
       <PaperContent className={classes.background}>
-        <Typography
-          variant={'body2'}
-          className={classes.description}
-        >
+        <Typography variant={'body2'} className={classes.description}>
           Fees
         </Typography>
         <LabelAndAsset
@@ -139,14 +144,13 @@ export default function WrapConfirmStep({
       </PaperContent>
       <PaperContent style={{ display: 'flex', padding: '20px 26px 0px 26px' }}>
         <Checkbox
-          disabled={check}
+          disabled={disabled}
           checked={checked}
           onChange={handleChange}
         />
-        <Typography
-          variant={'caption'}
-        >
-          I acknowledge the fees and that this transaction <span style={{ fontWeight: 'bold'}}>WILL</span> require ETH/XTZ
+        <Typography variant={'caption'}>
+          I acknowledge the fees and that this transaction will require XTZ to
+          finalize minting
         </Typography>
       </PaperContent>
       <WrapActions
@@ -157,7 +161,6 @@ export default function WrapConfirmStep({
         onWrap={onWrap}
         status={status}
         token={token.ethereumSymbol}
-
       />
     </>
   );

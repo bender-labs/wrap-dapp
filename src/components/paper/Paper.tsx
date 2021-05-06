@@ -80,8 +80,9 @@ export const PaperActions = styled('div')({
 
 export function PaperContent(props: React.HTMLAttributes<HTMLDivElement>) {
   const classes = useStyles();
+  const { className, ...rest } = props;
 
-  return <Box className={classes.card} p={2} {...props} />;
+  return <Box className={`${classes.card} ${className}`} p={2} {...rest} />;
 }
 
 // what is this for?

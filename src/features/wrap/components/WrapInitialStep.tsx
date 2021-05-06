@@ -16,11 +16,9 @@ const useStyles = makeStyles((theme) =>
   createStyles({
     title: {
       borderBottom: '3px solid #E0E0E0',
-      boxShadow: '0px 5px 10px rgba(0, 0, 0, 0.25)'
+      boxShadow: '0px 5px 10px rgba(0, 0, 0, 0.25)',
     },
-    bodyPadding: {
-
-    },
+    bodyPadding: {},
     buttonStyle: {
       color: 'black',
       backgroundColor: '#ffffff',
@@ -40,8 +38,7 @@ const useStyles = makeStyles((theme) =>
       '&:disabled': {
         backgroundColor: 'rgba(0, 0, 0, 0.05)',
       },
-    }
-
+    },
   })
 );
 

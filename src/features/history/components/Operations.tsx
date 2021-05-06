@@ -20,32 +20,29 @@ const StyledTableCell = withStyles(() =>
       backgroundColor: '#e5e5e5',
       color: 'black',
       padding: '0px',
-      fontWeight: 'bold'
-
+      fontWeight: 'bold',
     },
     body: {
       fontSize: 14,
       padding: '20px',
       backgroundColor: 'white',
       '&:first-child': {
-        borderRadius: '20px 0 0 20px'
+        borderRadius: '20px 0 0 20px',
       },
       '&:last-child': {
-        borderRadius: '0 20px 20px 0'
-      }
-
-    }
+        borderRadius: '0 20px 20px 0',
+      },
+    },
   })
 )(TableCell);
 
 const StyledTableRow = withStyles(() =>
   createStyles({
     root: {
-      margin: '50px'
-    }
+      margin: '50px',
+    },
   })
 )(TableRow);
-
 
 const useStyles = makeStyles(() =>
   createStyles({
@@ -54,94 +51,82 @@ const useStyles = makeStyles(() =>
       backgroundColor: '#e5e5e5',
       boxShadow: 'none',
       borderSpacing: '0 5px !important',
-      borderCollapse: 'separate'
+      borderCollapse: 'separate',
     },
     wrapper: {
       padding: '20px',
       backgroundColor: '#e5e5e5',
-      borderRadius: '0 0 10px 10px'
+      borderRadius: '0 0 10px 10px',
     },
     icon: {
-      padding: '20px'
-    }
-
+      padding: '20px',
+    },
   })
 );
 
-
-const renderRow = (op: Operation, tokensByEthAddress: Record<string, TokenMetadata>) => {
+const renderRow = (
+  op: Operation,
+  tokensByEthAddress: Record<string, TokenMetadata>
+) => {
   switch (op.type) {
     case OperationType.WRAP:
-      return <StyledTableRow key={op.hash}>
-        <StyledTableCell align='left'>
-          <IconSelect
-            blockchainTarget={SupportedBlockchain.Ethereum}
-            tokenMetadata={tokensByEthAddress[op.token]}
-          />
-          <Amount
-            symbol={tokensByEthAddress[op.token].ethereumSymbol}
-            value={op.amount}
-            decimals={tokensByEthAddress[op.token].decimals}
-          />
-        </StyledTableCell>
-        <StyledTableCell align='center'>
-          {op.source}
-        </StyledTableCell>
-        <StyledTableCell align='center'>
-          {op.destination}
-        </StyledTableCell>
-        <StyledTableCell align='center'>
-          {op.status.type}
-        </StyledTableCell>
-        <StyledTableCell align='center'>
-          <Link
-            href={`https://etherscan.io/tx/${op.hash}`}
-            rel='noreferrer'
-            target='_blank'
-            color='inherit'
-          >
-            {ellipsizeAddress(op.hash)}
-          </Link>
-
-        </StyledTableCell>
-      </StyledTableRow>;
+      return (
+        <StyledTableRow key={op.hash}>
+          <StyledTableCell align="left">
+            <IconSelect
+              blockchainTarget={SupportedBlockchain.Ethereum}
+              tokenMetadata={tokensByEthAddress[op.token]}
+            />
+            <Amount
+              symbol={tokensByEthAddress[op.token].ethereumSymbol}
+              value={op.amount}
+              decimals={tokensByEthAddress[op.token].decimals}
+            />
+          </StyledTableCell>
+          <StyledTableCell align="center">{op.source}</StyledTableCell>
+          <StyledTableCell align="center">{op.destination}</StyledTableCell>
+          <StyledTableCell align="center">{op.status.type}</StyledTableCell>
+          <StyledTableCell align="center">
+            <Link
+              href={`https://etherscan.io/tx/${op.hash}`}
+              rel="noreferrer"
+              target="_blank"
+              color="inherit"
+            >
+              {ellipsizeAddress(op.hash)}
+            </Link>
+          </StyledTableCell>
+        </StyledTableRow>
+      );
     case OperationType.UNWRAP:
-      return <StyledTableRow key={op.hash}>
-        <StyledTableCell align='left'>
-
-          <IconSelect
-
-            blockchainTarget={SupportedBlockchain.Tezos}
-            tokenMetadata={tokensByEthAddress[op.token]}
-          />
-          <Amount
-            symbol={tokensByEthAddress[op.token].tezosSymbol}
-            value={op.amount}
-            decimals={tokensByEthAddress[op.token].decimals}
-          />
-
-        </StyledTableCell>
-        <StyledTableCell align='center'>
-          {op.source}
-        </StyledTableCell>
-        <StyledTableCell align='center'>
-          {op.destination}
-        </StyledTableCell>
-        <StyledTableCell align='center'>
-          {op.status.type}
-        </StyledTableCell>
-        <StyledTableCell align='center'>
-          <Link
-            href={`https://tzkt.io/${op.hash}`}
-            rel='noreferrer'
-            color='inherit'
-            target='_blank'
-          >
-            {ellipsizeAddress(op.hash)}
-          </Link>
-        </StyledTableCell>
-
-      </StyledTableRow>;
+      return (
+        <StyledTableRow key={op.hash}>
+          <StyledTableCell align="left">
+            <IconSelect
+              blockchainTarget={SupportedBlockchain.Tezos}
+              tokenMetadata={tokensByEthAddress[op.token]}
+            />
+            <Amount
+              symbol={tokensByEthAddress[op.token].tezosSymbol}
+              value={op.amount}
+              decimals={tokensByEthAddress[op.token].decimals}
+            />
+          </StyledTableCell>
+          <StyledTableCell align="center">{op.source}</StyledTableCell>
+          <StyledTableCell align="center">{op.destination}</StyledTableCell>
+          <StyledTableCell align="center">{op.status.type}</StyledTableCell>
+          <StyledTableCell align="center">
+            <Link
+              href={`https://tzkt.io/${op.hash}`}
+              rel="noreferrer"
+              color="inherit"
+              target="_blank"
+            >
+              {ellipsizeAddress(op.hash)}
+            </Link>
+          </StyledTableCell>
+        </StyledTableRow>
+      );
   }
 };
 
@@ -152,10 +137,10 @@ export type OperationsProps = {
 };
 
 export default function Operations({
-                                     operations,
-                                     canFetch,
-                                     fungibleTokens
-                                   }: OperationsProps) {
+  operations,
+  canFetch,
+  fungibleTokens,
+}: OperationsProps) {
   const tokensByEthAddress = useMemo(
     () =>
       Object.entries(fungibleTokens).reduce<Record<string, TokenMetadata>>(
@@ -169,27 +154,33 @@ export default function Operations({
   );
   const classes = useStyles();
 
-  let active = operations.length > 0
+  let active = operations.length > 0;
 
   return (
     <div style={{ width: '100%' }}>
-
-
       {canFetch && (
         <div className={classes.wrapper}>
           <TableContainer>
-            <Table className={classes.table} aria-label='customized table'>
+            <Table className={classes.table} aria-label="customized table">
               <TableHead>
                 <TableRow>
-                  <StyledTableCell align='center'>Amount</StyledTableCell>
-                  <StyledTableCell align='center'>Source</StyledTableCell>
-                  <StyledTableCell align='center'>Destination</StyledTableCell>
-                  <StyledTableCell align='center'>Status</StyledTableCell>
-                  <StyledTableCell align='center'>Transaction Hash</StyledTableCell>
+                  <StyledTableCell align="center">Amount</StyledTableCell>
+                  <StyledTableCell align="center">Source</StyledTableCell>
+                  <StyledTableCell align="center">Destination</StyledTableCell>
+                  <StyledTableCell align="center">Status</StyledTableCell>
+                  <StyledTableCell align="center">
+                    Transaction Hash
+                  </StyledTableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
-                {active ? operations.map((r) => renderRow(r, tokensByEthAddress)) : <TableCell>No data to display...</TableCell>}
+                {active ? (
+                  operations.map((r) => renderRow(r, tokensByEthAddress))
+                ) : (
+                  <TableRow>
+                    <TableCell>No data to display...</TableCell>
+                  </TableRow>
+                )}
               </TableBody>
             </Table>
           </TableContainer>
