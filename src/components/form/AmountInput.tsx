@@ -46,7 +46,7 @@ export type AmountInputProps = {
   decimals: number;
   onChange: (v: string) => void;
   error?: boolean;
-  helperText?: string;
+  helperText?: React.ReactNode;
   focus?: boolean;
 };
 

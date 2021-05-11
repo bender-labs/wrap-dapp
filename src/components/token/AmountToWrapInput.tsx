@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { formatAmount } from '../../features/ethereum/token';
 import BigNumber from 'bignumber.js';
 import AmountInput from '../form/AmountInput';
+import { Link } from '@material-ui/core';
 
 type Props = {
   balance: BigNumber;
@@ -25,11 +26,13 @@ export default function AmountToWrapInput({
     '',
   ]);
 
+
   useEffect(() => {
     if (!displayBalance) {
       setUserError([false, '']);
       return;
     }
+
 
     if (amountToWrap.gt(balance)) {
       setUserError([
@@ -61,6 +64,10 @@ export default function AmountToWrapInput({
     onChange(newAmount);
   };
 
+  const setMax = () => {
+    onChange(balance);
+  };
+
   return (
     <>
       <AmountInput
@@ -70,8 +77,9 @@ export default function AmountToWrapInput({
         onChange={handleOnChange}
         error={error}
         focus
-        helperText={helperText}
+        helperText={<>{helperText}<Link color={'textPrimary'} onClick={setMax}>(Max)</Link></>}
       />
+
     </>
   );
 }
