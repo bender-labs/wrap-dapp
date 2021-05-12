@@ -172,7 +172,7 @@ const Render = () => {
                     color="inherit"
                     target="_blank"
                     to={{
-                      pathname: 'https://liquidity.testnet.tzwrap.com/',
+                      pathname: 'https://liquidity.tzwrap.com/',
                     }}
                   >
                     Liquidity <LaunchIcon className={classes.externalIcon} />

@@ -3,6 +3,15 @@ import { formatAmount } from '../../features/ethereum/token';
 import BigNumber from 'bignumber.js';
 import AmountInput from '../form/AmountInput';
 import { Link } from '@material-ui/core';
+import { createStyles, makeStyles } from '@material-ui/core/styles';
+
+const useStyles = makeStyles(() =>
+  createStyles({
+    maxLink: {
+      cursor: 'pointer',
+    },
+  })
+);
 
 type Props = {
   balance: BigNumber;
@@ -25,14 +34,14 @@ export default function AmountToWrapInput({
     false,
     '',
   ]);
-
+  const classes = useStyles();
+  const displayMax = !balance.isNaN() && displayBalance;
 
   useEffect(() => {
     if (!displayBalance) {
       setUserError([false, '']);
       return;
     }
-
 
     if (amountToWrap.gt(balance)) {
       setUserError([
@@ -77,9 +86,24 @@ export default function AmountToWrapInput({
         onChange={handleOnChange}
         error={error}
         focus
-        helperText={<>{helperText}<Link color={'textPrimary'} onClick={setMax}>(Max)</Link></>}
+        helperText={
+          <>
+            {helperText}
+            {displayMax && (
+              <>
+                &nbsp;
+                <Link
+                  color={'textPrimary'}
+                  className={classes.maxLink}
+                  onClick={setMax}
+                >
+                  (Max)
+                </Link>
+              </>
+            )}
+          </>
+        }
       />
-
     </>
   );
 }
