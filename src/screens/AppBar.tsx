@@ -20,6 +20,8 @@ import TezosWalletConnection from '../components/tezos/WalletConnection';
 import { useWalletContext } from '../runtime/wallet/WalletContext';
 import OperationHistoryDialog from '../features/operations/components/OperationHistoryDialog';
 import { paths } from './routes';
+import LaunchIcon from '@material-ui/icons/Launch';
+
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -35,11 +37,19 @@ const useStyles = makeStyles((theme) =>
         borderRadius: '20px',
         border: '1px solid transparent',
         padding: '6px 10px',
+        '& > svg': {
+          visibility: 'hidden',
+        },
         '&:hover': {
           textDecoration: 'none',
           border: '1px solid #FFD000',
+          visibility: 'visible'
         },
       },
+
+    },
+    externalIcon: {
+      fontSize: '0.8rem'
     },
     first: {
       flex: 2,
@@ -165,6 +175,7 @@ const Render = () => {
                     }}
                   >
                     Liquidity
+                    {' '}<LaunchIcon className={classes.externalIcon}/>
                   </Link>
                 </Typography>
               </Grid>
@@ -184,7 +195,9 @@ const Render = () => {
                       pathname: 'https://info.tzwrap.com/'
                     }}
                   >
+
                     Info
+                    {' '}<LaunchIcon className={classes.externalIcon}/>
                   </Link>
                 </Typography>
               </Grid>
