@@ -22,7 +22,6 @@ import OperationHistoryDialog from '../features/operations/components/OperationH
 import { paths } from './routes';
 import LaunchIcon from '@material-ui/icons/Launch';
 
-
 const useStyles = makeStyles((theme) =>
   createStyles({
     title: {
@@ -38,18 +37,20 @@ const useStyles = makeStyles((theme) =>
         border: '1px solid transparent',
         padding: '6px 10px',
         '& > svg': {
-          visibility: 'hidden',
+          display: 'none',
         },
         '&:hover': {
           textDecoration: 'none',
           border: '1px solid #FFD000',
-          visibility: 'visible'
+
+          '& > svg': {
+            display: 'inline',
+          },
         },
       },
-
     },
     externalIcon: {
-      fontSize: '0.8rem'
+      fontSize: '0.8rem',
     },
     first: {
       flex: 2,
@@ -171,11 +172,10 @@ const Render = () => {
                     color="inherit"
                     target="_blank"
                     to={{
-                      pathname: 'https://liquidity.testnet.tzwrap.com/'
+                      pathname: 'https://liquidity.testnet.tzwrap.com/',
                     }}
                   >
-                    Liquidity
-                    {' '}<LaunchIcon className={classes.externalIcon}/>
+                    Liquidity <LaunchIcon className={classes.externalIcon} />
                   </Link>
                 </Typography>
               </Grid>
@@ -192,12 +192,10 @@ const Render = () => {
                     color="inherit"
                     target="_blank"
                     to={{
-                      pathname: 'https://info.tzwrap.com/'
+                      pathname: 'https://info.tzwrap.com/',
                     }}
                   >
-
-                    Info
-                    {' '}<LaunchIcon className={classes.externalIcon}/>
+                    Info <LaunchIcon className={classes.externalIcon} />
                   </Link>
                 </Typography>
               </Grid>
