@@ -42,7 +42,7 @@ const useStyles = makeStyles((theme) =>
       },
     },
     first: {
-      flex: 1,
+      flex: 2,
     },
     second: {
       flex: 2,
@@ -145,6 +145,46 @@ const Render = () => {
                     to={paths.HISTORY}
                   >
                     History
+                  </Link>
+                </Typography>
+              </Grid>
+            </Hidden>
+            <Hidden xsDown>
+              <Grid item>
+                <Typography
+                  variant="h6"
+                  component="h1"
+                  className={classes.title}
+                >
+                  <Link
+                    component={RouterLink}
+                    color="inherit"
+                    target="_blank"
+                    to={{
+                      pathname: 'https://liquidity.testnet.tzwrap.com/'
+                    }}
+                  >
+                    Liquidity
+                  </Link>
+                </Typography>
+              </Grid>
+            </Hidden>
+            <Hidden xsDown>
+              <Grid item>
+                <Typography
+                  variant="h6"
+                  component="h1"
+                  className={classes.title}
+                >
+                  <Link
+                    component={RouterLink}
+                    color="inherit"
+                    target="_blank"
+                    to={{
+                      pathname: 'https://info.tzwrap.com/'
+                    }}
+                  >
+                    Info
                   </Link>
                 </Typography>
               </Grid>
