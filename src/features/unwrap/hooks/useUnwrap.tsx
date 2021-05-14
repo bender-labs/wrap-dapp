@@ -17,7 +17,10 @@ import {
 import { connectStore, createStore } from '../../types';
 
 function getFirstTokenByName(tokens: Record<string, TokenMetadata>) {
-  return Object.entries(tokens).sort(([key1, metadata1], [, metadata2]) => {
+  return Object.entries(tokens)
+          .sort(([key1,
+                   metadata1],
+                [, metadata2]) => {
     if (metadata1.ethereumName > metadata2.ethereumName) return 1;
     if (metadata1.ethereumName < metadata2.ethereumName) return -1;
     return 0;
@@ -56,6 +59,7 @@ export function useUnwrap() {
     contract: null,
     minterContractAddress,
     currentBalance: new BigNumber(''),
+    balanceNotYetFetched: true,
     amountToUnwrap: new BigNumber(''),
     fees,
   });
@@ -74,7 +78,8 @@ export function useUnwrap() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const selectAmountToUnwrap = useCallback((amountToUnwrap: BigNumber) => {
+  const selectAmountToUnwrap =
+    useCallback((amountToUnwrap: BigNumber) => {
     dispatch(
       amountToUnwrapChange({
         amountToUnwrap,
@@ -89,7 +94,6 @@ export function useUnwrap() {
       if (!state.token || !state.contractFactory) {
         return;
       }
-
       const {
         ethereumContractAddress,
         tezosWrappingContract,

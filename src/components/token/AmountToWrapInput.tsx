@@ -14,7 +14,7 @@ const useStyles = makeStyles(() =>
 );
 
 type Props = {
-  balance: BigNumber;
+  balance: { value: BigNumber, loading: boolean };
   decimals: number;
   symbol: string;
   onChange: (amount: BigNumber) => void;
@@ -35,25 +35,30 @@ export default function AmountToWrapInput({
     '',
   ]);
   const classes = useStyles();
-  const displayMax = !balance.isNaN() && displayBalance;
+  const displayMax = !balance.value.isNaN() && displayBalance;
 
   useEffect(() => {
     if (!displayBalance) {
       setUserError([false, '']);
       return;
     }
+    if (balance.loading) {
+      setUserError([false, 'Your Balance is loading...']);
+      return;
+    }
 
-    if (amountToWrap.gt(balance)) {
+
+    if (amountToWrap.gt(balance.value)) {
       setUserError([
         true,
-        `Insufficient Balance of ${formatAmount(symbol, balance, decimals)}`,
+        `Insufficient Balance of ${formatAmount(symbol, balance.value, decimals)}`,
       ]);
       return;
     }
     setUserError([
       false,
       `Balance: ${
-        balance.isNaN() ? '' : formatAmount(symbol, balance, decimals)
+        balance.value.isNaN() ? '' : formatAmount(symbol, balance.value, decimals)
       }`,
     ]);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -64,17 +69,17 @@ export default function AmountToWrapInput({
       setUserError([false, '']);
     }
     const newAmount = new BigNumber(v).shiftedBy(decimals);
-    if (displayBalance && newAmount.gt(balance)) {
+    if (displayBalance && newAmount.gt(balance.value)) {
       setUserError([
         true,
-        `Insufficient Balance of ${formatAmount(symbol, balance, decimals)}`,
+        `Insufficient Balance of ${formatAmount(symbol, balance.value, decimals)}`,
       ]);
     }
     onChange(newAmount);
   };
 
   const setMax = () => {
-    onChange(balance);
+    onChange(balance.value);
   };
 
   return (

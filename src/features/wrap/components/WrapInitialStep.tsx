@@ -44,7 +44,7 @@ const useStyles = makeStyles((theme) =>
 
 export type WrapInitialStepProps = {
   status: WrapStatus;
-  balance: BigNumber;
+  balance: { value: BigNumber, loading: boolean };
   token: TokenMetadata;
   connected: boolean;
   amount: BigNumber;

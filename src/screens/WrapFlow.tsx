@@ -25,6 +25,7 @@ function WrapForm() {
     token,
     launchAllowanceApproval,
     selectAmountToWrap,
+    balanceNotYetFetched,
     selectToken,
     launchWrap,
     connected,
@@ -66,7 +67,7 @@ function WrapForm() {
             tokens={fungibleTokens}
             token={fungibleTokens[token]}
             connected={connected}
-            balance={currentBalance}
+            balance={{ value: currentBalance, loading: balanceNotYetFetched }}
             amount={amountToWrap}
             fees={fees}
             onNext={() => setStep(Step.CONFIRM)}

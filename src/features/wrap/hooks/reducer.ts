@@ -24,6 +24,7 @@ type WrapState = {
   token: string;
   contract: EthereumWrapApi | null;
   currentBalance: BigNumber;
+  balanceNotYetFetched: boolean;
   currentAllowance: BigNumber;
   amountToWrap: BigNumber;
   connected: boolean;
@@ -47,6 +48,7 @@ export function initialState(token: string, custodianContractAddress: string) {
     token: token,
     contract: null,
     currentBalance: new BigNumber(''),
+    balanceNotYetFetched: true,
     currentAllowance: new BigNumber(''),
     amountToWrap: new BigNumber(''),
     connected: false,
@@ -94,6 +96,7 @@ export function reducer(state: WrapState, action: Action): WrapState {
       status: WrapStatus.NOT_READY,
       ...action.payload,
       currentBalance: new BigNumber(''),
+      balanceNotYetFetched: true,
       currentAllowance: new BigNumber(''),
       amountToWrap: new BigNumber('')
     };
@@ -101,6 +104,7 @@ export function reducer(state: WrapState, action: Action): WrapState {
   if (isType(action, userBalanceChange)) {
     return amountChange({
       ...state,
+      balanceNotYetFetched: false,
       ...action.payload
     });
   }
