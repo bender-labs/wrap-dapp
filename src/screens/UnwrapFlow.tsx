@@ -29,6 +29,7 @@ function UnwrapForm() {
     token,
     connected,
     currentBalance,
+    balanceNotYetFetched,
     amountToUnwrap,
     tzAccount,
     ethAccount,
@@ -86,7 +87,7 @@ function UnwrapForm() {
             tokens={fungibleTokens}
             token={fungibleTokens[token]}
             connected={connected}
-            balance={currentBalance}
+            balance={{value: currentBalance, loading: balanceNotYetFetched}}
             amount={amountToUnwrap}
             fees={fees}
             onNext={next}

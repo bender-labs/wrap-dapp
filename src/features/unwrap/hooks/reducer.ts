@@ -32,6 +32,7 @@ type UnwrapState = {
   token: string;
   contract: TezosUnwrapApi | null;
   currentBalance: BigNumber;
+  balanceNotYetFetched: boolean;
   amountToUnwrap: BigNumber;
   connected: boolean;
   minterContractAddress: string;
@@ -88,12 +89,13 @@ export function reducer(state: UnwrapState, action: Action): UnwrapState {
       status: UnwrapStatus.NOT_READY,
       ...action.payload,
       currentBalance: new BigNumber(''),
+      balanceNotYetFetched: true,
       amountToUnwrap: new BigNumber(0),
     };
   }
   if (isType(action, userBalanceChange)) {
     if (state.token === action.meta!.token) {
-      return amountChange({ ...state, ...action.payload });
+      return amountChange({ ...state, balanceNotYetFetched: false, ...action.payload });
     }
   }
   if (isType(action, amountToUnwrapChange)) {

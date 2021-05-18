@@ -43,7 +43,7 @@ const useStyles = makeStyles((theme) =>
 
 export type UnwrapInitialStepProps = {
   status: UnwrapStatus;
-  balance: BigNumber;
+  balance: {value: BigNumber, loading: boolean};
   token: TokenMetadata;
   connected: boolean;
   amount: BigNumber;
