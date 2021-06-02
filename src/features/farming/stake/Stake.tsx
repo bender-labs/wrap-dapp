@@ -8,17 +8,8 @@ import React, {useCallback} from 'react';
 import {FarmingContractActionsProps} from '../types';
 import FarmingContractInfo from '../../../components/farming/FarmingContractInfo';
 import FarmingContractHeader from '../../../components/farming/FarmingContractHeader';
-import {Typography} from '@material-ui/core';
-import {createStyles, makeStyles} from '@material-ui/core/styles'
 import {useWalletContext} from '../../../runtime/wallet/WalletContext';
 
-const useStyles = makeStyles(() =>
-    createStyles({
-        warning: {
-            fontSize: '10px',
-        }
-    })
-);
 
 export default function Stake({farm, farmBalances, onApply, inputBalance}: FarmingContractActionsProps) {
     const {amount, changeAmount, stakingStatus, stake} = useStake(
@@ -33,7 +24,6 @@ export default function Stake({farm, farmBalances, onApply, inputBalance}: Farmi
 
     const walletContext = useWalletContext();
 
-    const classes = useStyles();
 
     return (
         <>
@@ -65,10 +55,7 @@ export default function Stake({farm, farmBalances, onApply, inputBalance}: Farmi
                 value={amount.plus(farmBalances.staked)}
             />
             <PaperFooter>
-                {stakingStatus === StakingStatus.READY && (
-                    <Typography className={classes.warning}> If you have pending rewards, it will be automatically
-                        claimed while staking</Typography>
-                )}
+
                 {stakingStatus !== StakingStatus.NOT_CONNECTED && (
 
                     <LoadableButton
