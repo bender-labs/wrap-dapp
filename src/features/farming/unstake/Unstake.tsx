@@ -31,9 +31,9 @@ export function Unstake({farm, onApply, farmBalances, inputBalance}: FarmingCont
             <FarmingContractHeader farm={farm}/>
             <PaperContent>
                 <AmountToWrapInput
-                    balance={inputBalance.value}
+                    balance={farmBalances.staked}
                     decimals={farm.farmStakedToken.decimals}
-                    symbol={farm.farmStakedToken.symbol}
+                    symbol={"Staked " + farm.farmStakedToken.symbol}
                     onChange={changeAmount}
                     amountToWrap={amount}
                     balanceLoading={inputBalance.loading}

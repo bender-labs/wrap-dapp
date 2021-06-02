@@ -16,7 +16,7 @@ export function formatAmount(
     balance: BigNumber,
     decimals: number
 ) {
-    return `${symbol} ${balance.shiftedBy(-decimals).toFormat()}`;
+    return `${balance.shiftedBy(-decimals).toFormat()} ${symbol} `;
 }
 
 type Props = {
