@@ -11,6 +11,7 @@ const HISTORY = '/history';
 
 const FARMING = '/farming';
 const farmingContract = '/:contract';
+const FARMING_STAKE_ALL = `${FARMING}/stake_all`;
 const FARMING_STAKE = `${FARMING}${farmingContract}/stake`;
 const FARMING_UNSTAKE = `${FARMING}${farmingContract}/unstake`;
 const FARMING_CLAIM = `${FARMING}${farmingContract}/claim`;
@@ -24,6 +25,7 @@ export const paths = {
     HISTORY_UNWRAP,
     HISTORY,
     FARMING,
+    FARMING_STAKE_ALL,
     FARMING_STAKE,
     FARMING_UNSTAKE,
     FARMING_CLAIM

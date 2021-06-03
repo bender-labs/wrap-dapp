@@ -42,6 +42,7 @@ export default function Stake({farm, farmBalances, onApply, inputBalance}: Farmi
                         inputBalance.value.isNaN()
                     }
                 />
+              
             </PaperContent>
             <FarmingContractInfo
                 farm={farm}
