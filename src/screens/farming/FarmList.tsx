@@ -53,11 +53,17 @@ function Rewards({
         const currentStakedTotens = new BigNumber(farmConfig.farmTotalStaked).shiftedBy(-farmConfig.farmStakedToken.decimals).dp(8).toString(10);
         const nextRewardTime = DateTime.fromMillis(new Date(farmConfig.rewards.startTimestamp).getTime()).plus({"minutes": parseInt(farmConfig.rewards.duration)});
 
+        const nextRewardLabel = nextRewardTime.toMillis() < new Date().getTime() ?
+            "Awaiting new rewards period" :
+            `New rewards will be added ${nextRewardTime.toRelative({locale: 'en'})}`;
+
         return (
             <>
-                <Typography className={className}>Current available {farmConfig.rewardTokenSymbol} rewards: {currentTotalRewards}</Typography>
-                <Typography className={className}>Current staked {farmConfig.farmStakedToken.symbol} tokens: {currentStakedTotens}</Typography>
-                <Typography className={className}>New rewards will be added {nextRewardTime.toRelative({locale: 'en'})}</Typography>
+                <Typography className={className}>Current
+                    available {farmConfig.rewardTokenSymbol} rewards: {currentTotalRewards}</Typography>
+                <Typography className={className}>Current
+                    staked {farmConfig.farmStakedToken.symbol} tokens: {currentStakedTotens}</Typography>
+                <Typography className={className}>{nextRewardLabel}</Typography>
             </>
         );
     }
