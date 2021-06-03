@@ -66,13 +66,15 @@ export default function Provider({children}: PropsWithChildren<{}>) {
                         validFarms.push({
                             farmContractAddress: farmConfiguration.contract,
                             farmContractLink: initConfig.tzktLink + farmConfiguration.contract,
+                            farmTotalStaked: farmConfiguration.totalStaked,
                             farmStakedToken: initConfig.farmInput,
                             rewardTokenName: tokenMetadata.tezosName,
                             rewardTokenThumbnailUri: tokenMetadata.thumbnailUri,
                             rewardTokenContractAddress: farmConfiguration.token,
                             rewardTokenId: parseInt(farmConfiguration.tokenId),
                             rewardTokenDecimals: tokenMetadata.decimals,
-                            rewardTokenSymbol: tokenMetadata.tezosSymbol
+                            rewardTokenSymbol: tokenMetadata.tezosSymbol,
+                            rewards: farmConfiguration.rewards
                         });
                     }
                     return validFarms;

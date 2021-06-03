@@ -53,7 +53,17 @@ export interface IndexerConfigPayload {
     };
 }
 
+export interface IndexerFarmConfigurationRewardsPayload {
+    contract: string;
+    startLevel: string;
+    totalRewards: string;
+    startTimestamp: string;
+    duration: string;
+}
+
 export interface IndexerFarmConfigurationPayload {
+    rewards: IndexerFarmConfigurationRewardsPayload | undefined;
+    totalStaked: string;
     contract: string;
     token: string;
     tokenId: string;
