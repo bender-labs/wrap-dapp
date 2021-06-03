@@ -9,7 +9,7 @@ import {Container} from '@material-ui/core'
 
 export default function FarmingScreen() {
     return (
-        <Container maxWidth={'sm'}>
+        <Container maxWidth={'md'}>
             <Route exact path={paths.FARMING} component={FarmChoice}/>
             <Route exact path={farmingPaths} component={Farm}/>
         </Container>

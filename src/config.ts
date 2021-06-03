@@ -1,5 +1,6 @@
 import {TokenMetadata} from './features/swap/token';
 import {NetworkType} from '@airgap/beacon-sdk';
+import {IndexerFarmConfigurationRewardsPayload} from "./features/indexer/indexerApi";
 
 export type Fees = {
     erc20WrappingFees: number;
@@ -11,6 +12,7 @@ export type Fees = {
 export interface FarmConfig {
     farmContractAddress: string;
     farmContractLink: string;
+    farmTotalStaked: string;
     farmStakedToken: FarmStakedToken;
     rewardTokenName: string;
     rewardTokenThumbnailUri: string;
@@ -18,6 +20,7 @@ export interface FarmConfig {
     rewardTokenId: number;
     rewardTokenDecimals: number;
     rewardTokenSymbol: string;
+    rewards: IndexerFarmConfigurationRewardsPayload | undefined;
 }
 
 export interface InitialConfig {
