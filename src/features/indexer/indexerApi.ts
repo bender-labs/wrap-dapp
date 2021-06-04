@@ -80,6 +80,10 @@ export default class IndexerApi {
         this.client = axios.create({baseURL, timeout: 3000});
     }
 
+    public fetchCurrentUserFarmingConfiguration(tezosAddress: string): Promise<IndexerFarmingConfigurationPayload> {
+        return this.client.get('/staking-balances?tezosAddress=' + tezosAddress).then(({data}) => data);
+    }
+
     public fetchFarmingConfiguration(): Promise<IndexerFarmingConfigurationPayload> {
         return this.client.get('/staking-configuration').then(({data}) => data);
     }
