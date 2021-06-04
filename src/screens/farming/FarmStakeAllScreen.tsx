@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {Box, Container, Typography, withStyles} from '@material-ui/core';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -10,11 +10,11 @@ import LoadableButton from '../../components/button/LoadableButton';
 import {PaperFooter} from '../../components/paper/Paper';
 import {createStyles, makeStyles} from '@material-ui/core/styles';
 import {FarmConfig} from '../../config';
-import {useConfig} from '../../runtime/config/ConfigContext';
+import {useConfig, useIndexerApi} from '../../runtime/config/ConfigContext';
 import IconSelect from './FarmToken';
 import BigNumber from 'bignumber.js';
-import {useIndexerApi} from "../../runtime/config/ConfigContext";
 import {useTezosContext} from "../../features/tezos/TezosContext";
+import {IndexerContractBalance} from "../../features/indexer/indexerApi";
 
 const StyledTableCell = withStyles(() =>
     createStyles({
@@ -89,23 +89,30 @@ const useStyles = makeStyles((theme) => createStyles({
 function FarmStakeAllScreen() {
     const classes = useStyles();
     const {farms} = useConfig();
-
+    const indexerApi = useIndexerApi();
     const currentWallet = useTezosContext();
-    console.log(currentWallet);
+    const [stakingBalances, setStakingBalances] = useState<IndexerContractBalance[]>([]);
 
     useEffect(() => {
-        const indexerApi = useIndexerApi();
-
         const loadBalances = async () => {
-            const stakingBalances = await indexerApi.fetchCurrentUserFarmingConfiguration("");
+            if (currentWallet.account) {
+                setStakingBalances(await indexerApi.fetchCurrentUserFarmingConfiguration(currentWallet.account));
+            }
         }
 
+        // noinspection JSIgnoredPromiseFromCall
         loadBalances();
-    }, []);
+    }, [currentWallet.account]);
+
+    const findCurrentWalletBalance = (farm: FarmConfig): string => {
+        const contractBalance = stakingBalances.find((elt) => {
+            return elt.contract === farm.farmContractAddress;
+        });
+        return contractBalance ?
+            new BigNumber(contractBalance.balance).shiftedBy(-farm.farmStakedToken.decimals).toString(10) : "0";
+    };
 
     const renderRow = (farm: FarmConfig) => {
-        console.log(new BigNumber(farm.farmTotalStaked).shiftedBy(-8).toString());
-
         return (
             <StyledTableRow key={farm.rewardTokenId}>
                 <StyledTableCell align='center'>
@@ -114,9 +121,9 @@ function FarmStakeAllScreen() {
                 <StyledTableCell align='center'>
                     {farm.rewardTokenSymbol}
                 </StyledTableCell>
-                <StyledTableCell align='center'>{farm.rewardTokenDecimals}</StyledTableCell>
                 <StyledTableCell
-                    align='center'>{new BigNumber(farm.farmTotalStaked).shiftedBy(-8).toString()}</StyledTableCell>
+                    align='center'>{new BigNumber(farm.farmTotalStaked).shiftedBy(-farm.farmStakedToken.decimals).toString(10)}</StyledTableCell>
+                <StyledTableCell align='center'>{findCurrentWalletBalance(farm)}</StyledTableCell>
                 <StyledTableCell align='center'>
                     <input
                         className={classes.input}
@@ -142,8 +149,8 @@ function FarmStakeAllScreen() {
                             <TableRow>
                                 <StyledTableCell align='center'>Symbol</StyledTableCell>
                                 <StyledTableCell align='center'>Token Name</StyledTableCell>
-                                <StyledTableCell align='center'>Your Stake</StyledTableCell>
                                 <StyledTableCell align='center'>Total Global Stake</StyledTableCell>
+                                <StyledTableCell align='center'>Your current Stake</StyledTableCell>
                                 <StyledTableCell align='center'>New Stake</StyledTableCell>
                             </TableRow>
                         </TableHead>

@@ -73,6 +73,15 @@ export interface IndexerFarmingConfigurationPayload {
     contracts: IndexerFarmConfigurationPayload[];
 }
 
+export interface IndexerContractBalance {
+    contract: string;
+    balance: string;
+}
+
+export interface IndexerContractBalancesPayload {
+    result: IndexerContractBalance[];
+}
+
 export default class IndexerApi {
     private client: AxiosInstance;
 
@@ -80,8 +89,8 @@ export default class IndexerApi {
         this.client = axios.create({baseURL, timeout: 3000});
     }
 
-    public fetchCurrentUserFarmingConfiguration(tezosAddress: string): Promise<IndexerFarmingConfigurationPayload> {
-        return this.client.get('/staking-balances?tezosAddress=' + tezosAddress).then(({data}) => data);
+    public fetchCurrentUserFarmingConfiguration(tezosAddress: string): Promise<IndexerContractBalance[]> {
+        return this.client.get('/staking-balances?tezosAddress=' + tezosAddress).then(({data}: { data: IndexerContractBalancesPayload }) => data.result);
     }
 
     public fetchFarmingConfiguration(): Promise<IndexerFarmingConfigurationPayload> {
