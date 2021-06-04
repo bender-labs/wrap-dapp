@@ -15,6 +15,8 @@ import { FarmConfig } from '../../config';
 import { useConfig } from '../../runtime/config/ConfigContext';
 import IconSelect from './FarmToken';
 
+import BigNumber from 'bignumber.js';
+
 export type FarmListProps = {
   farms: FarmConfig[];
 };
@@ -96,8 +98,9 @@ function FarmStakeAllScreen() {
 
   const classes = useStyles();
   const { farms } = useConfig();
-  console.log(farms);
+
   const renderRow = (farm: FarmConfig) => {
+    console.log(new BigNumber(farm.farmTotalStaked).shiftedBy(-8).toString());
     return (
       <StyledTableRow key={farm.rewardTokenId}>
         <StyledTableCell align='center'>
@@ -105,7 +108,7 @@ function FarmStakeAllScreen() {
           {farm.rewardTokenSymbol}
         </StyledTableCell>
         <StyledTableCell align='center'>{farm.rewardTokenDecimals}</StyledTableCell>
-        <StyledTableCell align='center'>10000</StyledTableCell>
+        <StyledTableCell align='center'>{new BigNumber(farm.farmTotalStaked).shiftedBy(-8).toString()}</StyledTableCell>
         <StyledTableCell align='center'>
           <input
             className={classes.input}
