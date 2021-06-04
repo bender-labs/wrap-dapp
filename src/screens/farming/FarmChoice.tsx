@@ -8,6 +8,7 @@ import {PaperContent} from '../../components/paper/Paper';
 import {useHistory} from 'react-router';
 import {farmPageRoute, paths} from '../routes';
 import BigNumber from 'bignumber.js';
+import logo from './Logo/7.png'
 import TezosTokenIcon from "../../components/icons/TezosTokenIcon";
 
 const useStyles = makeStyles((theme) =>
@@ -49,14 +50,21 @@ const useStyles = makeStyles((theme) =>
         option: {
             fontSize: '20px'
         },
+      sub: {
+        fontSize: '12px'
+      },
         item: {
 
             '&:hover': {
                 cursor: 'pointer'
             }
         },
+        image: {
+            height: '100%',
+            width: '100%'
+        },
         images: {
-            '& img': {width: 60, height: 60, marginRight: 5, verticalAlign: 'middle'},
+            '& img': {width: 60, height: 50, marginRight: 5, verticalAlign: 'middle'},
             '& :first-child': {left: '0', position: 'relative'}
         }
     }));
@@ -88,11 +96,15 @@ export default function FarmChoice() {
                 <Grid container justify={'space-between'} alignItems={'center'} onClick={changeUri}
                       className={classes.item}>
                     <Grid item className={classes.images}>
-                        <TezosTokenIcon url={"" ?? "ipfs://"}/>
+
+                      <img src={logo} />
                     </Grid>
                     <Grid item>
                         <Typography className={classes.option}>
                             Stake on all farms
+                        </Typography>
+                        <Typography className={classes.sub}>
+                          Stake your $WRAP tokens on all available farms at once
                         </Typography>
                     </Grid>
                     <Grid item>

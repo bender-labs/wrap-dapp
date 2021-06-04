@@ -78,10 +78,10 @@ const useStyles = makeStyles((theme) => createStyles({
         padding: '7px',
         backgroundColor: '#e5e5e5',
         textAlign: 'center',
-        borderBottom: '2px solid #ffd000',
-        '&:focus': {
-            outline: 'none'
 
+        '&:focus': {
+            outline: 'none',
+            borderBottomColor: '200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms'
         }
     }
 }));
@@ -93,15 +93,15 @@ function FarmStakeAllScreen() {
     const currentWallet = useTezosContext();
     console.log(currentWallet);
 
-    useEffect(() => {
-        const indexerApi = useIndexerApi();
-
-        const loadBalances = async () => {
-            const stakingBalances = await indexerApi.fetchCurrentUserFarmingConfiguration("");
-        }
-
-        loadBalances();
-    }, []);
+    // useEffect(() => {
+    //     const indexerApi = useIndexerApi();
+    //
+    //     const loadBalances = async () => {
+    //         const stakingBalances = await indexerApi.fetchCurrentUserFarmingConfiguration("");
+    //     }
+    //
+    //     loadBalances();
+    // }, []);
 
     const renderRow = (farm: FarmConfig) => {
         console.log(new BigNumber(farm.farmTotalStaked).shiftedBy(-8).toString());
@@ -121,7 +121,7 @@ function FarmStakeAllScreen() {
                     <input
                         className={classes.input}
                         type='text'
-                        placeholder='0'>
+                        placeholder='Enter Amount...'>
                     </input>
                 </StyledTableCell>
             </StyledTableRow>
