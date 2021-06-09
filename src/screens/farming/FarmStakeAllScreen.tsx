@@ -44,12 +44,18 @@ const StyledTableCell = withStyles(() =>
 const StyledTableRow = withStyles(() =>
     createStyles({
         root: {
-            margin: '50px'
+            margin: '50px',
+
+            border: '2px solid red'
         }
     })
 )(TableRow);
 
 const useStyles = makeStyles((theme) => createStyles({
+    table: {
+        borderSpacing: '0 5px !important',
+        borderCollapse: 'separate'
+    },
     subtitle: {
         color: '#000000',
         textAlign: 'center',
@@ -86,15 +92,49 @@ const useStyles = makeStyles((theme) => createStyles({
     }
 }));
 
-function FarmStakeAllScreen() {
+export default function FarmStakeAllScreen() {
     const classes = useStyles();
     const {farms} = useConfig();
     const indexerApi = useIndexerApi();
     const currentWallet = useTezosContext();
     const [stakingBalances, setStakingBalances] = useState<IndexerContractBalance[]>([]);
 
+    const [value1, setValue1] = useState(0)
+    const [value2, setValue2] = useState(0)
+    const [value3, setValue3] = useState(0)
+    const [total, setTotal] = useState(0)
+
+
+
+    const valueHandler = (e: any, key: number) => {
+
+        switch (key) {
+            case 0:
+                setValue1(parseInt(e.target.value));
+                break;
+            case 1:
+                setValue2(parseInt(e.target.value));
+                break;
+            case 2:
+                setValue3(parseInt(e.target.value));
+                break;
+            default:
+                return;
+        }
+        const valueAdder = () => {
+            let val1 = value1;
+            let val2 = value2;
+            let val3 = value3;
+
+            let totalAll = [val1, val2, val3]
+            return totalAll.reduce((a,b) => a+b,0)
+
+        }
+        setTotal(valueAdder())
+    }
 
     useEffect(() => {
+
         const loadBalances = async () => {
             if (currentWallet.account) {
                 setStakingBalances(await indexerApi.fetchCurrentUserFarmingConfiguration(currentWallet.account));
@@ -106,6 +146,8 @@ function FarmStakeAllScreen() {
     }, [currentWallet.account]);
 
 
+
+
     const findCurrentWalletBalance = (farm: FarmConfig): string => {
         const contractBalance = stakingBalances.find((elt) => {
             return elt.contract === farm.farmContractAddress;
@@ -114,7 +156,8 @@ function FarmStakeAllScreen() {
             new BigNumber(contractBalance.balance).shiftedBy(-farm.farmStakedToken.decimals).toString(10) : "0";
     };
 
-    const renderRow = (farm: FarmConfig) => {
+
+    const renderRow = (farm: FarmConfig, key: number) => {
         return (
             <StyledTableRow key={farm.rewardTokenId}>
                 <StyledTableCell align='center'>
@@ -127,9 +170,12 @@ function FarmStakeAllScreen() {
                     align='center'>{new BigNumber(farm.farmTotalStaked).shiftedBy(-farm.farmStakedToken.decimals).toString(10)}</StyledTableCell>
                 <StyledTableCell align='center'>{findCurrentWalletBalance(farm)}</StyledTableCell>
                 <StyledTableCell align='center'>
+
                     <input
+
                         className={classes.input}
-                        type='text'
+                        type='number'
+                        onChange={(e) => valueHandler(e, key)}
                         placeholder='Enter Amount...'>
                     </input>
                 </StyledTableCell>
@@ -146,7 +192,7 @@ function FarmStakeAllScreen() {
             </Box>
             <Box className={classes.containBox}>
                 <TableContainer>
-                    <Table>
+                    <Table className={classes.table}>
                         <TableHead>
                             <TableRow>
                                 <StyledTableCell align='center'>Symbol</StyledTableCell>
@@ -158,9 +204,29 @@ function FarmStakeAllScreen() {
                         </TableHead>
                         <TableBody>
                             {active ?
-                                farms.map((farmConfig) => renderRow(farmConfig)) :
+                                farms.map((farmConfig, key) => renderRow(farmConfig, key)) :
                                 <TableRow><TableCell>No data to display...</TableCell></TableRow>
                             }
+                            <StyledTableRow>
+                                <StyledTableCell align='center'>
+                                </StyledTableCell>
+                                <StyledTableCell align='center'>
+                                    <Typography>
+                                        Totals:
+                                    </Typography>
+
+                                </StyledTableCell>
+                                <StyledTableCell></StyledTableCell>
+                                <StyledTableCell>0</StyledTableCell>
+                                <StyledTableCell>
+                                    <Typography>
+                                        {total}
+                                    </Typography>
+
+                                </StyledTableCell>
+
+                            </StyledTableRow>
+
                         </TableBody>
                     </Table>
                 </TableContainer>
@@ -178,5 +244,3 @@ function FarmStakeAllScreen() {
         </Container>
     );
 }
-
-export default FarmStakeAllScreen;
