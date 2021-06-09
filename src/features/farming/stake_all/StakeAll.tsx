@@ -46,12 +46,18 @@ const StyledTableCell = withStyles(() =>
 const StyledTableRow = withStyles(() =>
     createStyles({
         root: {
-            margin: '50px'
+            margin: '50px',
+
+            border: '2px solid red'
         }
     })
 )(TableRow);
 
 const useStyles = makeStyles((theme) => createStyles({
+    table: {
+        borderSpacing: '0 5px !important',
+        borderCollapse: 'separate'
+    },
     subtitle: {
         color: '#000000',
         textAlign: 'center',
@@ -95,6 +101,37 @@ export default function StakeAll() {
     const currentWallet = useTezosContext();
     const [stakingBalances, setStakingBalances] = useState<IndexerContractBalance[]>([]);
 
+    const [value1, setValue1] = useState(0);
+    const [value2, setValue2] = useState(0);
+    const [value3, setValue3] = useState(0);
+    const [total, setTotal] = useState(0);
+
+    const valueHandler = (e: any, index: number) => {
+        switch (index) {
+            case 0:
+                setValue1(parseInt(e.target.value));
+                break;
+            case 1:
+                setValue2(parseInt(e.target.value));
+                break;
+            case 2:
+                setValue3(parseInt(e.target.value));
+                break;
+            default:
+                return;
+        }
+        const valueAdder = () => {
+            let val1 = value1;
+            let val2 = value2;
+            let val3 = value3;
+
+            let totalAll = [val1, val2, val3]
+            return totalAll.reduce((a, b) => a + b, 0)
+
+        }
+        setTotal(valueAdder());
+    }
+
     useEffect(() => {
         const loadBalances = async () => {
             if (currentWallet.account) {
@@ -114,7 +151,7 @@ export default function StakeAll() {
             new BigNumber(contractBalance.balance).shiftedBy(-farm.farmStakedToken.decimals).toString(10) : "0";
     };
 
-    const renderRow = (farm: FarmConfig) => {
+    const renderRow = (farm: FarmConfig, index: number) => {
         return (
             <StyledTableRow key={farm.rewardTokenId}>
                 <StyledTableCell align='center'>
@@ -127,10 +164,8 @@ export default function StakeAll() {
                     align='center'>{new BigNumber(farm.farmTotalStaked).shiftedBy(-farm.farmStakedToken.decimals).toString(10)}</StyledTableCell>
                 <StyledTableCell align='center'>{findCurrentWalletBalance(farm)}</StyledTableCell>
                 <StyledTableCell align='center'>
-                    <input
-                        className={classes.input}
-                        type='text'
-                        placeholder='Enter Amount...'>
+                    <input className={classes.input} type='number' onChange={(e) => valueHandler(e, index)}
+                           placeholder='Enter Amount...'>
                     </input>
                 </StyledTableCell>
             </StyledTableRow>
@@ -144,7 +179,7 @@ export default function StakeAll() {
             <FarmingContractHeader title="All farms" path={paths.FARMING_ROOT}/>
             <Box className={classes.containBox}>
                 <TableContainer>
-                    <Table>
+                    <Table className={classes.table}>
                         <TableHead>
                             <TableRow>
                                 <StyledTableCell align='center'>Symbol</StyledTableCell>
@@ -156,9 +191,26 @@ export default function StakeAll() {
                         </TableHead>
                         <TableBody>
                             {active ?
-                                farms.map((farmConfig) => renderRow(farmConfig)) :
+                                farms.map((farmConfig, index) => renderRow(farmConfig, index)) :
                                 <TableRow><TableCell>No data to display...</TableCell></TableRow>
                             }
+                            <StyledTableRow>
+                                <StyledTableCell align='center'>
+                                </StyledTableCell>
+                                <StyledTableCell align='center'>
+                                    <Typography>
+                                        Totals:
+                                    </Typography>
+
+                                </StyledTableCell>
+                                <StyledTableCell></StyledTableCell>
+                                <StyledTableCell>0</StyledTableCell>
+                                <StyledTableCell>
+                                    <Typography>
+                                        {total}
+                                    </Typography>
+                                </StyledTableCell>
+                            </StyledTableRow>
                         </TableBody>
                     </Table>
                 </TableContainer>
@@ -174,5 +226,5 @@ export default function StakeAll() {
                 </PaperFooter>
             </Box>
         </>
-    )
+    );
 }
