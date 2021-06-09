@@ -1,20 +1,22 @@
-import React, {useEffect, useState} from 'react';
-import {Box, Container, Typography, withStyles} from '@material-ui/core';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableContainer from '@material-ui/core/TableContainer';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
-import LoadableButton from '../../components/button/LoadableButton';
-import {PaperFooter} from '../../components/paper/Paper';
-import {createStyles, makeStyles} from '@material-ui/core/styles';
-import {FarmConfig} from '../../config';
-import {useConfig, useIndexerApi} from '../../runtime/config/ConfigContext';
-import IconSelect from './FarmToken';
-import BigNumber from 'bignumber.js';
-import {useTezosContext} from "../../features/tezos/TezosContext";
-import {IndexerContractBalance} from "../../features/indexer/indexerApi";
+import {Box, Typography, withStyles} from "@material-ui/core";
+import TableContainer from "@material-ui/core/TableContainer";
+import Table from "@material-ui/core/Table";
+import TableHead from "@material-ui/core/TableHead";
+import TableRow from "@material-ui/core/TableRow";
+import TableBody from "@material-ui/core/TableBody";
+import TableCell from "@material-ui/core/TableCell";
+import {PaperFooter} from "../../../components/paper/Paper";
+import LoadableButton from "../../../components/button/LoadableButton";
+import React, {useEffect, useState} from "react";
+import {FarmConfig} from "../../../config";
+import IconSelect from "../../../screens/farming/FarmToken";
+import BigNumber from "bignumber.js";
+import {useConfig, useIndexerApi} from "../../../runtime/config/ConfigContext";
+import {useTezosContext} from "../../tezos/TezosContext";
+import {IndexerContractBalance} from "../../indexer/indexerApi";
+import {createStyles, makeStyles} from "@material-ui/core/styles";
+import {paths} from "../../../screens/routes";
+import FarmingContractHeader from "../../../components/farming/FarmingContractHeader";
 
 const StyledTableCell = withStyles(() =>
     createStyles({
@@ -86,13 +88,12 @@ const useStyles = makeStyles((theme) => createStyles({
     }
 }));
 
-function FarmStakeAllScreen() {
+export default function StakeAll() {
     const classes = useStyles();
     const {farms} = useConfig();
     const indexerApi = useIndexerApi();
     const currentWallet = useTezosContext();
     const [stakingBalances, setStakingBalances] = useState<IndexerContractBalance[]>([]);
-
 
     useEffect(() => {
         const loadBalances = async () => {
@@ -104,7 +105,6 @@ function FarmStakeAllScreen() {
         // noinspection JSIgnoredPromiseFromCall
         loadBalances();
     }, [currentWallet.account]);
-
 
     const findCurrentWalletBalance = (farm: FarmConfig): string => {
         const contractBalance = stakingBalances.find((elt) => {
@@ -140,10 +140,8 @@ function FarmStakeAllScreen() {
     let active = farms.length > 0;
 
     return (
-        <Container>
-            <Box className={classes.titleCenter} my={2}>
-                <Typography className={classes.title}>Stake On All Farms</Typography>
-            </Box>
+        <>
+            <FarmingContractHeader title="All farms" path={paths.FARMING_ROOT}/>
             <Box className={classes.containBox}>
                 <TableContainer>
                     <Table>
@@ -175,8 +173,6 @@ function FarmStakeAllScreen() {
                     />
                 </PaperFooter>
             </Box>
-        </Container>
-    );
+        </>
+    )
 }
-
-export default FarmStakeAllScreen;

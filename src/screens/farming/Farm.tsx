@@ -51,8 +51,8 @@ function WithFarm(
 
 export default function Farm() {
     const {path} = useRouteMatch();
-    const {contract} = useParams() as { contract: string };
-    const {farm} = useFarm(contract);
+    const {farm_address} = useParams() as { farm_address: string };
+    const {farm} = useFarm(farm_address);
     const {farmBalances, farmLoading, refreshFarmingContract} = useFarmingContract(farm.farmContractAddress);
     const {
         balance,
@@ -64,7 +64,7 @@ export default function Farm() {
     const classes = useStyles();
     const onTabChange = useCallback(
         (event: React.ChangeEvent<{}>, newPath: string) => {
-            history.push(newPath.replace(':contract', farm.farmContractAddress));
+            history.push(newPath.replace(':farm_address', farm.farmContractAddress));
         },
         [farm, history]
     );
@@ -85,13 +85,13 @@ export default function Farm() {
                 indicatorColor="primary"
                 variant="fullWidth"
             >
-                <Tab label="Stake" value={paths.FARMING_STAKE} className={classes.tab}/>
-                <Tab label="Unstake" value={paths.FARMING_UNSTAKE} className={classes.tab}/>
-                <Tab label="Claim" value={paths.FARMING_CLAIM} className={classes.tab}/>
+                <Tab label="Stake" value={paths.FARM_STAKE} className={classes.tab}/>
+                <Tab label="Unstake" value={paths.FARM_UNSTAKE} className={classes.tab}/>
+                <Tab label="Claim" value={paths.FARM_CLAIM} className={classes.tab}/>
             </Tabs>
             <Switch>
                 <Route
-                    path={paths.FARMING_STAKE}
+                    path={paths.FARM_STAKE}
                     exact
                     component={WithFarm(
                         farm,
@@ -105,7 +105,7 @@ export default function Farm() {
                     )}
                 />
                 <Route
-                    path={paths.FARMING_UNSTAKE}
+                    path={paths.FARM_UNSTAKE}
                     exact
                     component={WithFarm(
                         farm,
@@ -119,7 +119,7 @@ export default function Farm() {
                     )}
                 />
                 <Route
-                    path={paths.FARMING_CLAIM}
+                    path={paths.FARM_CLAIM}
                     exact
                     component={WithFarm(
                         farm,

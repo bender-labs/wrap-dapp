@@ -36,7 +36,7 @@ function App() {
                                         <Switch>
                                             <Route exact path={mainPaths} component={MainScreen}/>
                                             <Route exact path={historyPaths} component={HistoryScreen}/>
-                                            <Route path={paths.FARMING} component={FarmingScreen}/>
+                                            <Route path={paths.FARMING_ROOT} component={FarmingScreen}/>
                                         </Switch>
                                         <DisplayEnvironment/>
                                     </SnackbarProvider>

@@ -2,12 +2,11 @@ import {PaperActions, PaperHeader, PaperNav, PaperTitle,} from '../paper/Paper';
 import {IconButton} from '@material-ui/core';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import React from 'react';
-import {FarmConfig} from '../../config';
 import {useHistory} from 'react-router';
-import {paths} from "../../screens/routes";
 
-export default function FarmingContractHeader({farm}: {
-    farm: FarmConfig;
+export default function FarmingContractHeader({title, path}: {
+    title: string;
+    path: string;
 }) {
     const history = useHistory();
     return (
@@ -15,14 +14,14 @@ export default function FarmingContractHeader({farm}: {
             <PaperNav>
                 <IconButton
                     onClick={() => {
-                        history.push(paths.FARMING);
+                        history.push(path);
                     }}
                 >
                     <ArrowBackIcon/>
                 </IconButton>
             </PaperNav>
             <PaperTitle>
-                {farm.rewardTokenName} farm
+                {title}
             </PaperTitle>
             <PaperActions/>
         </PaperHeader>

@@ -9,6 +9,7 @@ import {FarmingContractActionsProps} from '../types';
 import FarmingContractInfo from '../../../components/farming/FarmingContractInfo';
 import FarmingContractHeader from '../../../components/farming/FarmingContractHeader';
 import {useWalletContext} from "../../../runtime/wallet/WalletContext";
+import {paths} from "../../../screens/routes";
 
 
 export function Unstake({farm, onApply, farmBalances, inputBalance}: FarmingContractActionsProps) {
@@ -22,13 +23,11 @@ export function Unstake({farm, onApply, farmBalances, inputBalance}: FarmingCont
         onApply();
     }, [onApply, unstake]);
 
-
-
     const walletContext = useWalletContext();
 
     return (
         <>
-            <FarmingContractHeader farm={farm}/>
+            <FarmingContractHeader title={farm.rewardTokenName + " farm"} path={paths.FARMING_ROOT}/>
             <PaperContent>
                 <AmountToWrapInput
                     balance={farmBalances.staked}

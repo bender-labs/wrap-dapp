@@ -9,6 +9,7 @@ import {FarmingContractActionsProps} from '../types';
 import FarmingContractInfo from '../../../components/farming/FarmingContractInfo';
 import FarmingContractHeader from '../../../components/farming/FarmingContractHeader';
 import {useWalletContext} from '../../../runtime/wallet/WalletContext';
+import {paths} from "../../../screens/routes";
 
 
 export default function Stake({farm, farmBalances, onApply, inputBalance}: FarmingContractActionsProps) {
@@ -24,10 +25,9 @@ export default function Stake({farm, farmBalances, onApply, inputBalance}: Farmi
 
     const walletContext = useWalletContext();
 
-
     return (
         <>
-            <FarmingContractHeader farm={farm}/>
+            <FarmingContractHeader title={farm.rewardTokenName + " farm"} path={paths.FARMING_ROOT}/>
             <PaperContent>
                 <AmountToWrapInput
                     balance={inputBalance.value}
@@ -42,7 +42,6 @@ export default function Stake({farm, farmBalances, onApply, inputBalance}: Farmi
                         inputBalance.value.isNaN()
                     }
                 />
-              
             </PaperContent>
             <FarmingContractInfo
                 farm={farm}
@@ -56,7 +55,6 @@ export default function Stake({farm, farmBalances, onApply, inputBalance}: Farmi
                 value={amount.plus(farmBalances.staked)}
             />
             <PaperFooter>
-
                 {stakingStatus !== StakingStatus.NOT_CONNECTED && (
 
                     <LoadableButton

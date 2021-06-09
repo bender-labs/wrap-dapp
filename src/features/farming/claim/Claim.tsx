@@ -8,6 +8,7 @@ import FarmingContractInfo from '../../../components/farming/FarmingContractInfo
 import AssetSummary from '../../../components/form/AssetSummary';
 import FarmingContractHeader from '../../../components/farming/FarmingContractHeader';
 import {useWalletContext} from '../../../runtime/wallet/WalletContext';
+import {paths} from "../../../screens/routes";
 
 export default function Claim({farm, farmBalances, inputBalance, onApply}: FarmingContractActionsProps) {
     const {claim, claimStatus} = useClaim(farm);
@@ -20,7 +21,7 @@ export default function Claim({farm, farmBalances, inputBalance, onApply}: Farmi
 
     return (
         <>
-            <FarmingContractHeader farm={farm}/>
+            <FarmingContractHeader title={farm.rewardTokenName + " farm"} path={paths.FARMING_ROOT}/>
             <FarmingContractInfo
                 farm={farm}
                 farmBalances={farmBalances}

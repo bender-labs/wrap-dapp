@@ -9,12 +9,14 @@ const HISTORY_WRAP = '/history/wrap';
 const HISTORY_UNWRAP = '/history/unwrap';
 const HISTORY = '/history';
 
-const FARMING = '/farming';
-const farmingContract = '/:contract';
-const FARMING_STAKE_ALL = `${FARMING}/stake_all`;
-const FARMING_STAKE = `${FARMING}${farmingContract}/stake`;
-const FARMING_UNSTAKE = `${FARMING}${farmingContract}/unstake`;
-const FARMING_CLAIM = `${FARMING}${farmingContract}/claim`;
+const FARMING_ROOT = '/farming';
+const FARM_PARAMETER = '/farm/:farm_address';
+const FARM_STAKE = `${FARMING_ROOT}${FARM_PARAMETER}/stake`;
+const FARM_UNSTAKE = `${FARMING_ROOT}${FARM_PARAMETER}/unstake`;
+const FARM_CLAIM = `${FARMING_ROOT}${FARM_PARAMETER}/claim`;
+const ALL_FARMS_STAKE = `${FARMING_ROOT}/all_farms/stake`;
+const ALL_FARMS_UNSTAKE = `${FARMING_ROOT}/all_farms/unstake`;
+const ALL_FARMS_CLAIM = `${FARMING_ROOT}/all_farms/claim`;
 
 export const paths = {
     WRAP,
@@ -24,17 +26,20 @@ export const paths = {
     HISTORY_WRAP,
     HISTORY_UNWRAP,
     HISTORY,
-    FARMING,
-    FARMING_STAKE_ALL,
-    FARMING_STAKE,
-    FARMING_UNSTAKE,
-    FARMING_CLAIM
+    FARMING_ROOT,
+    FARM_STAKE,
+    FARM_UNSTAKE,
+    FARM_CLAIM,
+    ALL_FARMS_STAKE,
+    ALL_FARMS_UNSTAKE,
+    ALL_FARMS_CLAIM
 };
 
 export const mainPaths = ['/', WRAP, UNWRAP, WRAP_FINALIZE, UNWRAP_FINALIZE];
 export const historyPaths = [HISTORY, HISTORY_WRAP, HISTORY_UNWRAP];
-export const farmingPaths = [FARMING_STAKE, FARMING_UNSTAKE, FARMING_CLAIM];
+export const farmPaths = [FARM_STAKE, FARM_UNSTAKE, FARM_CLAIM];
+export const allFarmsPaths = [ALL_FARMS_STAKE, ALL_FARMS_CLAIM, ALL_FARMS_UNSTAKE];
 
 export const wrapPage = (op: Operation) => `/wrap/${op.hash}`;
 export const unwrapPage = (op: Operation) => `/unwrap/${op.hash}`;
-export const farmPageRoute = (farmContract: string) => FARMING_STAKE.replace(':contract', farmContract);
+export const farmStakePageRoute = (farmContract: string) => FARM_STAKE.replace(':farm_address', farmContract);

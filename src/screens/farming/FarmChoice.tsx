@@ -6,10 +6,9 @@ import FarmList from './FarmList';
 import ArrowForwardIcon from '@material-ui/icons/ArrowForward';
 import {PaperContent} from '../../components/paper/Paper';
 import {useHistory} from 'react-router';
-import {farmPageRoute, paths} from '../routes';
+import {farmStakePageRoute, paths} from '../routes';
 import BigNumber from 'bignumber.js';
 import logo from './Logo/7.png'
-import TezosTokenIcon from "../../components/icons/TezosTokenIcon";
 
 const useStyles = makeStyles((theme) =>
     createStyles({
@@ -50,9 +49,9 @@ const useStyles = makeStyles((theme) =>
         option: {
             fontSize: '20px'
         },
-      sub: {
-        fontSize: '12px'
-      },
+        sub: {
+            fontSize: '12px'
+        },
         item: {
 
             '&:hover': {
@@ -88,7 +87,7 @@ export default function FarmChoice() {
     const StakeAllButton = () => {
 
         const changeUri = () => {
-            history.push(paths.FARMING_STAKE_ALL);
+            history.push(paths.ALL_FARMS_STAKE);
         }
 
         return (
@@ -97,14 +96,14 @@ export default function FarmChoice() {
                       className={classes.item}>
                     <Grid item className={classes.images}>
 
-                      <img src={logo} />
+                        <img src={logo}/>
                     </Grid>
                     <Grid item>
                         <Typography className={classes.option}>
                             Stake on all farms
                         </Typography>
                         <Typography className={classes.sub}>
-                          Stake your $WRAP tokens on all available farms at once
+                            Stake your $WRAP tokens on all available farms at once
                         </Typography>
                     </Grid>
                     <Grid item>
@@ -133,7 +132,7 @@ export default function FarmChoice() {
                 <StakeAllButton/>
                 <Typography variant={'subtitle1'} className={classes.subtitle}>Or choose one farm directly</Typography>
                 <FarmList farms={farms} onProgramSelect={(farmContract) => {
-                    history.push(farmPageRoute(farmContract));
+                    history.push(farmStakePageRoute(farmContract));
                 }}/>
             </Box>
         </Container>

@@ -162,7 +162,7 @@ const Render = () => {
                                     <Link
                                         component={RouterLink}
                                         color="inherit"
-                                        to={paths.FARMING}
+                                        to={paths.FARMING_ROOT}
                                     >
                                         Farming
                                     </Link>
