@@ -88,7 +88,7 @@ function Rewards({
 
     const nextRewardLabel = periodEnded
       ? 'Awaiting new rewards period'
-      : `New rewards will be added in ${
+      : `New rewards in ${
           endLevel - currentTezosLevel
         } blocks. (Approx. ${nextRewardsDuration.as('hour').toFixed(1)} hours)`;
 
