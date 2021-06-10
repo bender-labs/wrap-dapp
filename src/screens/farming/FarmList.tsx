@@ -4,9 +4,10 @@ import { Grid, IconButton, Typography } from '@material-ui/core';
 import { createStyles, makeStyles } from '@material-ui/core/styles';
 import TezosTokenIcon from '../../components/icons/TezosTokenIcon';
 import ArrowForwardIcon from '@material-ui/icons/ArrowForward';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import BigNumber from 'bignumber.js';
-import { DateTime } from 'luxon';
+import { Duration } from 'luxon';
+import { useWalletContext } from '../../runtime/wallet/WalletContext';
 
 export type FarmListProps = {
   farms: FarmConfig[];
@@ -56,13 +57,15 @@ const useStyle = makeStyles(() =>
 );
 
 function Rewards({
+  currentTezosLevel,
   farmConfig,
   className,
 }: {
+  currentTezosLevel: number;
   farmConfig: FarmConfig;
   className: string;
 }) {
-  if (farmConfig.rewards) {
+  if (farmConfig.rewards && currentTezosLevel > 0) {
     const currentTotalRewards = new BigNumber(farmConfig.rewards.totalRewards)
       .shiftedBy(-farmConfig.rewardTokenDecimals)
       .dp(8)
@@ -71,21 +74,23 @@ function Rewards({
       .shiftedBy(-farmConfig.farmStakedToken.decimals)
       .dp(8)
       .toString(10);
-    const nextRewardTime = DateTime.fromISO(
-      farmConfig.rewards.startTimestamp
-    ).plus({ minutes: parseInt(farmConfig.rewards.duration) });
-    const currentPeriodProgress =
-      (1 -
-        nextRewardTime.diff(DateTime.local().toUTC(), 'minutes').minutes /
-          parseInt(farmConfig.rewards.duration)) *
-      100;
+    const endLevel =
+      +farmConfig.rewards.startLevel + +farmConfig.rewards.duration;
+    const periodEnded = endLevel < currentTezosLevel;
+    const currentPeriodProgress = periodEnded
+      ? 100
+      : ((currentTezosLevel - +farmConfig.rewards.startLevel) /
+          +farmConfig.rewards.duration) *
+        100;
+    const nextRewardsDuration = Duration.fromMillis(
+      (endLevel - currentTezosLevel) * 60 * 1000
+    );
 
-    const nextRewardLabel =
-      nextRewardTime.toMillis() < DateTime.local().toUTC().toMillis()
-        ? 'Awaiting new rewards period'
-        : `New rewards will be added ${nextRewardTime.toRelative({
-            locale: 'en',
-          })}`;
+    const nextRewardLabel = periodEnded
+      ? 'Awaiting new rewards period'
+      : `New rewards will be added in ${
+          endLevel - currentTezosLevel
+        } blocks. (Approx. ${nextRewardsDuration.as('hour').toFixed(1)} hours)`;
 
     return (
       <>
@@ -108,14 +113,15 @@ function Rewards({
 }
 
 function FarmSelector({
+  currentTezosLevel,
   farmConfig,
   onClick,
 }: {
+  currentTezosLevel: number;
   farmConfig: FarmConfig;
   onClick: () => void;
 }) {
   const classes = useStyle();
-
   return (
     <PaperContent className={classes.main}>
       <Grid
@@ -134,7 +140,11 @@ function FarmSelector({
           <Typography className={classes.option}>
             {farmConfig.rewardTokenName} farm
           </Typography>
-          <Rewards farmConfig={farmConfig} className={classes.rewards} />
+          <Rewards
+            currentTezosLevel={currentTezosLevel}
+            farmConfig={farmConfig}
+            className={classes.rewards}
+          />
         </Grid>
         <Grid item>
           <IconButton>
@@ -147,11 +157,26 @@ function FarmSelector({
 }
 
 export default function FarmList({ farms, onProgramSelect }: FarmListProps) {
+  const [currentTezosLevel, setCurrentTezosLevel] = useState(0);
+  const walletContext = useWalletContext();
+  const { library } = walletContext.tezos;
+
+  useEffect(() => {
+    async function loadCurrentTezosLevel() {
+      if (library) {
+        const blockHeader = await library.rpc.getBlockHeader();
+        setCurrentTezosLevel(blockHeader.level);
+      }
+    }
+    loadCurrentTezosLevel();
+  }, [library]);
+
   return (
     <Grid container spacing={2} direction={'column'}>
       {farms.map((farmConfig) => (
         <Grid item key={farmConfig.farmContractAddress}>
           <FarmSelector
+            currentTezosLevel={currentTezosLevel}
             farmConfig={farmConfig}
             onClick={() => onProgramSelect(farmConfig.farmContractAddress)}
           />
