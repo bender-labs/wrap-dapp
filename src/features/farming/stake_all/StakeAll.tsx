@@ -101,10 +101,10 @@ export default function StakeAll() {
     const currentWallet = useTezosContext();
     const [stakingBalances, setStakingBalances] = useState<IndexerContractBalance[]>([]);
 
+    const [values, setValues] = useState([]);
     const [value1, setValue1] = useState(0);
     const [value2, setValue2] = useState(0);
     const [value3, setValue3] = useState(0);
-    const [total, setTotal] = useState(0);
 
     const valueHandler = (e: any, index: number) => {
         switch (index) {
@@ -120,17 +120,28 @@ export default function StakeAll() {
             default:
                 return;
         }
-        const valueAdder = () => {
-            let val1 = value1;
-            let val2 = value2;
-            let val3 = value3;
-
-            let totalAll = [val1, val2, val3]
-            return totalAll.reduce((a, b) => a + b, 0)
-
-        }
-        setTotal(valueAdder());
     }
+
+    const newValueHandler = (e: any, index: number) => {
+        setValues(values.concat(e.target.value))
+    }
+
+    const totalA = () => {
+        let arr = values.map((v) => {
+            return parseInt(v, 10)
+        })
+        let totalAll = [...arr]
+        return totalAll.reduce((a, b) => a + b, 0)
+    }
+
+    const totalB = () => {
+        let val1 = value1;
+        let val2 = value2;
+        let val3 = value3;
+        let totalAll = [val1, val2, val3];
+        return totalAll.reduce((a, b) => a + b,0)
+    }
+
 
     useEffect(() => {
         const loadBalances = async () => {
@@ -164,13 +175,19 @@ export default function StakeAll() {
                     align='center'>{new BigNumber(farm.farmTotalStaked).shiftedBy(-farm.farmStakedToken.decimals).toString(10)}</StyledTableCell>
                 <StyledTableCell align='center'>{findCurrentWalletBalance(farm)}</StyledTableCell>
                 <StyledTableCell align='center'>
-                    <input className={classes.input} type='number' onChange={(e) => valueHandler(e, index)}
-                           placeholder='Enter Amount...'>
+                    <input
+                      className={classes.input}
+                      type='number'
+                      onChange={(e) => newValueHandler(e, index)}
+                      placeholder='Enter Amount...'
+                    >
                     </input>
                 </StyledTableCell>
             </StyledTableRow>
         );
     };
+
+
 
     let active = farms.length > 0;
 
@@ -207,7 +224,7 @@ export default function StakeAll() {
                                 <StyledTableCell>0</StyledTableCell>
                                 <StyledTableCell>
                                     <Typography>
-                                        {total}
+                                        {totalA()}
                                     </Typography>
                                 </StyledTableCell>
                             </StyledTableRow>
