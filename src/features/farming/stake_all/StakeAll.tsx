@@ -123,15 +123,30 @@ export default function StakeAll() {
     }
 
     const newValueHandler = (e: any, index: number) => {
-        setValues(values.concat(e.target.value))
+
+        let val: any[] = values;
+        val[index] = e.target.value;
+        setValues(values)
+
+        // setValues(values.concat(e.target.value))
+        // let newArr = []
+        // newArr.push(parseInt(val[index]))
+
+        // console.log(newValues[index][e.target.name]) = e.target.value;
+        // console.log(newValues)
+        // console.log(newArr)
+        // console.log('parsed val[index]', parseInt(val[index]))
+        console.log('values', values)
+
     }
 
     const totalA = () => {
         let arr = values.map((v) => {
-            return parseInt(v, 10)
+            return parseInt(v)
         })
-        let totalAll = [...arr]
-        return totalAll.reduce((a, b) => a + b, 0)
+
+        let total = arr.reduce((a, b) => a + b, 0);
+        return total;
     }
 
     const totalB = () => {
@@ -139,6 +154,8 @@ export default function StakeAll() {
         let val2 = value2;
         let val3 = value3;
         let totalAll = [val1, val2, val3];
+
+
         return totalAll.reduce((a, b) => a + b,0)
     }
 
