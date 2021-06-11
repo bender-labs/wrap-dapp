@@ -12,7 +12,7 @@ import FarmList from './FarmList';
 import ArrowForwardIcon from '@material-ui/icons/ArrowForward';
 import { PaperContent } from '../../components/paper/Paper';
 import { useHistory } from 'react-router';
-import { farmStakePageRoute, paths } from '../routes';
+import { farmStakePageRoute, oldFarmUnstakePageRoute, paths } from '../routes';
 import BigNumber from 'bignumber.js';
 import logo from './Logo/7.png';
 
@@ -22,6 +22,9 @@ const useStyles = makeStyles((theme) =>
       color: '#000000',
       textAlign: 'center',
       marginBottom: '20px',
+    },
+    secondSubtitle: {
+      paddingTop: '20px',
     },
     main: {
       borderRadius: '10px 10px 10px 10px',
@@ -82,7 +85,7 @@ const useStyles = makeStyles((theme) =>
 export default function FarmChoice() {
   const classes = useStyles();
   const history = useHistory();
-  const { farms } = useConfig();
+  const { farms, oldFarms } = useConfig();
 
   const totalStaked = farms
     .reduce((total, farm) => {
@@ -149,6 +152,18 @@ export default function FarmChoice() {
           farms={farms}
           onProgramSelect={(farmContract) => {
             history.push(farmStakePageRoute(farmContract));
+          }}
+        />
+        <Typography
+          variant={'subtitle1'}
+          className={`${classes.subtitle} ${classes.secondSubtitle}`}
+        >
+          or select an old farm to unstake.
+        </Typography>
+        <FarmList
+          farms={oldFarms}
+          onProgramSelect={(farmContract) => {
+            history.push(oldFarmUnstakePageRoute(farmContract));
           }}
         />
       </Box>
