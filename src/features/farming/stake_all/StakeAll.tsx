@@ -68,10 +68,10 @@ export default function StakeAll() {
     const currentWallet = useTezosContext();
     const [stakingBalances, setStakingBalances] = useState<IndexerContractBalance[]>([]);
 
+    const [values, setValues] = useState([]);
     const [value1, setValue1] = useState(0);
     const [value2, setValue2] = useState(0);
     const [value3, setValue3] = useState(0);
-    const [total, setTotal] = useState(0);
 
     const valueHandler = (e: any, index: number) => {
         switch (index) {
@@ -87,17 +87,45 @@ export default function StakeAll() {
             default:
                 return;
         }
-        const valueAdder = () => {
-            let val1 = value1;
-            let val2 = value2;
-            let val3 = value3;
-
-            let totalAll = [val1, val2, val3]
-            return totalAll.reduce((a, b) => a + b, 0)
-
-        }
-        setTotal(valueAdder());
     }
+
+    const newValueHandler = (e: any, index: number) => {
+
+        let val: any[] = values;
+        val[index] = e.target.value;
+        setValues(values)
+
+        // setValues(values.concat(e.target.value))
+        // let newArr = []
+        // newArr.push(parseInt(val[index]))
+
+        // console.log(newValues[index][e.target.name]) = e.target.value;
+        // console.log(newValues)
+        // console.log(newArr)
+        // console.log('parsed val[index]', parseInt(val[index]))
+        console.log('values', values)
+
+    }
+
+    const totalA = () => {
+        let arr = values.map((v) => {
+            return parseInt(v)
+        })
+
+        let total = arr.reduce((a, b) => a + b, 0);
+        return total;
+    }
+
+    const totalB = () => {
+        let val1 = value1;
+        let val2 = value2;
+        let val3 = value3;
+        let totalAll = [val1, val2, val3];
+
+
+        return totalAll.reduce((a, b) => a + b,0)
+    }
+
 
     useEffect(() => {
         const loadBalances = async () => {
@@ -173,7 +201,7 @@ export default function StakeAll() {
                                 <FarmingStyledTableCell>0</FarmingStyledTableCell>
                                 <FarmingStyledTableCell>
                                     <Typography>
-                                        {total}
+                                        {totalA()}
                                     </Typography>
                                 </FarmingStyledTableCell>
                             </FarmingStyledTableRow>
