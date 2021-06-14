@@ -1,4 +1,4 @@
-import {Box, Typography, withStyles} from "@material-ui/core";
+import {Box, Typography} from "@material-ui/core";
 import TableContainer from "@material-ui/core/TableContainer";
 import Table from "@material-ui/core/Table";
 import TableHead from "@material-ui/core/TableHead";
@@ -17,41 +17,8 @@ import {IndexerContractBalance} from "../../indexer/indexerApi";
 import {createStyles, makeStyles} from "@material-ui/core/styles";
 import {paths} from "../../../screens/routes";
 import FarmingContractHeader from "../../../components/farming/FarmingContractHeader";
-
-const StyledTableCell = withStyles(() =>
-    createStyles({
-        head: {
-            backgroundColor: '#e5e5e5',
-            color: 'black',
-            padding: '0px',
-            fontWeight: 'bold'
-        },
-        body: {
-            fontSize: 14,
-            padding: '20px',
-            backgroundColor: 'white',
-            textAlign: 'center',
-            '&:first-child': {
-                borderRadius: '20px 0 0 20px'
-            },
-            '&:last-child': {
-                borderRadius: '0 20px 20px 0',
-                padding: '0px 0px',
-                flex: 2
-            }
-        }
-    })
-)(TableCell);
-
-const StyledTableRow = withStyles(() =>
-    createStyles({
-        root: {
-            margin: '50px',
-
-            border: '2px solid red'
-        }
-    })
-)(TableRow);
+import FarmingStyledTableCell from "../../../components/farming/FarmingStyledCell";
+import FarmingStyledTableRow from "../../../components/farming/FarmingStyledTableRow";
 
 const useStyles = makeStyles((theme) => createStyles({
     table: {
@@ -153,22 +120,22 @@ export default function StakeAll() {
 
     const renderRow = (farm: FarmConfig, index: number) => {
         return (
-            <StyledTableRow key={farm.rewardTokenId}>
-                <StyledTableCell align='center'>
+            <FarmingStyledTableRow key={farm.rewardTokenId}>
+                <FarmingStyledTableCell align='center'>
                     <IconSelect src={farm.rewardTokenThumbnailUri}/>
-                </StyledTableCell>
-                <StyledTableCell align='center'>
+                </FarmingStyledTableCell>
+                <FarmingStyledTableCell align='center'>
                     {farm.rewardTokenSymbol}
-                </StyledTableCell>
-                <StyledTableCell
-                    align='center'>{new BigNumber(farm.farmTotalStaked).shiftedBy(-farm.farmStakedToken.decimals).toString(10)}</StyledTableCell>
-                <StyledTableCell align='center'>{findCurrentWalletBalance(farm)}</StyledTableCell>
-                <StyledTableCell align='center'>
+                </FarmingStyledTableCell>
+                <FarmingStyledTableCell
+                    align='center'>{new BigNumber(farm.farmTotalStaked).shiftedBy(-farm.farmStakedToken.decimals).toString(10)}</FarmingStyledTableCell>
+                <FarmingStyledTableCell align='center'>{findCurrentWalletBalance(farm)}</FarmingStyledTableCell>
+                <FarmingStyledTableCell align='center'>
                     <input className={classes.input} type='number' onChange={(e) => valueHandler(e, index)}
                            placeholder='Enter Amount...'>
                     </input>
-                </StyledTableCell>
-            </StyledTableRow>
+                </FarmingStyledTableCell>
+            </FarmingStyledTableRow>
         );
     };
 
@@ -182,11 +149,11 @@ export default function StakeAll() {
                     <Table className={classes.table}>
                         <TableHead>
                             <TableRow>
-                                <StyledTableCell align='center'>Symbol</StyledTableCell>
-                                <StyledTableCell align='center'>Token Name</StyledTableCell>
-                                <StyledTableCell align='center'>Total Global Stake</StyledTableCell>
-                                <StyledTableCell align='center'>Your current Stake</StyledTableCell>
-                                <StyledTableCell align='center'>New Stake</StyledTableCell>
+                                <FarmingStyledTableCell align='center'>Symbol</FarmingStyledTableCell>
+                                <FarmingStyledTableCell align='center'>Token Name</FarmingStyledTableCell>
+                                <FarmingStyledTableCell align='center'>Total Global Stake</FarmingStyledTableCell>
+                                <FarmingStyledTableCell align='center'>Your current Stake</FarmingStyledTableCell>
+                                <FarmingStyledTableCell align='center'>New Stake</FarmingStyledTableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
@@ -194,23 +161,22 @@ export default function StakeAll() {
                                 farms.map((farmConfig, index) => renderRow(farmConfig, index)) :
                                 <TableRow><TableCell>No data to display...</TableCell></TableRow>
                             }
-                            <StyledTableRow>
-                                <StyledTableCell align='center'>
-                                </StyledTableCell>
-                                <StyledTableCell align='center'>
+                            <FarmingStyledTableRow>
+                                <FarmingStyledTableCell align='center'>
+                                </FarmingStyledTableCell>
+                                <FarmingStyledTableCell align='center'>
                                     <Typography>
                                         Totals:
                                     </Typography>
-
-                                </StyledTableCell>
-                                <StyledTableCell></StyledTableCell>
-                                <StyledTableCell>0</StyledTableCell>
-                                <StyledTableCell>
+                                </FarmingStyledTableCell>
+                                <FarmingStyledTableCell></FarmingStyledTableCell>
+                                <FarmingStyledTableCell>0</FarmingStyledTableCell>
+                                <FarmingStyledTableCell>
                                     <Typography>
                                         {total}
                                     </Typography>
-                                </StyledTableCell>
-                            </StyledTableRow>
+                                </FarmingStyledTableCell>
+                            </FarmingStyledTableRow>
                         </TableBody>
                     </Table>
                 </TableContainer>
