@@ -1,4 +1,3 @@
-
 import {Box, Typography} from "@material-ui/core";
 import TableContainer from "@material-ui/core/TableContainer";
 import Table from "@material-ui/core/Table";
@@ -70,70 +69,38 @@ export default function StakeAll() {
     const indexerApi = useIndexerApi();
     const walletContext = useWalletContext();
     const [stakingBalances, setStakingBalances] = useState<IndexerContractBalance[]>([]);
-    const {stakeAllStatus, stakeAll} = useStakeAll([
-        {
-            amount: 100,
-            contract: "KT1EsrWB1fpPrwz2E3RWTHxL6p146gXeV4xB"
-        },
-        {
-            amount: 11,
-            contract: "KT1BWxkr6c1w6q29WPHKH28ZUo4xJM2yZJUq"
+    const [newStakes, setNewStakes] = useState<NewStake[]>([]);
+    const {stakeAllStatus, stakeAll} = useStakeAll(newStakes);
+
+    const inputChangeHandler = (event: any, contract: string) => {
+        if (typeof event.target.value !== "undefined" && !isNaN(event.target.value)) {
+            const existingNewStake = newStakes.find((newStake) => {
+                return newStake.contract === contract;
+            });
+
+            if (existingNewStake) {
+                setNewStakes(newStakes.map((newStake) => {
+                    if (newStake.contract === contract) {
+                        newStake.amount = event.target.value === "" ? 0 : parseInt(event.target.value);
+                    }
+                    return newStake;
+                }));
+            } else {
+                const newNewStakes = newStakes.slice();
+                newNewStakes.push({
+                    contract: contract,
+                    amount: event.target.value === "" ? 0 : parseInt(event.target.value)
+                });
+                setNewStakes(newNewStakes);
+            }
         }
-    ]);
-
-    const [values, setValues] = useState([]);
-
-    const changeHandler = (e: any, index: number) => {
-
-
-        // make a copy of an array
-        // let copy: never[] = [...values]
-        // copy[index] = e.target.value
-        // let copy = values.map((x) => x)
-
-        // copy.split`,`.map(x=>+x)
-
-        // make sure is array of numbers type
-        // ??...
-
-        // let newCopy = copy.map((i, index) => { return parseInt(i) })
-        // setValues(newCopy)
-
-
-
-        let val: any[] = values;
-        let newArr: never[] = [];
-
-        // console.log('newArr', newArr)
-        val[index] = e.target.value;
-
-        // make change here to take care of values you must reject
-        if(Number(isNaN(val[index]))) {
-            val[index] = e.target.value || "0";
-        }
-        // Array.from(values, i => i || 0)
-
-        console.log(values)
-
-
-
-        setValues(newArr.concat(values))
-
-
-
     }
 
-    const total = () => {
-        // try to not need this
-        let arr = values.map((v) => {
-            return parseInt(v)
-        })
-
-
-        return arr.reduce((a, b) => a + b, 0);
+    const total = (): number => {
+        return newStakes.reduce((total, elt) => {
+            return total + elt.amount;
+        }, 0);
     }
-
-   
 
     useEffect(() => {
         const loadBalances = async () => {
@@ -154,30 +121,26 @@ export default function StakeAll() {
             new BigNumber(contractBalance.balance).shiftedBy(-farm.farmStakedToken.decimals).toString(10) : "0";
     };
 
-    const renderRow = (farm: FarmConfig, index: number) => {
+    const renderRow = (farm: FarmConfig) => {
         return (
-            <FarmingStyledTableRow key={farm.rewardTokenId}>
+            <FarmingStyledTableRow key={farm.farmContractAddress}>
                 <FarmingStyledTableCell align='center'>
                     <IconSelect src={farm.rewardTokenThumbnailUri}/>
                 </FarmingStyledTableCell>
                 <FarmingStyledTableCell align='center'>
                     {farm.rewardTokenSymbol}
-
                 </FarmingStyledTableCell>
                 <FarmingStyledTableCell
                     align='center'>{new BigNumber(farm.farmTotalStaked).shiftedBy(-farm.farmStakedToken.decimals).toString(10)}</FarmingStyledTableCell>
                 <FarmingStyledTableCell align='center'>{findCurrentWalletBalance(farm)}</FarmingStyledTableCell>
                 <FarmingStyledTableCell align='center'>
-                    <input className={classes.input} type='number' onChange={(e) => changeHandler(e, index)}
-                           placeholder='Enter Amount...'>
-
-                    </input>
+                    <input className={classes.input} type='number'
+                           onChange={(e) => inputChangeHandler(e, farm.farmContractAddress)}
+                           placeholder='Enter Amount...'/>
                 </FarmingStyledTableCell>
             </FarmingStyledTableRow>
         );
     };
-
-    let active = farms.length > 0;
 
     return (
         <>
@@ -195,8 +158,8 @@ export default function StakeAll() {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {active ?
-                                farms.map((farmConfig, index) => renderRow(farmConfig, index)) :
+                            {farms.length > 0 ?
+                                farms.map((farmConfig) => renderRow(farmConfig)) :
                                 <TableRow><TableCell>No data to display...</TableCell></TableRow>
                             }
                             <FarmingStyledTableRow>
