@@ -56,9 +56,9 @@ export default function useClaimAll(farms: FarmConfig[]) {
         const api = new FarmingContractApi(library!);
         setStatus(ClaimAllStatus.UNSTAKING);
         try {
-            // await api.claimAll(stakingBalances);
+            await api.claimAll(claimBalances);
             setStatus(ClaimAllStatus.NOT_READY);
-            enqueueSnackbar('Unstaking done', {variant: 'success'});
+            enqueueSnackbar('Claiming done', {variant: 'success'});
         } catch (error) {
             enqueueSnackbar(error.description, {variant: 'error'});
             setStatus(ClaimAllStatus.READY);

@@ -12,13 +12,15 @@ import {FarmConfig} from "../../../config";
 import IconSelect from "../../../screens/farming/FarmToken";
 import BigNumber from "bignumber.js";
 import {useConfig, useIndexerApi} from "../../../runtime/config/ConfigContext";
-import {useTezosContext} from "../../tezos/TezosContext";
 import {IndexerContractBalance} from "../../indexer/indexerApi";
 import {createStyles, makeStyles} from "@material-ui/core/styles";
 import {paths} from "../../../screens/routes";
 import FarmingContractHeader from "../../../components/farming/FarmingContractHeader";
 import FarmingStyledTableCell from "../../../components/farming/FarmingStyledCell";
 import FarmingStyledTableRow from "../../../components/farming/FarmingStyledTableRow";
+import useStakeAll, {NewStake, StakeAllStatus} from "./hook/useStakeAll";
+import WalletConnection from "../../../components/tezos/WalletConnection";
+import {useWalletContext} from "../../../runtime/wallet/WalletContext";
 
 const useStyles = makeStyles((theme) => createStyles({
     table: {
@@ -65,8 +67,18 @@ export default function StakeAll() {
     const classes = useStyles();
     const {farms} = useConfig();
     const indexerApi = useIndexerApi();
-    const currentWallet = useTezosContext();
+    const walletContext = useWalletContext();
     const [stakingBalances, setStakingBalances] = useState<IndexerContractBalance[]>([]);
+    const {stakeAllStatus, stakeAll} = useStakeAll([
+        {
+            amount: 100,
+            contract: "KT1EsrWB1fpPrwz2E3RWTHxL6p146gXeV4xB"
+        },
+        {
+            amount: 11,
+            contract: "KT1BWxkr6c1w6q29WPHKH28ZUo4xJM2yZJUq"
+        }
+    ]);
 
     const [values, setValues] = useState([]);
     const [value1, setValue1] = useState(0);
@@ -123,20 +135,20 @@ export default function StakeAll() {
         let totalAll = [val1, val2, val3];
 
 
-        return totalAll.reduce((a, b) => a + b,0)
+        return totalAll.reduce((a, b) => a + b, 0)
     }
 
 
     useEffect(() => {
         const loadBalances = async () => {
-            if (currentWallet.account) {
-                setStakingBalances(await indexerApi.fetchCurrentUserFarmingConfiguration(currentWallet.account));
+            if (walletContext.tezos.account) {
+                setStakingBalances(await indexerApi.fetchCurrentUserFarmingConfiguration(walletContext.tezos.account));
             }
         }
 
         // noinspection JSIgnoredPromiseFromCall
         loadBalances();
-    }, [currentWallet.account]);
+    }, [walletContext.tezos.account]);
 
     const findCurrentWalletBalance = (farm: FarmConfig): string => {
         const contractBalance = stakingBalances.find((elt) => {
@@ -209,14 +221,24 @@ export default function StakeAll() {
                     </Table>
                 </TableContainer>
                 <PaperFooter className={classes.footer}>
-                    <LoadableButton
-                        loading={false}
-                        onClick={() => {
-                        }}
-                        disabled={false}
-                        text={'Stake On All Farms'}
-                        variant={'contained'}
-                    />
+                    {stakeAllStatus !== StakeAllStatus.NOT_CONNECTED && (
+                        <LoadableButton
+                            loading={stakeAllStatus === StakeAllStatus.UNSTAKING}
+                            onClick={async () => {
+                                await stakeAll();
+                                // fakeResetBalances();
+                            }}
+                            disabled={stakeAllStatus !== StakeAllStatus.READY}
+                            text={`Stake on all farms`}
+                            variant={'contained'}
+                        />
+                    )}
+                    {stakeAllStatus === StakeAllStatus.NOT_CONNECTED && (
+                        <WalletConnection withConnectionStatus={false} account={walletContext.tezos.account}
+                                          connectionStatus={walletContext.tezos.status}
+                                          activate={walletContext.tezos.activate}
+                                          deactivate={walletContext.tezos.deactivate}/>
+                    )}
                 </PaperFooter>
             </Box>
         </>

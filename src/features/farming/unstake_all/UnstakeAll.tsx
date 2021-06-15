@@ -1,5 +1,5 @@
 import FarmingContractHeader from "../../../components/farming/FarmingContractHeader";
-import {Box, Table, TableBody} from "@material-ui/core";
+import {Box, Table, TableBody, Typography} from "@material-ui/core";
 import {paths} from "../../../screens/routes";
 import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
@@ -72,7 +72,19 @@ export default function UnstakeAll() {
     useEffect(() => {
         const loadBalances = async () => {
             if (walletContext.tezos.account) {
-                setStakingBalances(await indexerApi.fetchCurrentUserFarmingConfiguration(walletContext.tezos.account));
+                const currentIndexerStakingBalances = await indexerApi.fetchCurrentUserFarmingConfiguration(walletContext.tezos.account);
+                const stakingBalancesToKeep = currentIndexerStakingBalances.map((currentIndexerStakingBalance) => {
+                    const stateStakingBalance = stakingBalances.find((stakingBalance) => {
+                        return stakingBalance.contract === currentIndexerStakingBalance.contract;
+                    });
+
+                    if (stateStakingBalance && stateStakingBalance.maxLevelProcessed >= currentIndexerStakingBalance.maxLevelProcessed) {
+                        return stateStakingBalance;
+                    }
+                    return currentIndexerStakingBalance;
+                });
+
+                setStakingBalances(stakingBalancesToKeep);
             }
         }
 
@@ -102,9 +114,16 @@ export default function UnstakeAll() {
         );
     };
 
+    const total = () => {
+        return stakingBalances.reduce((total, contract) => {
+            return total.plus(contract.balance);
+        }, new BigNumber(0)).shiftedBy(-8).toString(10);
+    }
+
     const fakeResetBalances = () => {
         setStakingBalances(stakingBalances.map((stake) => {
-            stake.balance = 0;
+            stake.balance = "0";
+            return stake;
         }));
     }
 
@@ -135,10 +154,11 @@ export default function UnstakeAll() {
                             loading={unstakeAllStatus === UnstakeAllStatus.UNSTAKING}
                             onClick={async () => {
                                 await unstakeAll();
+                                fakeResetBalances();
                                 //todo reset inputs
                             }}
                             disabled={unstakeAllStatus !== UnstakeAllStatus.READY}
-                            text={"Unstake from all farms"}
+                            text={`Unstake ${total()} $WRAP tokens`}
                             variant={'contained'}
                         />
                     )}

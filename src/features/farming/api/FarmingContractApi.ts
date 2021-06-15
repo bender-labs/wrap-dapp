@@ -3,6 +3,7 @@ import {tzip16} from '@taquito/tzip16';
 import BigNumber from 'bignumber.js';
 import {IndexerContractBalance} from "../../indexer/indexerApi";
 import {FarmConfig} from "../../../config";
+import {NewStake} from "../stake_all/hook/useStakeAll";
 
 export interface FarmConfigWithClaimBalances extends FarmConfig {
     earned: BigNumber;
@@ -46,6 +47,24 @@ export default class FarmingContractApi {
         return opg.opHash;
     }
 
+    public async stakeAll(stakingBalances: NewStake[]): Promise<string> {
+        //todo operators
+
+
+        const stakes = await Promise.all(stakingBalances.map(async (stake): Promise<WalletParamsWithKind> => {
+            const farmContract = await this.library.contract.at(stake.contract);
+
+            return {
+                kind: OpKind.TRANSACTION,
+                ...farmContract.methods.stake(stake.amount).toTransferParams()
+            };
+        }));
+
+        const opg = await this.library.wallet.batch().with(stakes).send();
+        await opg.receipt();
+        return opg.opHash;
+    }
+
     public async unstake(
         amount: BigNumber,
         farmContractAddress: string
@@ -82,21 +101,34 @@ export default class FarmingContractApi {
         return opg.opHash;
     }
 
+    public async claimAll(claimBalances: FarmConfigWithClaimBalances[]): Promise<string> {
+        const claims = await Promise.all(claimBalances.filter((claim) => {
+            return new BigNumber(claim.earned).gt(0);
+        }).map(async (claim): Promise<WalletParamsWithKind> => {
+            const farmContract = await this.library.contract.at(claim.farmContractAddress);
+
+            return {
+                kind: OpKind.TRANSACTION,
+                ...farmContract.methods.claim({}).toTransferParams()
+            };
+        }));
+
+        const opg = await this.library.wallet.batch().with(claims).send();
+        await opg.receipt();
+        return opg.opHash;
+    }
+
     public async unstakeAll(stakingBalances: IndexerContractBalance[]): Promise<string> {
         const unstakes = await Promise.all(stakingBalances.filter((stake) => {
             return new BigNumber(stake.balance).gt(0);
         }).map(async (stake): Promise<WalletParamsWithKind> => {
             const farmContract = await this.library.contract.at(stake.contract);
 
-            console.log(farmContract.methods.withdraw(stake.balance).toTransferParams());
-
             return {
                 kind: OpKind.TRANSACTION,
                 ...farmContract.methods.withdraw(stake.balance).toTransferParams()
             };
         }));
-
-        console.log(unstakes);
 
         const opg = await this.library.wallet.batch().with(unstakes).send();
         await opg.receipt();
