@@ -1,3 +1,4 @@
+
 import {Box, Typography} from "@material-ui/core";
 import TableContainer from "@material-ui/core/TableContainer";
 import Table from "@material-ui/core/Table";
@@ -81,63 +82,58 @@ export default function StakeAll() {
     ]);
 
     const [values, setValues] = useState([]);
-    const [value1, setValue1] = useState(0);
-    const [value2, setValue2] = useState(0);
-    const [value3, setValue3] = useState(0);
 
-    const valueHandler = (e: any, index: number) => {
-        switch (index) {
-            case 0:
-                setValue1(parseInt(e.target.value));
-                break;
-            case 1:
-                setValue2(parseInt(e.target.value));
-                break;
-            case 2:
-                setValue3(parseInt(e.target.value));
-                break;
-            default:
-                return;
-        }
-    }
+    const changeHandler = (e: any, index: number) => {
 
-    const newValueHandler = (e: any, index: number) => {
+
+        // make a copy of an array
+        // let copy: never[] = [...values]
+        // copy[index] = e.target.value
+        // let copy = values.map((x) => x)
+
+        // copy.split`,`.map(x=>+x)
+
+        // make sure is array of numbers type
+        // ??...
+
+        // let newCopy = copy.map((i, index) => { return parseInt(i) })
+        // setValues(newCopy)
+
+
 
         let val: any[] = values;
+        let newArr: never[] = [];
+
+        // console.log('newArr', newArr)
         val[index] = e.target.value;
-        setValues(values)
 
-        // setValues(values.concat(e.target.value))
-        // let newArr = []
-        // newArr.push(parseInt(val[index]))
+        // make change here to take care of values you must reject
+        if(Number(isNaN(val[index]))) {
+            val[index] = e.target.value || "0";
+        }
+        // Array.from(values, i => i || 0)
 
-        // console.log(newValues[index][e.target.name]) = e.target.value;
-        // console.log(newValues)
-        // console.log(newArr)
-        // console.log('parsed val[index]', parseInt(val[index]))
-        console.log('values', values)
+        console.log(values)
+
+
+
+        setValues(newArr.concat(values))
+
+
 
     }
 
-    const totalA = () => {
+    const total = () => {
+        // try to not need this
         let arr = values.map((v) => {
             return parseInt(v)
         })
 
-        let total = arr.reduce((a, b) => a + b, 0);
-        return total;
+
+        return arr.reduce((a, b) => a + b, 0);
     }
 
-    const totalB = () => {
-        let val1 = value1;
-        let val2 = value2;
-        let val3 = value3;
-        let totalAll = [val1, val2, val3];
-
-
-        return totalAll.reduce((a, b) => a + b, 0)
-    }
-
+   
 
     useEffect(() => {
         const loadBalances = async () => {
@@ -166,13 +162,15 @@ export default function StakeAll() {
                 </FarmingStyledTableCell>
                 <FarmingStyledTableCell align='center'>
                     {farm.rewardTokenSymbol}
+
                 </FarmingStyledTableCell>
                 <FarmingStyledTableCell
                     align='center'>{new BigNumber(farm.farmTotalStaked).shiftedBy(-farm.farmStakedToken.decimals).toString(10)}</FarmingStyledTableCell>
                 <FarmingStyledTableCell align='center'>{findCurrentWalletBalance(farm)}</FarmingStyledTableCell>
                 <FarmingStyledTableCell align='center'>
-                    <input className={classes.input} type='number' onChange={(e) => valueHandler(e, index)}
+                    <input className={classes.input} type='number' onChange={(e) => changeHandler(e, index)}
                            placeholder='Enter Amount...'>
+
                     </input>
                 </FarmingStyledTableCell>
             </FarmingStyledTableRow>
@@ -213,7 +211,7 @@ export default function StakeAll() {
                                 <FarmingStyledTableCell>0</FarmingStyledTableCell>
                                 <FarmingStyledTableCell>
                                     <Typography>
-                                        {totalA()}
+                                        {total()}
                                     </Typography>
                                 </FarmingStyledTableCell>
                             </FarmingStyledTableRow>
