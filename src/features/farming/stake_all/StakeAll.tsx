@@ -1,22 +1,22 @@
-import {Box, Typography, withStyles} from "@material-ui/core";
-import TableContainer from "@material-ui/core/TableContainer";
-import Table from "@material-ui/core/Table";
-import TableHead from "@material-ui/core/TableHead";
-import TableRow from "@material-ui/core/TableRow";
-import TableBody from "@material-ui/core/TableBody";
-import TableCell from "@material-ui/core/TableCell";
-import {PaperFooter} from "../../../components/paper/Paper";
-import LoadableButton from "../../../components/button/LoadableButton";
-import React, {useEffect, useState} from "react";
-import {FarmConfig} from "../../../config";
-import IconSelect from "../../../screens/farming/FarmToken";
-import BigNumber from "bignumber.js";
-import {useConfig, useIndexerApi} from "../../../runtime/config/ConfigContext";
-import {useTezosContext} from "../../tezos/TezosContext";
-import {IndexerContractBalance} from "../../indexer/indexerApi";
-import {createStyles, makeStyles} from "@material-ui/core/styles";
-import {paths} from "../../../screens/routes";
-import FarmingContractHeader from "../../../components/farming/FarmingContractHeader";
+import { Box, Typography, withStyles } from '@material-ui/core';
+import TableContainer from '@material-ui/core/TableContainer';
+import Table from '@material-ui/core/Table';
+import TableHead from '@material-ui/core/TableHead';
+import TableRow from '@material-ui/core/TableRow';
+import TableBody from '@material-ui/core/TableBody';
+import TableCell from '@material-ui/core/TableCell';
+import { PaperFooter } from '../../../components/paper/Paper';
+import LoadableButton from '../../../components/button/LoadableButton';
+import React, { useEffect, useState } from 'react';
+import { FarmConfig } from '../../../config';
+import IconSelect from '../../../screens/farming/FarmToken';
+import BigNumber from 'bignumber.js';
+import { useConfig, useIndexerApi } from '../../../runtime/config/ConfigContext';
+import { useTezosContext } from '../../tezos/TezosContext';
+import { IndexerContractBalance } from '../../indexer/indexerApi';
+import { createStyles, makeStyles } from '@material-ui/core/styles';
+import { paths } from '../../../screens/routes';
+import FarmingContractHeader from '../../../components/farming/FarmingContractHeader';
 
 const StyledTableCell = withStyles(() =>
     createStyles({
@@ -102,63 +102,58 @@ export default function StakeAll() {
     const [stakingBalances, setStakingBalances] = useState<IndexerContractBalance[]>([]);
 
     const [values, setValues] = useState([]);
-    const [value1, setValue1] = useState(0);
-    const [value2, setValue2] = useState(0);
-    const [value3, setValue3] = useState(0);
 
-    const valueHandler = (e: any, index: number) => {
-        switch (index) {
-            case 0:
-                setValue1(parseInt(e.target.value));
-                break;
-            case 1:
-                setValue2(parseInt(e.target.value));
-                break;
-            case 2:
-                setValue3(parseInt(e.target.value));
-                break;
-            default:
-                return;
-        }
-    }
+    const changeHandler = (e: any, index: number) => {
 
-    const newValueHandler = (e: any, index: number) => {
+
+        // make a copy of an array
+        // let copy: never[] = [...values]
+        // copy[index] = e.target.value
+        // let copy = values.map((x) => x)
+
+        // copy.split`,`.map(x=>+x)
+
+        // make sure is array of numbers type
+        // ??...
+
+        // let newCopy = copy.map((i, index) => { return parseInt(i) })
+        // setValues(newCopy)
+
+
 
         let val: any[] = values;
+        let newArr: never[] = [];
+
+        // console.log('newArr', newArr)
         val[index] = e.target.value;
-        setValues(values)
 
-        // setValues(values.concat(e.target.value))
-        // let newArr = []
-        // newArr.push(parseInt(val[index]))
+        // make change here to take care of values you must reject
+        if(Number(isNaN(val[index]))) {
+            val[index] = e.target.value || "0";
+        }
+        // Array.from(values, i => i || 0)
 
-        // console.log(newValues[index][e.target.name]) = e.target.value;
-        // console.log(newValues)
-        // console.log(newArr)
-        // console.log('parsed val[index]', parseInt(val[index]))
-        console.log('values', values)
+        console.log(values)
+
+
+
+        setValues(newArr.concat(values))
+
+
 
     }
 
-    const totalA = () => {
+    const total = () => {
+        // try to not need this
         let arr = values.map((v) => {
             return parseInt(v)
         })
 
-        let total = arr.reduce((a, b) => a + b, 0);
-        return total;
+
+        return arr.reduce((a, b) => a + b, 0);
     }
 
-    const totalB = () => {
-        let val1 = value1;
-        let val2 = value2;
-        let val3 = value3;
-        let totalAll = [val1, val2, val3];
-
-
-        return totalAll.reduce((a, b) => a + b,0)
-    }
-
+   
 
     useEffect(() => {
         const loadBalances = async () => {
@@ -193,9 +188,10 @@ export default function StakeAll() {
                 <StyledTableCell align='center'>{findCurrentWalletBalance(farm)}</StyledTableCell>
                 <StyledTableCell align='center'>
                     <input
+                      min="0"
                       className={classes.input}
                       type='number'
-                      onChange={(e) => newValueHandler(e, index)}
+                      onChange={(e) => changeHandler(e, index)}
                       placeholder='Enter Amount...'
                     >
                     </input>
@@ -241,7 +237,7 @@ export default function StakeAll() {
                                 <StyledTableCell>0</StyledTableCell>
                                 <StyledTableCell>
                                     <Typography>
-                                        {totalA()}
+                                        {total()}
                                     </Typography>
                                 </StyledTableCell>
                             </StyledTableRow>
