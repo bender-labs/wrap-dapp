@@ -11,7 +11,6 @@ import FarmingContractHeader from '../../../components/farming/FarmingContractHe
 import {useWalletContext} from "../../../runtime/wallet/WalletContext";
 import {paths} from "../../../screens/routes";
 
-
 export function Unstake({farm, onApply, farmBalances, inputBalance}: FarmingContractActionsProps) {
     const {unstakeStatus, amount, changeAmount, unstake} = useUnstake(
         farm,
