@@ -70,7 +70,7 @@ function Rewards({
       .shiftedBy(-farmConfig.rewardTokenDecimals)
       .dp(8)
       .toString(10);
-    const currentStakedTotens = new BigNumber(farmConfig.farmTotalStaked)
+    const currentStakedTotens = new BigNumber(farmConfig.farmTotalStaked ?? 0)
       .shiftedBy(-farmConfig.farmStakedToken.decimals)
       .dp(8)
       .toString(10);

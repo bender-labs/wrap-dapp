@@ -83,7 +83,7 @@ export default function FarmChoice() {
 
     const totalStaked = farms
         .reduce((total, farm) => {
-            const staked = new BigNumber(farm.farmTotalStaked).shiftedBy(
+            const staked = new BigNumber(farm.farmTotalStaked ?? 0).shiftedBy(
                 -farm.farmStakedToken.decimals
             );
             return total.plus(staked);

@@ -18,9 +18,9 @@ import {paths} from "../../../screens/routes";
 import FarmingContractHeader from "../../../components/farming/FarmingContractHeader";
 import FarmingStyledTableCell from "../../../components/farming/FarmingStyledCell";
 import FarmingStyledTableRow from "../../../components/farming/FarmingStyledTableRow";
-import useStakeAll, {NewStake, StakeAllStatus} from "./hook/useStakeAll";
 import WalletConnection from "../../../components/tezos/WalletConnection";
 import {useWalletContext} from "../../../runtime/wallet/WalletContext";
+import useStakeAll, {NewStake, StakeAllStatus} from "./hook/useStakeAll";
 
 const useStyles = makeStyles((theme) => createStyles({
     table: {
@@ -72,27 +72,36 @@ export default function StakeAll() {
     const [newStakes, setNewStakes] = useState<NewStake[]>([]);
     const {stakeAllStatus, stakeAll} = useStakeAll(newStakes);
 
-    const inputChangeHandler = (event: any, contract: string) => {
-        if (typeof event.target.value !== "undefined" && !isNaN(event.target.value)) {
-            const existingNewStake = newStakes.find((newStake) => {
-                return newStake.contract === contract;
-            });
+    const inputChangeHandler = (event: any, contract: string, farmStakedTokenAddress: string, decimals: number) => {
+        let newAmount = 0;
 
-            if (existingNewStake) {
-                setNewStakes(newStakes.map((newStake) => {
-                    if (newStake.contract === contract) {
-                        newStake.amount = event.target.value === "" ? 0 : parseInt(event.target.value);
-                    }
-                    return newStake;
-                }));
-            } else {
-                const newNewStakes = newStakes.slice();
-                newNewStakes.push({
-                    contract: contract,
-                    amount: event.target.value === "" ? 0 : parseInt(event.target.value)
-                });
-                setNewStakes(newNewStakes);
+        if (typeof event.target.value !== "undefined" && !isNaN(event.target.value) && event.target.value !== "") {
+            let eventAmount = parseInt(event.target.value);
+            if (eventAmount > 0) {
+                newAmount = eventAmount;
             }
+        }
+
+        const existingNewStake = newStakes.find((newStake) => {
+            return newStake.contract === contract;
+        });
+
+        if (existingNewStake) {
+            setNewStakes(newStakes.map((newStake) => {
+                if (newStake.contract === contract) {
+                    newStake.amount = newAmount
+                }
+                return newStake;
+            }));
+        } else {
+            const newNewStakes = newStakes.slice();
+            newNewStakes.push({
+                contract: contract,
+                farmStakedToken: farmStakedTokenAddress,
+                amount: newAmount,
+                stakeDecimals: decimals
+            });
+            setNewStakes(newNewStakes);
         }
     }
 
@@ -130,12 +139,13 @@ export default function StakeAll() {
                 <FarmingStyledTableCell align='center'>
                     {farm.rewardTokenSymbol}
                 </FarmingStyledTableCell>
-                <FarmingStyledTableCell
-                    align='center'>{new BigNumber(farm.farmTotalStaked).shiftedBy(-farm.farmStakedToken.decimals).toString(10)}</FarmingStyledTableCell>
+                <FarmingStyledTableCell align='center'>
+                    {new BigNumber(farm.farmTotalStaked ?? 0).shiftedBy(-farm.farmStakedToken.decimals).toString(10)}
+                </FarmingStyledTableCell>
                 <FarmingStyledTableCell align='center'>{findCurrentWalletBalance(farm)}</FarmingStyledTableCell>
                 <FarmingStyledTableCell align='center'>
                     <input className={classes.input} type='number'
-                           onChange={(e) => inputChangeHandler(e, farm.farmContractAddress)}
+                           onChange={(e) => inputChangeHandler(e, farm.farmContractAddress, farm.farmStakedToken.contractAddress, farm.farmStakedToken.decimals)}
                            placeholder='Enter Amount...'/>
                 </FarmingStyledTableCell>
             </FarmingStyledTableRow>
@@ -163,15 +173,14 @@ export default function StakeAll() {
                                 <TableRow><TableCell>No data to display...</TableCell></TableRow>
                             }
                             <FarmingStyledTableRow>
-                                <FarmingStyledTableCell align='center'>
-                                </FarmingStyledTableCell>
-                                <FarmingStyledTableCell align='center'>
+                                <FarmingStyledTableCell align='center'/>
+                                <FarmingStyledTableCell align='center'/>
+                                <FarmingStyledTableCell/>
+                                <FarmingStyledTableCell>
                                     <Typography>
-                                        Totals:
+                                        Total :
                                     </Typography>
                                 </FarmingStyledTableCell>
-                                <FarmingStyledTableCell></FarmingStyledTableCell>
-                                <FarmingStyledTableCell>0</FarmingStyledTableCell>
                                 <FarmingStyledTableCell>
                                     <Typography>
                                         {total()}
@@ -186,7 +195,7 @@ export default function StakeAll() {
                         <LoadableButton
                             loading={stakeAllStatus === StakeAllStatus.UNSTAKING}
                             onClick={async () => {
-                                await stakeAll();
+                                await stakeAll(newStakes);
                                 // fakeResetBalances();
                             }}
                             disabled={stakeAllStatus !== StakeAllStatus.READY}

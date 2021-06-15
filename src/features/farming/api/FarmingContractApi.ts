@@ -47,20 +47,41 @@ export default class FarmingContractApi {
         return opg.opHash;
     }
 
-    public async stakeAll(stakingBalances: NewStake[]): Promise<string> {
-        //todo operators
+    public async stakeAll(newStakes: NewStake[], account: string): Promise<string> {
 
+        const operators = await Promise.all(newStakes.map(async (stake): Promise<WalletParamsWithKind> => {
+            const farmStakeContract = await this.library.contract.at(stake.farmStakedToken);
 
-        const stakes = await Promise.all(stakingBalances.map(async (stake): Promise<WalletParamsWithKind> => {
+            const addOperator = farmStakeContract.methods
+                .update_operators([
+                    {
+                        add_operator: {
+                            owner: account,
+                            operator: stake.contract,
+                            token_id: 0,
+                        },
+                    }
+                ]);
+
+            return {
+                kind: OpKind.TRANSACTION,
+                ...addOperator.toTransferParams()
+            }
+        }));
+
+        const stakes = await Promise.all(newStakes.map(async (stake): Promise<WalletParamsWithKind> => {
             const farmContract = await this.library.contract.at(stake.contract);
 
             return {
                 kind: OpKind.TRANSACTION,
-                ...farmContract.methods.stake(stake.amount).toTransferParams()
+                ...farmContract.methods.stake(new BigNumber(stake.amount).shiftedBy(stake.stakeDecimals).toString(10)).toTransferParams()
             };
         }));
 
-        const opg = await this.library.wallet.batch().with(stakes).send();
+        const opg = await this.library.wallet.batch()
+            .with(operators)
+            .with(stakes)
+            .send();
         await opg.receipt();
         return opg.opHash;
     }

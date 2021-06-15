@@ -155,7 +155,6 @@ export default function UnstakeAll() {
                             onClick={async () => {
                                 await unstakeAll();
                                 fakeResetBalances();
-                                //todo reset inputs
                             }}
                             disabled={unstakeAllStatus !== UnstakeAllStatus.READY}
                             text={`Unstake ${total()} $WRAP tokens`}

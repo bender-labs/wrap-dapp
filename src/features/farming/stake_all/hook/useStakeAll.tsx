@@ -8,6 +8,8 @@ import BigNumber from "bignumber.js";
 export interface NewStake {
     amount: number;
     contract: string;
+    farmStakedToken: string;
+    stakeDecimals: number;
 }
 
 export enum StakeAllStatus {
@@ -17,8 +19,8 @@ export enum StakeAllStatus {
     UNSTAKING = 'UNSTAKING',
 }
 
-const nextStatus = (stakingBalances: NewStake[]) => {
-    const balance = stakingBalances.reduce((acc, elt) => {
+const nextStatus = (newStakes: NewStake[]) => {
+    const balance = newStakes.reduce((acc, elt) => {
         return acc.plus(elt.amount);
     }, new BigNumber(0));
 
@@ -28,7 +30,7 @@ const nextStatus = (stakingBalances: NewStake[]) => {
     return StakeAllStatus.NOT_READY;
 };
 
-export default function useStakeAll(stakingBalances: NewStake[]) {
+export default function useStakeAll(newStakes: NewStake[]) {
     const walletContext = useWalletContext();
     const {status, library, account} = walletContext.tezos;
     const {enqueueSnackbar} = useSnackbar();
@@ -41,16 +43,16 @@ export default function useStakeAll(stakingBalances: NewStake[]) {
             setStatus(StakeAllStatus.NOT_CONNECTED);
             return;
         }
-        setStatus(nextStatus(stakingBalances));
-    }, [connected, stakingBalances]);
+        setStatus(nextStatus(newStakes));
+    }, [connected, newStakes]);
 
-    const stakeAll = useCallback(async () => {
+    const stakeAll = useCallback(async (newStakes: NewStake[]) => {
         const api = new FarmingContractApi(library!);
         setStatus(StakeAllStatus.UNSTAKING);
         try {
-            await api.stakeAll(stakingBalances);
+            await api.stakeAll(newStakes, account!);
             setStatus(StakeAllStatus.NOT_READY);
-            enqueueSnackbar('Unstaking done', {variant: 'success'});
+            enqueueSnackbar('Staking done', {variant: 'success'});
         } catch (error) {
             enqueueSnackbar(error.description, {variant: 'error'});
             setStatus(StakeAllStatus.READY);
