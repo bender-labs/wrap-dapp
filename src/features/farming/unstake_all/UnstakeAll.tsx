@@ -73,13 +73,14 @@ export default function UnstakeAll() {
         const loadBalances = async () => {
             if (walletContext.tezos.account) {
                 const currentIndexerStakingBalances = await indexerApi.fetchCurrentUserFarmingConfiguration(walletContext.tezos.account);
+
                 const stakingBalancesToKeep = currentIndexerStakingBalances.map((currentIndexerStakingBalance) => {
-                    const stateStakingBalance = stakingBalances.find((stakingBalance) => {
+                    const stakingBalanceFromCurrentState = stakingBalances.find((stakingBalance) => {
                         return stakingBalance.contract === currentIndexerStakingBalance.contract;
                     });
 
-                    if (stateStakingBalance && stateStakingBalance.maxLevelProcessed >= currentIndexerStakingBalance.maxLevelProcessed) {
-                        return stateStakingBalance;
+                    if (stakingBalanceFromCurrentState && stakingBalanceFromCurrentState.maxLevelProcessed >= currentIndexerStakingBalance.maxLevelProcessed) {
+                        return stakingBalanceFromCurrentState;
                     }
                     return currentIndexerStakingBalance;
                 });
@@ -102,7 +103,7 @@ export default function UnstakeAll() {
 
     const renderRow = (farm: FarmConfig, index: number) => {
         return (
-            <FarmingStyledTableRow key={farm.rewardTokenId}>
+            <FarmingStyledTableRow key={farm.farmContractAddress}>
                 <FarmingStyledTableCell align='center'>
                     <IconSelect src={farm.rewardTokenThumbnailUri}/>
                 </FarmingStyledTableCell>

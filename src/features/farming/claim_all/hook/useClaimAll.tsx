@@ -67,6 +67,7 @@ export default function useClaimAll(farms: FarmConfig[]) {
 
     return {
         claimBalances,
+        setClaimBalances,
         claimAllStatus,
         claimAll,
     };

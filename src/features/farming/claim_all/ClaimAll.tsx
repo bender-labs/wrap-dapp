@@ -17,6 +17,7 @@ import IconSelect from "../../../screens/farming/FarmToken";
 import useClaimAll, {ClaimAllStatus} from "./hook/useClaimAll";
 import FarmingStyledTableCell from "../../../components/farming/FarmingStyledCell";
 import FarmingStyledTableRow from "../../../components/farming/FarmingStyledTableRow";
+import BigNumber from "bignumber.js";
 
 const useStyles = makeStyles((theme) => createStyles({
     table: {
@@ -63,7 +64,7 @@ export default function ClaimAll() {
     const classes = useStyles();
     const {farms} = useConfig();
     const walletContext = useWalletContext();
-    const {claimAllStatus, claimAll, claimBalances} = useClaimAll(farms);
+    const {claimAllStatus, claimAll, setClaimBalances, claimBalances} = useClaimAll(farms);
 
     const findCurrentPendingReward = (farm: FarmConfig): string => {
         const farmWithEarnings = claimBalances.find((claimBalance) => {
@@ -74,7 +75,7 @@ export default function ClaimAll() {
 
     const renderRow = (farm: FarmConfig, index: number) => {
         return (
-            <FarmingStyledTableRow key={farm.rewardTokenId}>
+            <FarmingStyledTableRow key={farm.farmContractAddress}>
                 <FarmingStyledTableCell align='center'>
                     <IconSelect src={farm.rewardTokenThumbnailUri}/>
                 </FarmingStyledTableCell>
@@ -84,6 +85,13 @@ export default function ClaimAll() {
                 <FarmingStyledTableCell align='center'>{findCurrentPendingReward(farm)}</FarmingStyledTableCell>
             </FarmingStyledTableRow>
         );
+    };
+
+    const reset = () => {
+        setClaimBalances(claimBalances.map((claimBalance) => {
+            claimBalance.earned = new BigNumber(0);
+            return claimBalance;
+        }));
     };
 
     return (
@@ -113,7 +121,7 @@ export default function ClaimAll() {
                             loading={claimAllStatus === ClaimAllStatus.UNSTAKING}
                             onClick={async () => {
                                 await claimAll();
-
+                                reset();
                             }}
                             disabled={claimAllStatus !== ClaimAllStatus.READY}
                             text={"Claim from all farms"}

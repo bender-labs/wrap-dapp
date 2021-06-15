@@ -130,6 +130,20 @@ export default function StakeAll() {
             new BigNumber(contractBalance.balance).shiftedBy(-farm.farmStakedToken.decimals).toString(10) : "0";
     };
 
+    const fakeResetBalances = (newStakes: NewStake[]) => {
+        setStakingBalances(stakingBalances.map((stake) => {
+            const newStakeToApply = newStakes.find((newStake) => {
+                return newStake.contract === stake.contract;
+            });
+
+            if (newStakeToApply) {
+                const newStakeAmount = new BigNumber(newStakeToApply.amount).shiftedBy(newStakeToApply.stakeDecimals);
+                stake.balance = new BigNumber(stake.balance).plus(newStakeAmount).toString(10);
+            }
+            return stake;
+        }));
+    }
+
     const renderRow = (farm: FarmConfig) => {
         return (
             <FarmingStyledTableRow key={farm.farmContractAddress}>
@@ -196,7 +210,7 @@ export default function StakeAll() {
                             loading={stakeAllStatus === StakeAllStatus.UNSTAKING}
                             onClick={async () => {
                                 await stakeAll(newStakes);
-                                // fakeResetBalances();
+                                fakeResetBalances(newStakes);
                             }}
                             disabled={stakeAllStatus !== StakeAllStatus.READY}
                             text={`Stake on all farms`}
