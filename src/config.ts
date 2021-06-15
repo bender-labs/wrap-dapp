@@ -21,11 +21,13 @@ export interface FarmConfig {
   rewardTokenDecimals: number;
   rewardTokenSymbol: string;
   rewards: IndexerFarmConfigurationRewardsPayload | undefined;
+  apy?: string;
 }
 
 export interface InitialConfig {
   environmentName: string;
   indexerUrl: string;
+  statisticsUrl: string;
   ethereum: {
     rpcUrl: string;
     networkId: number;
@@ -45,6 +47,7 @@ export interface InitialConfig {
 export interface Config {
   environmentName: string;
   indexerUrl: string;
+  statisticsUrl: string;
   ethereum: {
     rpcUrl: string;
     networkId: number;
@@ -113,6 +116,7 @@ export enum Environment {
 export const initialConfig: InitialConfig = {
   environmentName: process.env.REACT_APP_WRAP_ENVIRONMENT!,
   indexerUrl: process.env.REACT_APP_INDEXER!,
+  statisticsUrl: process.env.REACT_APP_STATISTICS!,
   ethereum: {
     rpcUrl: process.env.REACT_APP_ETH_RPC!,
     networkId: +process.env.REACT_APP_ETH_NETWORK_ID!,

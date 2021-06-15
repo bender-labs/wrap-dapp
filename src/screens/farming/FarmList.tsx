@@ -34,6 +34,13 @@ const useStyle = makeStyles(() =>
         fontWeight: 900,
       },
     },
+    apy: {
+      fontSize: '16px',
+
+      '& > span': {
+        fontWeight: 900,
+      },
+    },
     item: {
       '&:hover': {
         cursor: 'pointer',
@@ -60,10 +67,12 @@ function Rewards({
   currentTezosLevel,
   farmConfig,
   className,
+  apyClassName
 }: {
   currentTezosLevel: number;
   farmConfig: FarmConfig;
   className: string;
+  apyClassName: string;
 }) {
   if (farmConfig.rewards && currentTezosLevel > 0) {
     const currentTotalRewards = new BigNumber(farmConfig.rewards.totalRewards)
@@ -94,12 +103,16 @@ function Rewards({
 
     return (
       <>
+        { farmConfig.apy && <Typography className={apyClassName}>
+            APY: <span>{farmConfig.apy}%</span>
+          </Typography>
+        }
         <Typography className={className}>
-          Current available {farmConfig.rewardTokenSymbol} rewards:{' '}
+          {farmConfig.rewardTokenSymbol} rewards:{' '}
           <span>{currentTotalRewards}</span>
         </Typography>
         <Typography className={className}>
-          Current staked {farmConfig.farmStakedToken.symbol} tokens:{' '}
+          Total ${farmConfig.farmStakedToken.symbol} staked:{' '}
           <span>{currentStakedTotens}</span>
         </Typography>
         <Typography className={className}>
@@ -144,6 +157,7 @@ function FarmSelector({
             currentTezosLevel={currentTezosLevel}
             farmConfig={farmConfig}
             className={classes.rewards}
+            apyClassName={classes.apy}
           />
         </Grid>
         <Grid item>

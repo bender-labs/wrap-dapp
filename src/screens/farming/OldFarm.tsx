@@ -8,7 +8,6 @@ import BigNumber from 'bignumber.js';
 import { FarmConfig } from '../../config';
 import { FarmingContractActionsProps } from '../../features/farming/types';
 import useFarmingContract from '../../features/farming/farm/hooks/useFarmingContract';
-import { useFarm } from '../../features/farming/farm/hooks/useFarm';
 import useTokenBalance from '../../features/token/hook/useTokenBalance';
 import { Unstake } from '../../features/farming/unstake/Unstake';
 import { useOldFarm } from '../../features/farming/farm/hooks/useOldFarm';

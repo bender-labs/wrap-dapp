@@ -3,6 +3,7 @@ import { Config, ConfigStatus, FarmConfig, initialConfig } from '../../config';
 import LoadingScreen from '../../screens/LoadingScreen';
 import IndexerApi from '../../features/indexer/indexerApi';
 import { Token } from '../../features/swap/token';
+import StatisticsApi from '../../features/statistics/statisticsApi';
 
 type ContextValue = undefined | Config;
 const ConfigContext = React.createContext<ContextValue>(undefined);
@@ -35,6 +36,29 @@ export function useIndexerApi() {
 
 const getTimeFromRetryCounter = (counter: number) => Math.pow(2, counter) - 1;
 
+const stoppedFarms = {
+  contracts: [
+    {
+      totalStaked: '0',
+      contract: 'KT1FQBbU7uNkHSq4oLyiTyBFTZ7KfTWGLpcv',
+      token: 'KT18fp5rcTW7mbWDmzFwjLDUhs5MeJmagDSZ',
+      tokenId: '2',
+    },
+    {
+      totalStaked: '0',
+      contract: 'KT1SZVLvLDQvqx6qMbF8oXZe2tfP7bJMASy2',
+      token: 'KT18fp5rcTW7mbWDmzFwjLDUhs5MeJmagDSZ',
+      tokenId: '19',
+    },
+    {
+      totalStaked: '0',
+      contract: 'KT1AnsHEdYKEdM62QCNpZGc5PfpXhftcdu22',
+      token: 'KT1LRboPna9yQY9BrjtQYDS1DVxhKESK4VVd',
+      tokenId: '0',
+    },
+  ],
+};
+
 export default function Provider({ children }: PropsWithChildren<{}>) {
   const [configStatus, setConfigStatus] = useState<ConfigStatus>(
     ConfigStatus.UNINITIALIZED
@@ -54,10 +78,12 @@ export default function Provider({ children }: PropsWithChildren<{}>) {
     }
 
     const indexerApi = new IndexerApi(initConfig.indexerUrl);
+    const statisticsApi = new StatisticsApi(initConfig.statisticsUrl);
 
     const loadConfig = async () => {
       const indexerConfig = await indexerApi.fetchConfig();
       const farmingConfiguration = await indexerApi.fetchFarmingConfiguration();
+      const stakingApies = await statisticsApi.fetchStakingApy();
 
       const farms = farmingConfiguration.contracts.reduce(
         (validFarms: FarmConfig[], farmConfiguration) => {
@@ -67,6 +93,7 @@ export default function Provider({ children }: PropsWithChildren<{}>) {
               t.tezosTokenId === farmConfiguration.tokenId
           );
           if (tokenMetadata) {
+            const apy = stakingApies.find(s => s.farmingContract === farmConfiguration.contract);
             validFarms.push({
               farmContractAddress: farmConfiguration.contract,
               farmContractLink:
@@ -80,6 +107,7 @@ export default function Provider({ children }: PropsWithChildren<{}>) {
               rewardTokenDecimals: tokenMetadata.decimals,
               rewardTokenSymbol: tokenMetadata.tezosSymbol,
               rewards: farmConfiguration.rewards,
+              apy: apy ? parseFloat(apy.apy).toFixed(0) : undefined
             });
           }
           return validFarms;
@@ -87,28 +115,7 @@ export default function Provider({ children }: PropsWithChildren<{}>) {
         []
       );
 
-      const oldFarms = {
-        contracts: [
-          {
-            totalStaked: '0',
-            contract: 'KT1FQBbU7uNkHSq4oLyiTyBFTZ7KfTWGLpcv',
-            token: 'KT18fp5rcTW7mbWDmzFwjLDUhs5MeJmagDSZ',
-            tokenId: '2',
-          },
-          {
-            totalStaked: '0',
-            contract: 'KT1SZVLvLDQvqx6qMbF8oXZe2tfP7bJMASy2',
-            token: 'KT18fp5rcTW7mbWDmzFwjLDUhs5MeJmagDSZ',
-            tokenId: '19',
-          },
-          {
-            totalStaked: '0',
-            contract: 'KT1AnsHEdYKEdM62QCNpZGc5PfpXhftcdu22',
-            token: 'KT1LRboPna9yQY9BrjtQYDS1DVxhKESK4VVd',
-            tokenId: '0',
-          },
-        ],
-      }.contracts.reduce((validFarms: FarmConfig[], farmConfiguration) => {
+      const oldFarms = stoppedFarms.contracts.reduce((validFarms: FarmConfig[], farmConfiguration) => {
         const tokenMetadata = indexerConfig.tokens.find(
           (t) =>
             t.tezosWrappingContract === farmConfiguration.token &&
@@ -135,6 +142,7 @@ export default function Provider({ children }: PropsWithChildren<{}>) {
       const config = {
         environmentName: initConfig.environmentName,
         indexerUrl: initConfig.indexerUrl,
+        statisticsUrl: initConfig.statisticsUrl,
         ethereum: {
           ...initConfig.ethereum,
           custodianContractAddress: indexerConfig.ethereumWrapContract,
