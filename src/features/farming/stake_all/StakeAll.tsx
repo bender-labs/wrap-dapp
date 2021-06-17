@@ -21,6 +21,8 @@ import FarmingStyledTableRow from "../../../components/farming/FarmingStyledTabl
 import WalletConnection from "../../../components/tezos/WalletConnection";
 import {useWalletContext} from "../../../runtime/wallet/WalletContext";
 import useStakeAll, {NewStake, StakeAllStatus} from "./hook/useStakeAll";
+import { FarmingContractActionsProps } from '../types';
+import useTokenBalance from '../../token/hook/useTokenBalance';
 
 const useStyles = makeStyles((theme) => createStyles({
     table: {
@@ -63,14 +65,25 @@ const useStyles = makeStyles((theme) => createStyles({
     }
 }));
 
-export default function StakeAll() {
+export function formatAmount(
+  balance: BigNumber,
+  decimals: number
+) {
+    return `${balance.shiftedBy(-decimals).toFormat()}`;
+}
+
+export default function StakeAll({inputBalance}: FarmingContractActionsProps) {
     const classes = useStyles();
     const {farms} = useConfig();
+    const decimals = farms[0].farmStakedToken.decimals
+    const { balance } = useTokenBalance(farms[0].farmStakedToken.contractAddress, farms[0].farmStakedToken.tokenId)
     const indexerApi = useIndexerApi();
     const walletContext = useWalletContext();
     const [stakingBalances, setStakingBalances] = useState<IndexerContractBalance[]>([]);
     const [newStakes, setNewStakes] = useState<NewStake[]>([]);
     const {stakeAllStatus, stakeAll} = useStakeAll(newStakes);
+
+    const tB = () => formatAmount(balance, decimals)
 
     const inputChangeHandler = (event: any, contract: string, farmStakedTokenAddress: string, decimals: number) => {
         let newAmount = 0;
@@ -130,6 +143,7 @@ export default function StakeAll() {
             new BigNumber(contractBalance.balance).shiftedBy(-farm.farmStakedToken.decimals).toString(10) : "0";
     };
 
+
     const fakeResetBalances = (newStakes: NewStake[]) => {
         setStakingBalances(stakingBalances.map((stake) => {
             const newStakeToApply = newStakes.find((newStake) => {
@@ -144,7 +158,23 @@ export default function StakeAll() {
         }));
     }
 
+    const ventButton = () => {
+        // get balance of wrap tokens from the wallet
+        tB()
+
+        // get total number of farms
+        farms.map((i) => {console.log('This is', i)})
+        // divide amount by number of farms
+        // divide only by integers
+        // if a remainder is left over then add to the first farm
+
+        return;
+
+    }
+
+
     const renderRow = (farm: FarmConfig) => {
+        // console.log('find current wallet balance', findCurrentWalletBalance(farm))
         return (
             <FarmingStyledTableRow key={farm.farmContractAddress}>
                 <FarmingStyledTableCell align='center'>
@@ -165,6 +195,8 @@ export default function StakeAll() {
             </FarmingStyledTableRow>
         );
     };
+
+
 
     return (
         <>
@@ -189,7 +221,7 @@ export default function StakeAll() {
                             <FarmingStyledTableRow>
                                 <FarmingStyledTableCell align='center'/>
                                 <FarmingStyledTableCell align='center'/>
-                                <FarmingStyledTableCell/>
+                                <FarmingStyledTableCell>Your available WRAPS: {tB()}</FarmingStyledTableCell>
                                 <FarmingStyledTableCell>
                                     <Typography>
                                         Total :

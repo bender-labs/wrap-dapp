@@ -24,6 +24,7 @@ export default function Stake({farm, farmBalances, onApply, inputBalance}: Farmi
     }, [onApply, stake]);
 
     const walletContext = useWalletContext();
+    console.log(inputBalance.value)
 
     return (
         <>
