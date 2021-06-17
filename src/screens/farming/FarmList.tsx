@@ -9,9 +9,15 @@ import BigNumber from 'bignumber.js';
 import { Duration } from 'luxon';
 import { useWalletContext } from '../../runtime/wallet/WalletContext';
 
+export enum FarmStyle {
+  CLASSIC,
+  OLD
+}
+
 export type FarmListProps = {
   farms: FarmConfig[];
   onProgramSelect: (farm: string) => void;
+  style: FarmStyle
 };
 
 const useStyle = makeStyles(() =>
@@ -45,6 +51,9 @@ const useStyle = makeStyles(() =>
       '&:hover': {
         cursor: 'pointer',
       },
+    },
+    old: {
+      backgroundColor: '#B1B1B1'
     },
     leftGridItem: {
       flexGrow: 1,
@@ -129,14 +138,16 @@ function FarmSelector({
   currentTezosLevel,
   farmConfig,
   onClick,
+  style
 }: {
   currentTezosLevel: number;
   farmConfig: FarmConfig;
   onClick: () => void;
+  style: FarmStyle
 }) {
   const classes = useStyle();
   return (
-    <PaperContent className={classes.main}>
+    <PaperContent className={`${classes.main} ${style === FarmStyle.OLD ? classes.old : ''}`}>
       <Grid
         container
         justify={'space-between'}
@@ -170,7 +181,7 @@ function FarmSelector({
   );
 }
 
-export default function FarmList({ farms, onProgramSelect }: FarmListProps) {
+export default function FarmList({ farms, onProgramSelect, style }: FarmListProps) {
   const [currentTezosLevel, setCurrentTezosLevel] = useState(0);
   const walletContext = useWalletContext();
   const { library } = walletContext.tezos;
@@ -193,6 +204,7 @@ export default function FarmList({ farms, onProgramSelect }: FarmListProps) {
             currentTezosLevel={currentTezosLevel}
             farmConfig={farmConfig}
             onClick={() => onProgramSelect(farmConfig.farmContractAddress)}
+            style={style}
           />
         </Grid>
       ))}

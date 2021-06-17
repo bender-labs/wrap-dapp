@@ -40,12 +40,6 @@ const stoppedFarms = {
   contracts: [
     {
       totalStaked: '0',
-      contract: 'KT1FQBbU7uNkHSq4oLyiTyBFTZ7KfTWGLpcv',
-      token: 'KT18fp5rcTW7mbWDmzFwjLDUhs5MeJmagDSZ',
-      tokenId: '2',
-    },
-    {
-      totalStaked: '0',
       contract: 'KT1SZVLvLDQvqx6qMbF8oXZe2tfP7bJMASy2',
       token: 'KT18fp5rcTW7mbWDmzFwjLDUhs5MeJmagDSZ',
       tokenId: '19',

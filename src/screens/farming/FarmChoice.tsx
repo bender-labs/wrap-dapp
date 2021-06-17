@@ -1,12 +1,12 @@
-import {Box, Container, Grid, IconButton, Typography,} from '@material-ui/core';
-import {createStyles, makeStyles} from '@material-ui/core/styles';
+import { Box, Container, Grid, IconButton, Typography } from '@material-ui/core';
+import { createStyles, makeStyles } from '@material-ui/core/styles';
 import React from 'react';
-import {useConfig} from '../../runtime/config/ConfigContext';
-import FarmList from './FarmList';
+import { useConfig } from '../../runtime/config/ConfigContext';
+import FarmList, { FarmStyle } from './FarmList';
 import ArrowForwardIcon from '@material-ui/icons/ArrowForward';
-import {PaperContent} from '../../components/paper/Paper';
-import {useHistory} from 'react-router';
-import {farmStakePageRoute, oldFarmUnstakePageRoute, paths} from '../routes';
+import { PaperContent } from '../../components/paper/Paper';
+import { useHistory } from 'react-router';
+import { farmStakePageRoute, oldFarmUnstakePageRoute, paths } from '../routes';
 import BigNumber from 'bignumber.js';
 import logo from './Logo/7.png';
 
@@ -147,6 +147,7 @@ export default function FarmChoice() {
                     onProgramSelect={(farmContract) => {
                         history.push(farmStakePageRoute(farmContract));
                     }}
+                    style={FarmStyle.CLASSIC}
                 />
                 <Typography
                     variant={'subtitle1'}
@@ -159,6 +160,7 @@ export default function FarmChoice() {
                     onProgramSelect={(farmContract) => {
                         history.push(oldFarmUnstakePageRoute(farmContract));
                     }}
+                    style={FarmStyle.OLD}
                 />
             </Box>
         </Container>
