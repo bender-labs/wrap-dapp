@@ -11,6 +11,7 @@ import React, {useEffect, useState} from "react";
 import {FarmConfig} from "../../../config";
 import IconSelect from "../../../screens/farming/FarmToken";
 import BigNumber from "bignumber.js";
+import Button from '@material-ui/core/Button';
 import {useConfig, useIndexerApi} from "../../../runtime/config/ConfigContext";
 import {IndexerContractBalance} from "../../indexer/indexerApi";
 import {createStyles, makeStyles} from "@material-ui/core/styles";
@@ -50,7 +51,7 @@ const useStyles = makeStyles((theme) => createStyles({
         justifyItems: 'center'
     },
     footer: {
-        padding: '20px 280px 0px 280px'
+        padding: '20px 180px 0px 180px'
     },
     input: {
         border: 'none',
@@ -62,6 +63,33 @@ const useStyles = makeStyles((theme) => createStyles({
             outline: 'none',
             borderBottomColor: '200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms'
         }
+    },
+    buttons: {
+        display: 'flex',
+    },
+    wrapper: {
+        margin: theme.spacing(1),
+        backgroundColor: '#FFFFFF',
+        position: 'relative',
+        borderRadius: '25px',
+    },
+    disButton: {
+        textTransform: 'none',
+        textAlign: 'center',
+        boxShadow: 'none',
+        fontWeight: 900,
+        borderRadius: '25px',
+        border: 'none',
+        '&:hover': {
+            border: 'none',
+            boxShadow: 'none',
+            backgroundColor: theme.palette.primary.main,
+        },
+        backgroundColor: '#FFFFFF',
+        '&.Mui-disabled': {
+            border: 'none',
+            backgroundColor: 'rgba(0, 0, 0, 0.05)',
+        },
     }
 }));
 
@@ -83,9 +111,13 @@ export default function StakeAll({inputBalance}: FarmingContractActionsProps) {
     const [newStakes, setNewStakes] = useState<NewStake[]>([]);
     const {stakeAllStatus, stakeAll} = useStakeAll(newStakes);
 
-    const tB = () => formatAmount(balance, decimals)
+    // const totalFarms = farms.map((i) => {console.log('This is', i)})
+
+    const walletTokenBalance = formatAmount(balance, decimals)
 
     const inputChangeHandler = (event: any, contract: string, farmStakedTokenAddress: string, decimals: number) => {
+
+        console.log(newStakes)
         let newAmount = 0;
 
         if (typeof event.target.value !== "undefined" && !isNaN(event.target.value) && event.target.value !== "") {
@@ -158,23 +190,58 @@ export default function StakeAll({inputBalance}: FarmingContractActionsProps) {
         }));
     }
 
-    const ventButton = () => {
+    const ventButton = (contract: string, farmStakedTokenAddress: string, decimals: number) => {
         // get balance of wrap tokens from the wallet
-        tB()
-
         // get total number of farms
-        farms.map((i) => {console.log('This is', i)})
         // divide amount by number of farms
         // divide only by integers
         // if a remainder is left over then add to the first farm
+        // push amounts to input boxes
 
-        return;
+        let newDisStake = 0;
+        let walletBalance = parseInt(walletTokenBalance);
+
+        let disTotal = walletBalance / farms.length;
+
+        if(disTotal > 0) {
+            newDisStake = disTotal;
+        }
+
+        console.log(newStakes[0].amount)
+        // farms.map((farm) => {
+        //     farm.push({
+        //         contract: contract,
+        //         farmStakedToken: farmStakedTokenAddress,
+        //         amount: disTotal,
+        //         stakeDecimals: decimals
+        //     })
+        // })
+
+        newStakes.map((i) => {
+            console.log(i, newDisStake)
+        })
+
+        const a = newStakes.slice()
+        let b = a.map((i) => {
+            i.amount = newDisStake
+        })
+        console.log(b)
+
+        a.push({
+            contract: contract,
+            farmStakedToken: farmStakedTokenAddress,
+            amount: newDisStake,
+            stakeDecimals: decimals
+        })
+
+        // if(a.amount > walletBalance) {
+
+        // }
+        setNewStakes(a)
 
     }
 
-
     const renderRow = (farm: FarmConfig) => {
-        // console.log('find current wallet balance', findCurrentWalletBalance(farm))
         return (
             <FarmingStyledTableRow key={farm.farmContractAddress}>
                 <FarmingStyledTableCell align='center'>
@@ -188,9 +255,18 @@ export default function StakeAll({inputBalance}: FarmingContractActionsProps) {
                 </FarmingStyledTableCell>
                 <FarmingStyledTableCell align='center'>{findCurrentWalletBalance(farm)}</FarmingStyledTableCell>
                 <FarmingStyledTableCell align='center'>
-                    <input className={classes.input} type='number'
-                           onChange={(e) => inputChangeHandler(e, farm.farmContractAddress, farm.farmStakedToken.contractAddress, farm.farmStakedToken.decimals)}
-                           placeholder='Enter Amount...'/>
+                    <input
+                      className={classes.input}
+                      type='number'
+                      onChange={
+                          (e) => inputChangeHandler(
+                            e,
+                            farm.farmContractAddress,
+                            farm.farmStakedToken.contractAddress,
+                            farm.farmStakedToken.decimals
+                          )
+                      }
+                      placeholder='Enter Amount...'/>
                 </FarmingStyledTableCell>
             </FarmingStyledTableRow>
         );
@@ -221,7 +297,7 @@ export default function StakeAll({inputBalance}: FarmingContractActionsProps) {
                             <FarmingStyledTableRow>
                                 <FarmingStyledTableCell align='center'/>
                                 <FarmingStyledTableCell align='center'/>
-                                <FarmingStyledTableCell>Your available WRAPS: {tB()}</FarmingStyledTableCell>
+                                <FarmingStyledTableCell>Your available WRAPS: {walletTokenBalance}</FarmingStyledTableCell>
                                 <FarmingStyledTableCell>
                                     <Typography>
                                         Total :
@@ -238,16 +314,33 @@ export default function StakeAll({inputBalance}: FarmingContractActionsProps) {
                 </TableContainer>
                 <PaperFooter className={classes.footer}>
                     {stakeAllStatus !== StakeAllStatus.NOT_CONNECTED && (
-                        <LoadableButton
+                      <div className={classes.buttons}>
+                          <div className={classes.wrapper}>
+                          <Button
+                            className={classes.disButton}
+                            onClick={() => {
+                                ventButton(
+                                  farms[0].farmContractAddress,
+                                  farms[0].farmStakedToken.contractAddress,
+                                  farms[0].farmStakedToken.decimals
+                                )}}
+                          >
+                              Evenly Split All Tokens In Wallet
+                          </Button>
+                          </div>
+                          <LoadableButton
                             loading={stakeAllStatus === StakeAllStatus.UNSTAKING}
                             onClick={async () => {
                                 await stakeAll(newStakes);
                                 fakeResetBalances(newStakes);
                             }}
                             disabled={stakeAllStatus !== StakeAllStatus.READY}
-                            text={`Stake on all farms`}
+                            text={`Stake On All Farms`}
                             variant={'contained'}
-                        />
+                          />
+
+                      </div>
+
                     )}
                     {stakeAllStatus === StakeAllStatus.NOT_CONNECTED && (
                         <WalletConnection withConnectionStatus={false} account={walletContext.tezos.account}
