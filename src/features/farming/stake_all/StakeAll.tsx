@@ -7,12 +7,11 @@ import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
 import {PaperFooter} from "../../../components/paper/Paper";
 import LoadableButton from "../../../components/button/LoadableButton";
-import React, {useEffect, useState} from "react";
+import React, {useState} from "react";
 import {FarmConfig} from "../../../config";
 import IconSelect from "../../../screens/farming/FarmToken";
 import BigNumber from "bignumber.js";
-import {useConfig, useIndexerApi} from "../../../runtime/config/ConfigContext";
-import {IndexerContractBalance} from "../../indexer/indexerApi";
+import {useConfig} from "../../../runtime/config/ConfigContext";
 import {createStyles, makeStyles} from "@material-ui/core/styles";
 import {paths} from "../../../screens/routes";
 import FarmingContractHeader from "../../../components/farming/FarmingContractHeader";
@@ -21,6 +20,10 @@ import FarmingStyledTableRow from "../../../components/farming/FarmingStyledTabl
 import WalletConnection from "../../../components/tezos/WalletConnection";
 import {useWalletContext} from "../../../runtime/wallet/WalletContext";
 import useStakeAll, {NewStake, StakeAllStatus} from "./hook/useStakeAll";
+import {FarmAllProps} from "../../../screens/farming/AllFarms";
+import {changeStakingBalances} from "../balance-actions";
+import {ContractBalance} from "../balances-reducer";
+import useTokenBalance from "../../token/hook/useTokenBalance";
 
 const useStyles = makeStyles((theme) => createStyles({
     table: {
@@ -48,7 +51,9 @@ const useStyles = makeStyles((theme) => createStyles({
         justifyItems: 'center'
     },
     footer: {
-        padding: '20px 280px 0px 280px'
+        display: 'flex',
+        flexFlow: 'row nowrap',
+        justifyContent: 'space-around'
     },
     input: {
         border: 'none',
@@ -63,45 +68,46 @@ const useStyles = makeStyles((theme) => createStyles({
     }
 }));
 
-export default function StakeAll() {
+export default function StakeAll({balances, balanceDispatch}: FarmAllProps) {
     const classes = useStyles();
     const {farms} = useConfig();
-    const indexerApi = useIndexerApi();
     const walletContext = useWalletContext();
-    const [stakingBalances, setStakingBalances] = useState<IndexerContractBalance[]>([]);
     const [newStakes, setNewStakes] = useState<NewStake[]>([]);
     const {stakeAllStatus, stakeAll} = useStakeAll(newStakes);
 
+    const {
+        balance,
+        loading,
+        refresh
+    } = useTokenBalance(farms[0].farmStakedToken.contractAddress, farms[0].farmStakedToken.tokenId);
+
     const inputChangeHandler = (event: any, contract: string, farmStakedTokenAddress: string, decimals: number) => {
-        let newAmount = 0;
-
         if (typeof event.target.value !== "undefined" && !isNaN(event.target.value) && event.target.value !== "") {
-            let eventAmount = parseInt(event.target.value);
-            if (eventAmount > 0) {
-                newAmount = eventAmount;
-            }
-        }
+            let newAmount = parseInt(event.target.value);
 
-        const existingNewStake = newStakes.find((newStake) => {
-            return newStake.contract === contract;
-        });
-
-        if (existingNewStake) {
-            setNewStakes(newStakes.map((newStake) => {
-                if (newStake.contract === contract) {
-                    newStake.amount = newAmount
-                }
-                return newStake;
-            }));
-        } else {
-            const newNewStakes = newStakes.slice();
-            newNewStakes.push({
-                contract: contract,
-                farmStakedToken: farmStakedTokenAddress,
-                amount: newAmount,
-                stakeDecimals: decimals
+            const existingNewStake = newStakes.find((newStake) => {
+                return newStake.contract === contract;
             });
-            setNewStakes(newNewStakes);
+
+            if (existingNewStake) {
+                setNewStakes(newStakes.map((newStake) => {
+                    if (newStake.contract === contract) {
+                        newStake.amount = newAmount
+                    }
+                    return newStake;
+                }));
+            } else {
+                const newNewStakes = newStakes.slice();
+                newNewStakes.push({
+                    contract: contract,
+                    farmStakedToken: farmStakedTokenAddress,
+                    amount: newAmount,
+                    stakeDecimals: decimals
+                });
+                setNewStakes(newNewStakes);
+            }
+        } else {
+            setNewStakes(newStakes.filter(stake => stake.contract !== contract));
         }
     }
 
@@ -111,38 +117,58 @@ export default function StakeAll() {
         }, 0);
     }
 
-    useEffect(() => {
-        const loadBalances = async () => {
-            if (walletContext.tezos.account) {
-                setStakingBalances(await indexerApi.fetchCurrentUserFarmingConfiguration(walletContext.tezos.account));
-            }
-        }
-
-        // noinspection JSIgnoredPromiseFromCall
-        loadBalances();
-    }, [walletContext.tezos.account]);
-
     const findCurrentWalletBalance = (farm: FarmConfig): string => {
-        const contractBalance = stakingBalances.find((elt) => {
+        const contractBalance = balances.balances.find((elt) => {
             return elt.contract === farm.farmContractAddress;
         });
-        return contractBalance ?
+        return contractBalance && contractBalance.balance ?
             new BigNumber(contractBalance.balance).shiftedBy(-farm.farmStakedToken.decimals).toString(10) : "0";
     };
 
-    const fakeResetBalances = (newStakes: NewStake[]) => {
-        setStakingBalances(stakingBalances.map((stake) => {
-            const newStakeToApply = newStakes.find((newStake) => {
-                return newStake.contract === stake.contract;
-            });
+    const findFarmTotalStaked = (farm: FarmConfig, balances: ContractBalance[]): string => {
+        const currentBalance = balances.find((balance) => {
+            return balance.contract === farm.farmContractAddress;
+        });
+        return new BigNumber(currentBalance?.totalStaked ?? 0).shiftedBy(-farm.farmStakedToken.decimals).toString(10);
+    };
 
-            if (newStakeToApply) {
-                const newStakeAmount = new BigNumber(newStakeToApply.amount).shiftedBy(newStakeToApply.stakeDecimals);
-                stake.balance = new BigNumber(stake.balance).plus(newStakeAmount).toString(10);
-            }
-            return stake;
+    const changeBalances = (newStakes: NewStake[]): void => {
+        balanceDispatch(changeStakingBalances({
+            balances: balances.balances.map((contractBalance) => {
+                const newStakeToApply = newStakes.find((newStake) => {
+                    return newStake.contract === contractBalance.contract;
+                });
+
+                if (newStakeToApply) {
+                    const newStakeAmount = new BigNumber(newStakeToApply.amount).shiftedBy(newStakeToApply.stakeDecimals);
+                    contractBalance.balance = new BigNumber(contractBalance.balance ?? 0).plus(newStakeAmount).toString(10);
+                    contractBalance.totalStaked = new BigNumber(contractBalance.totalStaked ?? 0).plus(newStakeAmount).toString(10);
+                }
+                return contractBalance;
+            })
         }));
     }
+
+    const ditributeEvenly = (): void => {
+        if (farms && farms.length > 0 && balance.gt(0)) {
+            const amount = balance.dividedBy(farms.length).shiftedBy(-farms[0].farmStakedToken.decimals).dp(farms[0].farmStakedToken.decimals, BigNumber.ROUND_DOWN);
+
+            const newNewStakes = farms.map((farm): NewStake => {
+                return {
+                    amount: amount.toNumber(),
+                    contract: farm.farmContractAddress,
+                    stakeDecimals: farm.farmStakedToken.decimals,
+                    farmStakedToken: farm.farmStakedToken.contractAddress
+                };
+            });
+            setNewStakes(newNewStakes);
+        }
+    };
+
+    const findValueForInput = (farmContractAddress: string): string => {
+        const stake = newStakes.find((stake) => stake.contract === farmContractAddress);
+        return stake ? stake.amount.toString() : "";
+    };
 
     const renderRow = (farm: FarmConfig) => {
         return (
@@ -154,12 +180,13 @@ export default function StakeAll() {
                     {farm.rewardTokenSymbol}
                 </FarmingStyledTableCell>
                 <FarmingStyledTableCell align='center'>
-                    {new BigNumber(farm.farmTotalStaked ?? 0).shiftedBy(-farm.farmStakedToken.decimals).toString(10)}
+                    {findFarmTotalStaked(farm, balances.balances)}
                 </FarmingStyledTableCell>
                 <FarmingStyledTableCell align='center'>{findCurrentWalletBalance(farm)}</FarmingStyledTableCell>
                 <FarmingStyledTableCell align='center'>
                     <input className={classes.input} type='number'
                            onChange={(e) => inputChangeHandler(e, farm.farmContractAddress, farm.farmStakedToken.contractAddress, farm.farmStakedToken.decimals)}
+                           value={findValueForInput(farm.farmContractAddress)}
                            placeholder='Enter Amount...'/>
                 </FarmingStyledTableCell>
             </FarmingStyledTableRow>
@@ -205,12 +232,14 @@ export default function StakeAll() {
                     </Table>
                 </TableContainer>
                 <PaperFooter className={classes.footer}>
+                    <LoadableButton loading={loading} onClick={ditributeEvenly} disabled={false}
+                                    text={'Distribute my tokens evenly'}/>
                     {stakeAllStatus !== StakeAllStatus.NOT_CONNECTED && (
                         <LoadableButton
                             loading={stakeAllStatus === StakeAllStatus.UNSTAKING}
                             onClick={async () => {
                                 await stakeAll(newStakes);
-                                fakeResetBalances(newStakes);
+                                changeBalances(newStakes);
                             }}
                             disabled={stakeAllStatus !== StakeAllStatus.READY}
                             text={`Stake on all farms`}

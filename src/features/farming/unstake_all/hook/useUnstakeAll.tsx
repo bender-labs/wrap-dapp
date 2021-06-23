@@ -3,8 +3,8 @@ import {useCallback, useEffect, useState} from 'react';
 import {ConnectionStatus} from '../../../wallet/connectionStatus';
 import {useSnackbar} from 'notistack';
 import BigNumber from "bignumber.js";
-import {IndexerContractBalance} from "../../../indexer/indexerApi";
 import FarmingContractApi from "../../api/FarmingContractApi";
+import {ContractBalance} from "../../balances-reducer";
 
 export enum UnstakeAllStatus {
     NOT_CONNECTED = 'NOT_CONNECTED',
@@ -13,9 +13,9 @@ export enum UnstakeAllStatus {
     UNSTAKING = 'UNSTAKING',
 }
 
-const nextStatus = (stakingBalances: IndexerContractBalance[]) => {
-    const balance = stakingBalances.reduce((acc, elt) => {
-        return acc.plus(elt.balance);
+const nextStatus = (balances: ContractBalance[]) => {
+    const balance = balances.reduce((acc, elt) => {
+        return acc.plus(elt.balance ?? "0");
     }, new BigNumber(0));
 
     if (balance.gt(0)) {
@@ -24,7 +24,7 @@ const nextStatus = (stakingBalances: IndexerContractBalance[]) => {
     return UnstakeAllStatus.NOT_READY;
 };
 
-export default function useUnstakeAll(stakingBalances: IndexerContractBalance[]) {
+export default function useUnstakeAll(stakingBalances: ContractBalance[]) {
     const walletContext = useWalletContext();
     const {status, library, account} = walletContext.tezos;
     const [unstakeAllStatus, setStatus] = useState(UnstakeAllStatus.NOT_CONNECTED);

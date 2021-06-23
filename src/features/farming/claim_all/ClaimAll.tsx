@@ -70,7 +70,7 @@ export default function ClaimAll() {
         const farmWithEarnings = claimBalances.find((claimBalance) => {
             return claimBalance.farmContractAddress === farm.farmContractAddress;
         });
-        return farmWithEarnings ? farmWithEarnings.earned.shiftedBy(-farmWithEarnings.rewardTokenDecimals).toString(10) : "0";
+        return farmWithEarnings ? farmWithEarnings.earned.shiftedBy(-farmWithEarnings.rewardTokenDecimals).toString(10) : "loading ...";
     };
 
     const renderRow = (farm: FarmConfig, index: number) => {

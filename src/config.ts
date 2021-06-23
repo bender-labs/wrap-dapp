@@ -10,6 +10,7 @@ export type Fees = {
 };
 
 export interface FarmConfig {
+  maxTotalStakedLevelProcessed: number;
   farmContractAddress: string;
   farmContractLink: string;
   farmTotalStaked: string;

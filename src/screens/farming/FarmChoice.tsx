@@ -140,8 +140,8 @@ export default function FarmChoice() {
                 <Typography variant={'subtitle1'} className={classes.subtitle}>
                     Select a farm to stake, unstake or claim your fees share.
                 </Typography>
-              {/*<StakeAllButton/>
-                <Typography variant={'subtitle1'} className={classes.subtitle}>Or choose one farm directly</Typography>*/}
+                <StakeAllButton/>
+                <Typography variant={'subtitle1'} className={classes.subtitle}>Or choose one farm directly</Typography>
                 <FarmList
                     farms={farms}
                     onProgramSelect={(farmContract) => {

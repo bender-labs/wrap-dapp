@@ -4,6 +4,7 @@ import BigNumber from 'bignumber.js';
 import {IndexerContractBalance} from "../../indexer/indexerApi";
 import {FarmConfig} from "../../../config";
 import {NewStake} from "../stake_all/hook/useStakeAll";
+import {ContractBalance} from "../balances-reducer";
 
 export interface FarmConfigWithClaimBalances extends FarmConfig {
     earned: BigNumber;
@@ -139,9 +140,9 @@ export default class FarmingContractApi {
         return opg.opHash;
     }
 
-    public async unstakeAll(stakingBalances: IndexerContractBalance[]): Promise<string> {
+    public async unstakeAll(stakingBalances: ContractBalance[]): Promise<string> {
         const unstakes = await Promise.all(stakingBalances.filter((stake) => {
-            return new BigNumber(stake.balance).gt(0);
+            return stake.balance && new BigNumber(stake.balance).gt(0);
         }).map(async (stake): Promise<WalletParamsWithKind> => {
             const farmContract = await this.library.contract.at(stake.contract);
 

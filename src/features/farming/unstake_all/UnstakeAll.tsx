@@ -1,16 +1,15 @@
 import FarmingContractHeader from "../../../components/farming/FarmingContractHeader";
-import {Box, Table, TableBody, Typography} from "@material-ui/core";
+import {Box, Table, TableBody} from "@material-ui/core";
 import {paths} from "../../../screens/routes";
 import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
-import React, {useEffect, useState} from "react";
+import React from "react";
 import {PaperFooter} from "../../../components/paper/Paper";
 import LoadableButton from "../../../components/button/LoadableButton";
 import {createStyles, makeStyles} from "@material-ui/core/styles";
 import TableCell from "@material-ui/core/TableCell";
-import {useConfig, useIndexerApi} from "../../../runtime/config/ConfigContext";
-import {IndexerContractBalance} from "../../indexer/indexerApi";
+import {useConfig} from "../../../runtime/config/ConfigContext";
 import {FarmConfig} from "../../../config";
 import IconSelect from "../../../screens/farming/FarmToken";
 import BigNumber from "bignumber.js";
@@ -19,6 +18,8 @@ import WalletConnection from "../../../components/tezos/WalletConnection";
 import {useWalletContext} from "../../../runtime/wallet/WalletContext";
 import FarmingStyledTableCell from "../../../components/farming/FarmingStyledCell";
 import FarmingStyledTableRow from "../../../components/farming/FarmingStyledTableRow";
+import {FarmAllProps} from "../../../screens/farming/AllFarms";
+import {changeStakingBalances} from "../balance-actions";
 
 const useStyles = makeStyles((theme) => createStyles({
     table: {
@@ -61,43 +62,17 @@ const useStyles = makeStyles((theme) => createStyles({
     }
 }));
 
-export default function UnstakeAll() {
+export default function UnstakeAll({balances, balanceDispatch}: FarmAllProps) {
     const classes = useStyles();
     const {farms} = useConfig();
-    const indexerApi = useIndexerApi();
     const walletContext = useWalletContext();
-    const [stakingBalances, setStakingBalances] = useState<IndexerContractBalance[]>([]);
-    const {unstakeAllStatus, unstakeAll} = useUnstakeAll(stakingBalances);
-
-    useEffect(() => {
-        const loadBalances = async () => {
-            if (walletContext.tezos.account) {
-                const currentIndexerStakingBalances = await indexerApi.fetchCurrentUserFarmingConfiguration(walletContext.tezos.account);
-
-                const stakingBalancesToKeep = currentIndexerStakingBalances.map((currentIndexerStakingBalance) => {
-                    const stakingBalanceFromCurrentState = stakingBalances.find((stakingBalance) => {
-                        return stakingBalance.contract === currentIndexerStakingBalance.contract;
-                    });
-
-                    if (stakingBalanceFromCurrentState && stakingBalanceFromCurrentState.maxLevelProcessed >= currentIndexerStakingBalance.maxLevelProcessed) {
-                        return stakingBalanceFromCurrentState;
-                    }
-                    return currentIndexerStakingBalance;
-                });
-
-                setStakingBalances(stakingBalancesToKeep);
-            }
-        }
-
-        // noinspection JSIgnoredPromiseFromCall
-        loadBalances();
-    }, [walletContext.tezos.account, indexerApi]);
+    const {unstakeAllStatus, unstakeAll} = useUnstakeAll(balances.balances);
 
     const findCurrentWalletBalance = (farm: FarmConfig): string => {
-        const contractBalance = stakingBalances.find((elt) => {
+        const contractBalance = balances.balances.find((elt) => {
             return elt.contract === farm.farmContractAddress;
         });
-        return contractBalance ?
+        return contractBalance && contractBalance.balance ?
             new BigNumber(contractBalance.balance).shiftedBy(-farm.farmStakedToken.decimals).toString(10) : "0";
     };
 
@@ -116,17 +91,22 @@ export default function UnstakeAll() {
     };
 
     const total = () => {
-        return stakingBalances.reduce((total, contract) => {
-            return total.plus(contract.balance);
+        return balances.balances.reduce((total, contract) => {
+            return total.plus(contract.balance ?? "0");
         }, new BigNumber(0)).shiftedBy(-8).toString(10);
     }
 
-    const fakeResetBalances = () => {
-        setStakingBalances(stakingBalances.map((stake) => {
-            stake.balance = "0";
-            return stake;
+    const resetStakingBalances = () => {
+        balanceDispatch(changeStakingBalances({
+            balances: balances.balances.map((stake) => {
+                return {
+                    ...stake,
+                    balance: "0",
+                    totalStaked: new BigNumber(stake.totalStaked ?? 0).minus(stake.balance ?? 0).toString(10)
+                };
+            })
         }));
-    }
+    };
 
     return (
         <>
@@ -155,7 +135,7 @@ export default function UnstakeAll() {
                             loading={unstakeAllStatus === UnstakeAllStatus.UNSTAKING}
                             onClick={async () => {
                                 await unstakeAll();
-                                fakeResetBalances();
+                                resetStakingBalances();
                             }}
                             disabled={unstakeAllStatus !== UnstakeAllStatus.READY}
                             text={`Unstake ${total()} $WRAP tokens`}

@@ -64,6 +64,7 @@ export interface IndexerFarmConfigurationRewardsPayload {
 export interface IndexerFarmConfigurationPayload {
     rewards: IndexerFarmConfigurationRewardsPayload | undefined;
     totalStaked: string;
+    maxLevelProcessed: number;
     contract: string;
     token: string;
     tokenId: string;
