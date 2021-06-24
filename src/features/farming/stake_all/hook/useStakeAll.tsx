@@ -52,7 +52,7 @@ export default function useStakeAll(newStakes: NewStake[]) {
         try {
             await api.stakeAll(newStakes, account!);
             setStatus(StakeAllStatus.NOT_READY);
-            enqueueSnackbar('Staking done', {variant: 'success'});
+            enqueueSnackbar('Staking operation sent to blockchain', {variant: 'success'});
         } catch (error) {
             enqueueSnackbar(error.description, {variant: 'error'});
             setStatus(StakeAllStatus.READY);

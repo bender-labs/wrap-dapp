@@ -46,7 +46,7 @@ export default function useUnstakeAll(stakingBalances: ContractBalance[]) {
         try {
             await api.unstakeAll(stakingBalances);
             setStatus(UnstakeAllStatus.NOT_READY);
-            enqueueSnackbar('Unstaking done', {variant: 'success'});
+            enqueueSnackbar('Unstaking operation sent to blockchain', {variant: 'success'});
         } catch (error) {
             enqueueSnackbar(error.description, {variant: 'error'});
             setStatus(UnstakeAllStatus.READY);

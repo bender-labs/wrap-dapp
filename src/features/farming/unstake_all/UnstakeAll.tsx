@@ -137,7 +137,7 @@ export default function UnstakeAll({balances, balanceDispatch, balance, loading,
                                 resetStakingBalances();
                             }}
                             disabled={unstakeAllStatus !== UnstakeAllStatus.READY}
-                            text={`Unstake ${total()} $WRAP tokens`}
+                            text={balances.isDirty ? "Waiting for confirmation" : `Unstake ${total()} $WRAP tokens`}
                             variant={'contained'}
                         />
                     )}

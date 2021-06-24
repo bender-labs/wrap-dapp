@@ -11,7 +11,6 @@ import React, {useState} from "react";
 import {FarmConfig} from "../../../config";
 import IconSelect from "../../../screens/farming/FarmToken";
 import BigNumber from "bignumber.js";
-import {useConfig} from "../../../runtime/config/ConfigContext";
 import {createStyles, makeStyles} from "@material-ui/core/styles";
 import {paths} from "../../../screens/routes";
 import FarmingContractHeader from "../../../components/farming/FarmingContractHeader";
@@ -23,7 +22,6 @@ import useStakeAll, {NewStake, StakeAllStatus} from "./hook/useStakeAll";
 import {FarmAllProps} from "../../../screens/farming/AllFarms";
 import {changeBalances} from "../balance-actions";
 import {ContractBalance} from "../balances-reducer";
-import useTokenBalance from "../../token/hook/useTokenBalance";
 
 const useStyles = makeStyles((theme) => createStyles({
     table: {
@@ -180,10 +178,28 @@ export default function StakeAll({balances, balanceDispatch, balance, loading, r
         );
     };
 
+    const isTotalInvalid = (): boolean => {
+        if (balance && farms && farms.length > 0) {
+            return balance.shiftedBy(-farms[0].farmStakedToken.decimals).isLessThan(total());
+        }
+        return true;
+    }
+
+    const availableTokens = (): string => {
+        if (!loading && !balances.isDirty && farms.length > 0 && !balance.isNaN()) {
+            return balance.shiftedBy(-farms[0].farmStakedToken.decimals).toString(10);
+        }
+
+        return "Loading ...";
+    }
+
     return (
         <>
             <FarmingContractHeader title="All farms" path={paths.FARMING_ROOT}/>
             <Box className={classes.containBox}>
+                <PaperFooter>
+                    <h4>Available $WRAP tokens: {availableTokens()}</h4>
+                </PaperFooter>
                 <TableContainer>
                     <Table className={classes.table}>
                         <TableHead>
@@ -219,7 +235,7 @@ export default function StakeAll({balances, balanceDispatch, balance, loading, r
                     </Table>
                 </TableContainer>
                 <PaperFooter className={classes.footer}>
-                    <LoadableButton loading={loading || balances.isDirty} onClick={ditributeEvenly} disabled={false}
+                    <LoadableButton loading={loading} onClick={ditributeEvenly} disabled={balances.isDirty}
                                     text={'Distribute my tokens evenly'}/>
                     {stakeAllStatus !== StakeAllStatus.NOT_CONNECTED && (
                         <LoadableButton
@@ -228,8 +244,8 @@ export default function StakeAll({balances, balanceDispatch, balance, loading, r
                                 await stakeAll(newStakes);
                                 updateBalances(newStakes);
                             }}
-                            disabled={stakeAllStatus !== StakeAllStatus.READY}
-                            text={`Stake on all farms`}
+                            disabled={stakeAllStatus !== StakeAllStatus.READY || isTotalInvalid()}
+                            text={balances.isDirty ? "Waiting for confirmation" : "Stake on all farms"}
                             variant={'contained'}
                         />
                     )}

@@ -1,4 +1,4 @@
-import React, {useCallback, useMemo} from 'react';
+import React, {useCallback, useEffect, useMemo} from 'react';
 import {Container, Tab, Tabs} from '@material-ui/core';
 import {Route, Switch} from 'react-router-dom';
 import {createStyles, makeStyles} from '@material-ui/core/styles';
@@ -66,6 +66,12 @@ function AllFarms() {
         },
         [history]
     );
+
+    useEffect(() => {
+        if (!balances.isDirty) {
+            refresh();
+        }
+    }, [balances]);
 
     return (
         <Container>

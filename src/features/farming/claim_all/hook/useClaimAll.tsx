@@ -58,7 +58,7 @@ export default function useClaimAll(farms: FarmConfig[]) {
         try {
             await api.claimAll(claimBalances);
             setStatus(ClaimAllStatus.NOT_READY);
-            enqueueSnackbar('Claiming done', {variant: 'success'});
+            enqueueSnackbar('Claiming operation sent to blockchain', {variant: 'success'});
         } catch (error) {
             enqueueSnackbar(error.description, {variant: 'error'});
             setStatus(ClaimAllStatus.READY);

@@ -123,7 +123,7 @@ export default function ClaimAll({balances, balanceDispatch, balance, loading, r
                                 reset();
                             }}
                             disabled={claimAllStatus !== ClaimAllStatus.READY}
-                            text={"Claim from all farms"}
+                            text={balances.isDirty ? "Waiting for confirmation" : "Claim from all farms"}
                             variant={'contained'}
                         />
                     )}
