@@ -62,9 +62,8 @@ const useStyles = makeStyles((theme) => createStyles({
     }
 }));
 
-export default function UnstakeAll({balances, balanceDispatch}: FarmAllProps) {
+export default function UnstakeAll({balances, balanceDispatch, balance, loading, refresh, farms}: FarmAllProps) {
     const classes = useStyles();
-    const {farms} = useConfig();
     const walletContext = useWalletContext();
     const {unstakeAllStatus, unstakeAll} = useUnstakeAll(balances.balances);
 

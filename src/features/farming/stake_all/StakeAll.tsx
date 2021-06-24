@@ -68,18 +68,11 @@ const useStyles = makeStyles((theme) => createStyles({
     }
 }));
 
-export default function StakeAll({balances, balanceDispatch}: FarmAllProps) {
+export default function StakeAll({balances, balanceDispatch, balance, loading, refresh, farms}: FarmAllProps) {
     const classes = useStyles();
-    const {farms} = useConfig();
     const walletContext = useWalletContext();
     const [newStakes, setNewStakes] = useState<NewStake[]>([]);
     const {stakeAllStatus, stakeAll} = useStakeAll(newStakes);
-
-    const {
-        balance,
-        loading,
-        refresh
-    } = useTokenBalance(farms[0].farmStakedToken.contractAddress, farms[0].farmStakedToken.tokenId);
 
     const inputChangeHandler = (event: any, contract: string, farmStakedTokenAddress: string, decimals: number) => {
         if (typeof event.target.value !== "undefined" && !isNaN(event.target.value) && event.target.value !== "") {

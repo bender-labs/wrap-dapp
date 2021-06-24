@@ -9,7 +9,6 @@ import {PaperFooter} from "../../../components/paper/Paper";
 import LoadableButton from "../../../components/button/LoadableButton";
 import WalletConnection from "../../../components/tezos/WalletConnection";
 import React from "react";
-import {useConfig} from "../../../runtime/config/ConfigContext";
 import {useWalletContext} from "../../../runtime/wallet/WalletContext";
 import {createStyles, makeStyles} from "@material-ui/core/styles";
 import {FarmConfig} from "../../../config";
@@ -61,9 +60,8 @@ const useStyles = makeStyles((theme) => createStyles({
     }
 }));
 
-export default function ClaimAll({balances, balanceDispatch}: FarmAllProps) {
+export default function ClaimAll({balances, balanceDispatch, balance, loading, refresh, farms}: FarmAllProps) {
     const classes = useStyles();
-    const {farms} = useConfig();
     const walletContext = useWalletContext();
     const {claimAllStatus, claimAll, setClaimBalances, claimBalances} = useClaimAll(farms);
 
