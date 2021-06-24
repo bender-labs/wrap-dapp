@@ -19,7 +19,7 @@ import {useWalletContext} from "../../../runtime/wallet/WalletContext";
 import FarmingStyledTableCell from "../../../components/farming/FarmingStyledCell";
 import FarmingStyledTableRow from "../../../components/farming/FarmingStyledTableRow";
 import {FarmAllProps} from "../../../screens/farming/AllFarms";
-import {changeStakingBalances} from "../balance-actions";
+import {changeBalances} from "../balance-actions";
 
 const useStyles = makeStyles((theme) => createStyles({
     table: {
@@ -97,7 +97,7 @@ export default function UnstakeAll({balances, balanceDispatch}: FarmAllProps) {
     }
 
     const resetStakingBalances = () => {
-        balanceDispatch(changeStakingBalances({
+        balanceDispatch(changeBalances({
             balances: balances.balances.map((stake) => {
                 return {
                     ...stake,
@@ -132,7 +132,7 @@ export default function UnstakeAll({balances, balanceDispatch}: FarmAllProps) {
                 <PaperFooter className={classes.footer}>
                     {unstakeAllStatus !== UnstakeAllStatus.NOT_CONNECTED && (
                         <LoadableButton
-                            loading={unstakeAllStatus === UnstakeAllStatus.UNSTAKING}
+                            loading={unstakeAllStatus === UnstakeAllStatus.UNSTAKING || balances.isDirty}
                             onClick={async () => {
                                 await unstakeAll();
                                 resetStakingBalances();

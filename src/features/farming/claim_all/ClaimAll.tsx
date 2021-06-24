@@ -18,6 +18,7 @@ import useClaimAll, {ClaimAllStatus} from "./hook/useClaimAll";
 import FarmingStyledTableCell from "../../../components/farming/FarmingStyledCell";
 import FarmingStyledTableRow from "../../../components/farming/FarmingStyledTableRow";
 import BigNumber from "bignumber.js";
+import {FarmAllProps} from "../../../screens/farming/AllFarms";
 
 const useStyles = makeStyles((theme) => createStyles({
     table: {
@@ -60,7 +61,7 @@ const useStyles = makeStyles((theme) => createStyles({
     }
 }));
 
-export default function ClaimAll() {
+export default function ClaimAll({balances, balanceDispatch}: FarmAllProps) {
     const classes = useStyles();
     const {farms} = useConfig();
     const walletContext = useWalletContext();
@@ -118,7 +119,7 @@ export default function ClaimAll() {
                 <PaperFooter className={classes.footer}>
                     {claimAllStatus !== ClaimAllStatus.NOT_CONNECTED && (
                         <LoadableButton
-                            loading={claimAllStatus === ClaimAllStatus.UNSTAKING}
+                            loading={claimAllStatus === ClaimAllStatus.UNSTAKING || balances.isDirty}
                             onClick={async () => {
                                 await claimAll();
                                 reset();

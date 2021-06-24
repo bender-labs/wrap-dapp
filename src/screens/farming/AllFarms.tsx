@@ -58,12 +58,11 @@ function AllFarms() {
             </Tabs>
             <Switch>
                 <Route path={paths.ALL_FARMS_STAKE} exact
-                       component={useMemo(() => {
-                           return WithBalances(balances, balanceDispatch, StakeAll);
-                       }, [balances])}/>
+                       component={WithBalances(balances, balanceDispatch, StakeAll)}/>
                 <Route path={paths.ALL_FARMS_UNSTAKE} exact
                        component={WithBalances(balances, balanceDispatch, UnstakeAll)}/>
-                <Route path={paths.ALL_FARMS_CLAIM} exact component={ClaimAll}/>
+                <Route path={paths.ALL_FARMS_CLAIM} exact
+                       component={WithBalances(balances, balanceDispatch, ClaimAll)}/>
             </Switch>
         </Container>
     );

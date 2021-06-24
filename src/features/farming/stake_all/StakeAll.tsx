@@ -21,7 +21,7 @@ import WalletConnection from "../../../components/tezos/WalletConnection";
 import {useWalletContext} from "../../../runtime/wallet/WalletContext";
 import useStakeAll, {NewStake, StakeAllStatus} from "./hook/useStakeAll";
 import {FarmAllProps} from "../../../screens/farming/AllFarms";
-import {changeStakingBalances} from "../balance-actions";
+import {changeBalances} from "../balance-actions";
 import {ContractBalance} from "../balances-reducer";
 import useTokenBalance from "../../token/hook/useTokenBalance";
 
@@ -118,22 +118,17 @@ export default function StakeAll({balances, balanceDispatch}: FarmAllProps) {
     }
 
     const findCurrentWalletBalance = (farm: FarmConfig): string => {
-        const contractBalance = balances.balances.find((elt) => {
-            return elt.contract === farm.farmContractAddress;
-        });
-        return contractBalance && contractBalance.balance ?
-            new BigNumber(contractBalance.balance).shiftedBy(-farm.farmStakedToken.decimals).toString(10) : "0";
+        const contractBalance = balances.balances.find((elt) => elt.contract === farm.farmContractAddress);
+        return new BigNumber(contractBalance?.balance ?? 0).shiftedBy(-farm.farmStakedToken.decimals).toString(10);
     };
 
     const findFarmTotalStaked = (farm: FarmConfig, balances: ContractBalance[]): string => {
-        const currentBalance = balances.find((balance) => {
-            return balance.contract === farm.farmContractAddress;
-        });
+        const currentBalance = balances.find((balance) => balance.contract === farm.farmContractAddress);
         return new BigNumber(currentBalance?.totalStaked ?? 0).shiftedBy(-farm.farmStakedToken.decimals).toString(10);
     };
 
-    const changeBalances = (newStakes: NewStake[]): void => {
-        balanceDispatch(changeStakingBalances({
+    const updateBalances = (newStakes: NewStake[]): void => {
+        balanceDispatch(changeBalances({
             balances: balances.balances.map((contractBalance) => {
                 const newStakeToApply = newStakes.find((newStake) => {
                     return newStake.contract === contractBalance.contract;
@@ -152,7 +147,6 @@ export default function StakeAll({balances, balanceDispatch}: FarmAllProps) {
     const ditributeEvenly = (): void => {
         if (farms && farms.length > 0 && balance.gt(0)) {
             const amount = balance.dividedBy(farms.length).shiftedBy(-farms[0].farmStakedToken.decimals).dp(farms[0].farmStakedToken.decimals, BigNumber.ROUND_DOWN);
-
             const newNewStakes = farms.map((farm): NewStake => {
                 return {
                     amount: amount.toNumber(),
@@ -232,14 +226,14 @@ export default function StakeAll({balances, balanceDispatch}: FarmAllProps) {
                     </Table>
                 </TableContainer>
                 <PaperFooter className={classes.footer}>
-                    <LoadableButton loading={loading} onClick={ditributeEvenly} disabled={false}
+                    <LoadableButton loading={loading || balances.isDirty} onClick={ditributeEvenly} disabled={false}
                                     text={'Distribute my tokens evenly'}/>
                     {stakeAllStatus !== StakeAllStatus.NOT_CONNECTED && (
                         <LoadableButton
-                            loading={stakeAllStatus === StakeAllStatus.UNSTAKING}
+                            loading={stakeAllStatus === StakeAllStatus.UNSTAKING || balances.isDirty}
                             onClick={async () => {
                                 await stakeAll(newStakes);
-                                changeBalances(newStakes);
+                                updateBalances(newStakes);
                             }}
                             disabled={stakeAllStatus !== StakeAllStatus.READY}
                             text={`Stake on all farms`}

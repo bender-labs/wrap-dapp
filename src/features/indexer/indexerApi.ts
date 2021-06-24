@@ -77,6 +77,7 @@ export interface IndexerFarmingConfigurationPayload {
 export interface IndexerContractBalance {
     contract: string;
     balance: string;
+    totalStaked: string;
     tezosAddress: string;
     maxLevelProcessed: number;
 }

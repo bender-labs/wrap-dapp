@@ -1,29 +1,17 @@
 import {Action, Dispatch, Store} from "../types";
 import IndexerApi, {IndexerContractBalance} from "../indexer/indexerApi";
 import {isType} from 'typescript-fsa';
-import {
-    changeStakingBalances,
-    fetchStakingBalances,
-    fetchTotalStaked,
-    stakingBalancesReceived,
-    totalStakedReceived
-} from "./balance-actions";
-
-export interface StakeUpdate {
-    contract: string;
-    maxTotalStakedLevelProcessed: number;
-    farmTotalStaked: string;
-}
+import {balancesReceived, changeBalances, fetchBalances} from "./balance-actions";
 
 export interface ContractBalance {
     contract: string;
-    balance?: string;
-    maxLevelProcessed?: number;
-    totalStaked?: string;
-    maxTotalStakedLevelProcessed?: number;
+    balance: string;
+    totalStaked: string;
+    maxLevelProcessed: number;
 }
 
 export type BalancesState = {
+    isDirty: boolean,
     balances: ContractBalance[]
 };
 
@@ -41,6 +29,7 @@ const computeNewStakingBalances = (balances: ContractBalance[], indexerStakingBa
                 return {
                     ...existingBalance,
                     balance: currentIndexerStakingBalance.balance,
+                    totalStaked: currentIndexerStakingBalance.totalStaked,
                     maxLevelProcessed: currentIndexerStakingBalance.maxLevelProcessed,
                 };
             } else {
@@ -51,6 +40,7 @@ const computeNewStakingBalances = (balances: ContractBalance[], indexerStakingBa
             return {
                 contract: currentIndexerStakingBalance.contract,
                 balance: currentIndexerStakingBalance.balance,
+                totalStaked: currentIndexerStakingBalance.totalStaked,
                 maxLevelProcessed: currentIndexerStakingBalance.maxLevelProcessed
             };
         }
@@ -59,49 +49,13 @@ const computeNewStakingBalances = (balances: ContractBalance[], indexerStakingBa
     return shouldUpdate ? balancesToKeep : null;
 };
 
-const computeNewTotalStakedBalances = (balances: ContractBalance[], farms: StakeUpdate[]): ContractBalance[] | null => {
-    let shouldUpdate = false;
-
-    const balancesToKeep = farms?.map((farm) => {
-        const existingBalance = balances.find((balance) => {
-            return balance.contract === farm.contract;
-        });
-
-        if (existingBalance) {
-            if (!existingBalance.maxTotalStakedLevelProcessed || existingBalance.maxTotalStakedLevelProcessed < farm.maxTotalStakedLevelProcessed) {
-                shouldUpdate = true;
-                return {
-                    ...existingBalance,
-                    maxTotalStakedLevelProcessed: farm.maxTotalStakedLevelProcessed,
-                    totalStaked: farm.farmTotalStaked
-                };
-            } else {
-                return existingBalance;
-            }
-        } else {
-            shouldUpdate = true;
-            return {
-                contract: farm.contract,
-                maxTotalStakedLevelProcessed: farm.maxTotalStakedLevelProcessed,
-                totalStaked: farm.farmTotalStaked
-            }
-        }
-    });
-
-    return shouldUpdate ? balancesToKeep : null;
-};
-
 export const reducer = (state: BalancesState, action: Action): BalancesState => {
-    if (isType(action, stakingBalancesReceived)) {
+    if (isType(action, balancesReceived)) {
         const newBalances = computeNewStakingBalances(state.balances, action.payload.balances);
-        return newBalances ? {...state, balances: newBalances} : state;
+        return newBalances ? {isDirty: false, balances: newBalances} : state;
     }
-    if (isType(action, changeStakingBalances)) {
-        return {...state, balances: action.payload.balances};
-    }
-    if (isType(action, totalStakedReceived)) {
-        const newBalances = computeNewTotalStakedBalances(state.balances, action.payload.farms);
-        return newBalances ? {...state, balances: newBalances} : state;
+    if (isType(action, changeBalances)) {
+        return {isDirty: true, balances: action.payload.balances};
     }
     return state;
 };
@@ -110,23 +64,11 @@ export const sideEffectReducer = (indexerApi: IndexerApi) => (
     {getState, dispatch}: Store<BalancesState>,
     action: Action
 ) => async (next: Dispatch) => {
-    if (isType(action, fetchStakingBalances)) {
+    if (isType(action, fetchBalances)) {
         const {tezosAccount} = action.payload;
         const stakingBalances = await indexerApi.fetchCurrentUserFarmingConfiguration(tezosAccount);
-        dispatch(stakingBalancesReceived({balances: stakingBalances}));
+        dispatch(balancesReceived({balances: stakingBalances}));
         return;
-    }
-    if (isType(action, fetchTotalStaked)) {
-        const farmingConfiguration = await indexerApi.fetchFarmingConfiguration();
-        dispatch(totalStakedReceived({
-            farms: farmingConfiguration.contracts.map((payload) => {
-                return {
-                    contract: payload.contract,
-                    maxTotalStakedLevelProcessed: payload.maxLevelProcessed,
-                    farmTotalStaked: payload.totalStaked
-                };
-            })
-        }));
     }
     next(action);
 };
