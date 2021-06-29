@@ -1,7 +1,6 @@
 import {OpKind, TezosToolkit, WalletParamsWithKind} from '@taquito/taquito';
 import {tzip16} from '@taquito/tzip16';
 import BigNumber from 'bignumber.js';
-import {IndexerContractBalance} from "../../indexer/indexerApi";
 import {FarmConfig} from "../../../config";
 import {NewStake} from "../stake_all/hook/useStakeAll";
 import {ContractBalance} from "../balances-reducer";
@@ -49,7 +48,6 @@ export default class FarmingContractApi {
     }
 
     public async stakeAll(newStakes: NewStake[], account: string): Promise<string> {
-
         const operators = await Promise.all(newStakes.map(async (stake): Promise<WalletParamsWithKind> => {
             const farmStakeContract = await this.library.contract.at(stake.farmStakedToken);
 
@@ -75,7 +73,9 @@ export default class FarmingContractApi {
 
             return {
                 kind: OpKind.TRANSACTION,
-                ...farmContract.methods.stake(new BigNumber(stake.amount).shiftedBy(stake.stakeDecimals).toString(10)).toTransferParams()
+                ...farmContract.methods.stake(new BigNumber(stake.amount).shiftedBy(stake.stakeDecimals).toString(10)).toTransferParams({
+                    storageLimit: 20
+                })
             };
         }));
 
@@ -83,7 +83,6 @@ export default class FarmingContractApi {
             .with(operators)
             .with(stakes)
             .send();
-        await opg.receipt();
         return opg.opHash;
     }
 
@@ -131,7 +130,9 @@ export default class FarmingContractApi {
 
             return {
                 kind: OpKind.TRANSACTION,
-                ...farmContract.methods.claim({}).toTransferParams()
+                ...farmContract.methods.claim({}).toTransferParams({
+                    storageLimit: 20
+                })
             };
         }));
 
@@ -148,7 +149,9 @@ export default class FarmingContractApi {
 
             return {
                 kind: OpKind.TRANSACTION,
-                ...farmContract.methods.withdraw(stake.balance).toTransferParams()
+                ...farmContract.methods.withdraw(stake.balance).toTransferParams({
+                    storageLimit: 20
+                })
             };
         }));
 

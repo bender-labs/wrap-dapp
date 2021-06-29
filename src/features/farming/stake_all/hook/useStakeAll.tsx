@@ -46,11 +46,12 @@ export default function useStakeAll(newStakes: NewStake[]) {
         setStatus(nextStatus(newStakes));
     }, [connected, newStakes]);
 
-    const stakeAll = useCallback(async (newStakes: NewStake[]) => {
+    const stakeAll = useCallback(async (newStakes: NewStake[], successCallback: (newStakes: NewStake[]) => void) => {
         const api = new FarmingContractApi(library!);
         setStatus(StakeAllStatus.UNSTAKING);
         try {
             await api.stakeAll(newStakes, account!);
+            successCallback(newStakes);
             setStatus(StakeAllStatus.NOT_READY);
             enqueueSnackbar('Staking operation sent to blockchain', {variant: 'success'});
         } catch (error) {

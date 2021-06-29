@@ -52,11 +52,12 @@ export default function useClaimAll(farms: FarmConfig[]) {
         setStatus(nextStatus(claimBalances));
     }, [connected, claimBalances]);
 
-    const claimAll = useCallback(async () => {
+    const claimAll = useCallback(async (successCallback: () => void) => {
         const api = new FarmingContractApi(library!);
         setStatus(ClaimAllStatus.UNSTAKING);
         try {
             await api.claimAll(claimBalances);
+            successCallback();
             setStatus(ClaimAllStatus.NOT_READY);
             enqueueSnackbar('Claiming operation sent to blockchain', {variant: 'success'});
         } catch (error) {

@@ -40,11 +40,12 @@ export default function useUnstakeAll(stakingBalances: ContractBalance[]) {
         setStatus(nextStatus(stakingBalances));
     }, [connected, stakingBalances]);
 
-    const unstakeAll = useCallback(async () => {
+    const unstakeAll = useCallback(async (successCallback: () => void) => {
         const api = new FarmingContractApi(library!);
         setStatus(UnstakeAllStatus.UNSTAKING);
         try {
             await api.unstakeAll(stakingBalances);
+            successCallback();
             setStatus(UnstakeAllStatus.NOT_READY);
             enqueueSnackbar('Unstaking operation sent to blockchain', {variant: 'success'});
         } catch (error) {

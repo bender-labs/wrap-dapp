@@ -241,8 +241,7 @@ export default function StakeAll({balances, balanceDispatch, balance, loading, r
                         <LoadableButton
                             loading={stakeAllStatus === StakeAllStatus.UNSTAKING || balances.isDirty}
                             onClick={async () => {
-                                await stakeAll(newStakes);
-                                updateBalances(newStakes);
+                                await stakeAll(newStakes, updateBalances);
                             }}
                             disabled={stakeAllStatus !== StakeAllStatus.READY || isTotalInvalid()}
                             text={balances.isDirty ? "Waiting for confirmation" : "Stake on all farms"}

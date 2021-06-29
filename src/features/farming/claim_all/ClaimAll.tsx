@@ -119,8 +119,7 @@ export default function ClaimAll({balances, balanceDispatch, balance, loading, r
                         <LoadableButton
                             loading={claimAllStatus === ClaimAllStatus.UNSTAKING || balances.isDirty}
                             onClick={async () => {
-                                await claimAll();
-                                reset();
+                                await claimAll(reset);
                             }}
                             disabled={claimAllStatus !== ClaimAllStatus.READY}
                             text={balances.isDirty ? "Waiting for confirmation" : "Claim from all farms"}

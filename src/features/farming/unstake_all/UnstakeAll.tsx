@@ -133,8 +133,7 @@ export default function UnstakeAll({balances, balanceDispatch, balance, loading,
                         <LoadableButton
                             loading={unstakeAllStatus === UnstakeAllStatus.UNSTAKING || balances.isDirty}
                             onClick={async () => {
-                                await unstakeAll();
-                                resetStakingBalances();
+                                await unstakeAll(resetStakingBalances);
                             }}
                             disabled={unstakeAllStatus !== UnstakeAllStatus.READY}
                             text={balances.isDirty ? "Waiting for confirmation" : `Unstake ${total()} $WRAP tokens`}
