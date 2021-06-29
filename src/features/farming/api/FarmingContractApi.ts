@@ -4,6 +4,7 @@ import BigNumber from 'bignumber.js';
 import {FarmConfig} from "../../../config";
 import {NewStake} from "../stake_all/hook/useStakeAll";
 import {ContractBalance} from "../balances-reducer";
+import { ParamsWithKind } from '@taquito/taquito/dist/types/operations/types';
 
 export interface FarmConfigWithClaimBalances extends FarmConfig {
     earned: BigNumber;
@@ -16,74 +17,105 @@ export default class FarmingContractApi {
         this.library = library;
     }
 
+    private static updateOperatorTransaction(farmStakedToken: string, owner: string, stakingContract: string): WalletParamsWithKind {
+        return {
+            kind: OpKind.TRANSACTION,
+            to: farmStakedToken,
+            amount: 0,
+            mutez: false,
+            parameter: {
+                entrypoint: "update_operators",
+                value: [
+                    {
+                        prim: "Left",
+                        args: [
+                            {
+                                prim: "Pair",
+                                args: [
+                                    {
+                                        string: owner
+                                    },
+                                    {
+                                        prim: "Pair",
+                                        args: [
+                                            {
+                                                string: stakingContract
+                                            },
+                                            {
+                                                int: "0"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        };
+    }
+
+    public static stakeOperation(farmContract: string, amount: string): WalletParamsWithKind {
+        return {
+            kind: OpKind.TRANSACTION,
+            to: farmContract,
+            amount: 0,
+            mutez: false,
+            parameter: {
+                entrypoint: "stake",
+                value: {
+                    int: amount
+                }
+            }
+        }
+    }
+
     public async stake(
         account: string,
         amount: BigNumber,
         stakedTokenContractAddress: string,
         farmContractAddress: string
     ): Promise<string> {
-        const farmContract = await this.library.contract.at(farmContractAddress);
-        const stakedTokenContract = await this.library.contract.at(
-            stakedTokenContractAddress
-        );
-        const addOperator = stakedTokenContract.methods
-            .update_operators([
-                {
-                    add_operator: {
-                        owner: account,
-                        operator: farmContractAddress,
-                        token_id: 0,
-                    },
-                },
-            ])
-            .toTransferParams();
-        const stake = await farmContract.methods.stake(amount).toTransferParams();
+        const addOperator = FarmingContractApi.updateOperatorTransaction(stakedTokenContractAddress, account, farmContractAddress);
+        const stake = FarmingContractApi.stakeOperation(farmContractAddress, amount.toString(10));
         const opg = await this.library.wallet
             .batch()
-            .withTransfer(addOperator)
-            .withTransfer(stake)
+            .with([addOperator])
+            .with([stake])
             .send();
         await opg.receipt();
         return opg.opHash;
     }
 
     public async stakeAll(newStakes: NewStake[], account: string): Promise<string> {
-        const operators = await Promise.all(newStakes.map(async (stake): Promise<WalletParamsWithKind> => {
-            const farmStakeContract = await this.library.contract.at(stake.farmStakedToken);
-
-            const addOperator = farmStakeContract.methods
-                .update_operators([
-                    {
-                        add_operator: {
-                            owner: account,
-                            operator: stake.contract,
-                            token_id: 0,
-                        },
-                    }
-                ]);
-
-            return {
-                kind: OpKind.TRANSACTION,
-                ...addOperator.toTransferParams()
-            }
-        }));
-
-        const stakes = await Promise.all(newStakes.map(async (stake): Promise<WalletParamsWithKind> => {
-            const farmContract = await this.library.contract.at(stake.contract);
-
-            return {
-                kind: OpKind.TRANSACTION,
-                ...farmContract.methods.stake(new BigNumber(stake.amount).shiftedBy(stake.stakeDecimals).toString(10)).toTransferParams({
-                    storageLimit: 20
-                })
-            };
-        }));
-
-        const opg = await this.library.wallet.batch()
-            .with(operators)
-            .with(stakes)
+        const operators = newStakes.map((stake): WalletParamsWithKind => FarmingContractApi.updateOperatorTransaction(stake.farmStakedToken, account, stake.contract));
+        const stakes = newStakes.map((stake): WalletParamsWithKind => FarmingContractApi.stakeOperation(stake.contract, new BigNumber(stake.amount).shiftedBy(stake.stakeDecimals).toString(10)));
+        const batch = this.library.wallet.batch()
+          .with(operators)
+          .with(stakes.map(stake => ({
+              storageLimit: 20,
+              ...stake
+          })));
+        const estimate = await this.library.estimate.batch(operators.concat(stakes) as ParamsWithKind[]);
+        console.log(estimate);
+        const opg = await batch
             .send();
         return opg.opHash;
+    }
+
+    private static unstakeOperation(farmContract: string, amount: string): WalletParamsWithKind {
+        return {
+            kind: OpKind.TRANSACTION,
+            to: farmContract,
+            amount: 0,
+            mutez: false,
+            parameter: {
+                entrypoint: "withdraw",
+                value: {
+                    int: amount
+                }
+            }
+        }
     }
 
     public async unstake(
@@ -92,6 +124,19 @@ export default class FarmingContractApi {
     ): Promise<string> {
         const farmContract = await this.library.wallet.at(farmContractAddress);
         const opg = await farmContract.methods.withdraw(amount.toString(10)).send();
+        await opg.receipt();
+        return opg.opHash;
+    }
+
+    public async unstakeAll(stakingBalances: ContractBalance[]): Promise<string> {
+        const unstakes = stakingBalances.filter((stake) => {
+            return stake.balance && new BigNumber(stake.balance).gt(0);
+        }).map((stake): WalletParamsWithKind => FarmingContractApi.unstakeOperation(stake.contract, stake.balance));
+        const opg = await this.library.wallet.batch()
+          .with(unstakes.map(unstake => ({
+              storageLimit: 20,
+              ...unstake
+          }))).send();
         await opg.receipt();
         return opg.opHash;
     }
@@ -137,25 +182,6 @@ export default class FarmingContractApi {
         }));
 
         const opg = await this.library.wallet.batch().with(claims).send();
-        await opg.receipt();
-        return opg.opHash;
-    }
-
-    public async unstakeAll(stakingBalances: ContractBalance[]): Promise<string> {
-        const unstakes = await Promise.all(stakingBalances.filter((stake) => {
-            return stake.balance && new BigNumber(stake.balance).gt(0);
-        }).map(async (stake): Promise<WalletParamsWithKind> => {
-            const farmContract = await this.library.contract.at(stake.contract);
-
-            return {
-                kind: OpKind.TRANSACTION,
-                ...farmContract.methods.withdraw(stake.balance).toTransferParams({
-                    storageLimit: 20
-                })
-            };
-        }));
-
-        const opg = await this.library.wallet.batch().with(unstakes).send();
         await opg.receipt();
         return opg.opHash;
     }
