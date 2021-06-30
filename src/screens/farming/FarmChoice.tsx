@@ -8,7 +8,6 @@ import { PaperContent } from '../../components/paper/Paper';
 import { useHistory } from 'react-router';
 import { farmStakePageRoute, oldFarmUnstakePageRoute, paths } from '../routes';
 import BigNumber from 'bignumber.js';
-import logo from './Logo/7.png';
 
 const useStyles = makeStyles((theme) =>
     createStyles({
@@ -106,7 +105,7 @@ export default function FarmChoice() {
                     className={classes.item}
                 >
                     <Grid item className={classes.images}>
-                        <img src={logo}/>
+                        <img alt={'stake all'} src="/static/images/wrap3gif.gif"/>
                     </Grid>
                     <Grid item>
                         <Typography className={classes.option}>
@@ -137,11 +136,8 @@ export default function FarmChoice() {
                 </Typography>
             </Box>
             <Box className={classes.containBox}>
-                <Typography variant={'subtitle1'} className={classes.subtitle}>
-                    Select a farm to stake, unstake or claim your fees share.
-                </Typography>
-              { /*<StakeAllButton/>
-                <Typography variant={'subtitle1'} className={classes.subtitle}>Or choose one farm directly</Typography> */ }
+                <StakeAllButton/>
+                <Typography variant={'subtitle1'} className={classes.subtitle}>Or select a farm to stake, unstake or claim your fees share.</Typography>
                 <FarmList
                     farms={farms}
                     onProgramSelect={(farmContract) => {

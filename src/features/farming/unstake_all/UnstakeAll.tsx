@@ -9,7 +9,6 @@ import {PaperFooter} from "../../../components/paper/Paper";
 import LoadableButton from "../../../components/button/LoadableButton";
 import {createStyles, makeStyles} from "@material-ui/core/styles";
 import TableCell from "@material-ui/core/TableCell";
-import {useConfig} from "../../../runtime/config/ConfigContext";
 import {FarmConfig} from "../../../config";
 import IconSelect from "../../../screens/farming/FarmToken";
 import BigNumber from "bignumber.js";
