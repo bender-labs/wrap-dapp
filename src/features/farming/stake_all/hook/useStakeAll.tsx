@@ -6,7 +6,7 @@ import {ConnectionStatus} from "../../../wallet/connectionStatus";
 import BigNumber from "bignumber.js";
 
 export interface NewStake {
-    amount: number;
+    amount: string;
     contract: string;
     farmStakedToken: string;
     stakeDecimals: number;
@@ -21,7 +21,8 @@ export enum StakeAllStatus {
 
 const nextStatus = (newStakes: NewStake[]) => {
     const balance = newStakes.reduce((acc, elt) => {
-        return acc.plus(elt.amount);
+        const amount = new BigNumber(elt.amount);
+        return amount.isNaN() ? acc : acc.plus(amount);
     }, new BigNumber(0));
 
     if (balance.gt(0)) {

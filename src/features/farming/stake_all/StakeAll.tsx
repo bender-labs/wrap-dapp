@@ -73,8 +73,8 @@ export default function StakeAll({balances, balanceDispatch, balance, loading, r
     const {stakeAllStatus, stakeAll} = useStakeAll(newStakes);
 
     const inputChangeHandler = (event: any, contract: string, farmStakedTokenAddress: string, decimals: number) => {
-        if (typeof event.target.value !== "undefined" && !isNaN(event.target.value) && event.target.value !== "") {
-            let newAmount = parseInt(event.target.value);
+        if (typeof event.target.value !== "undefined" && event.target.value !== "") {
+            let newAmount = event.target.value;
 
             const existingNewStake = newStakes.find((newStake) => {
                 return newStake.contract === contract;
@@ -102,10 +102,11 @@ export default function StakeAll({balances, balanceDispatch, balance, loading, r
         }
     }
 
-    const total = (): number => {
+    const total = (): string => {
         return newStakes.reduce((total, elt) => {
-            return total + elt.amount;
-        }, 0);
+            const amount = new BigNumber(elt.amount);
+            return amount.isNaN() ? total : total.plus(elt.amount);
+        }, new BigNumber(0)).toString(10);
     }
 
     const findCurrentWalletBalance = (farm: FarmConfig): string => {
@@ -126,9 +127,12 @@ export default function StakeAll({balances, balanceDispatch, balance, loading, r
                 });
 
                 if (newStakeToApply) {
-                    const newStakeAmount = new BigNumber(newStakeToApply.amount).shiftedBy(newStakeToApply.stakeDecimals);
-                    contractBalance.balance = new BigNumber(contractBalance.balance ?? 0).plus(newStakeAmount).toString(10);
-                    contractBalance.totalStaked = new BigNumber(contractBalance.totalStaked ?? 0).plus(newStakeAmount).toString(10);
+                    const amount = new BigNumber(newStakeToApply.amount);
+                    if (!amount.isNaN()) {
+                        const newStakeAmount = amount.shiftedBy(newStakeToApply.stakeDecimals);
+                        contractBalance.balance = new BigNumber(contractBalance.balance ?? 0).plus(newStakeAmount).toString(10);
+                        contractBalance.totalStaked = new BigNumber(contractBalance.totalStaked ?? 0).plus(newStakeAmount).toString(10);
+                    }
                 }
                 return contractBalance;
             })
@@ -140,7 +144,7 @@ export default function StakeAll({balances, balanceDispatch, balance, loading, r
             const amount = balance.dividedBy(farms.length).shiftedBy(-farms[0].farmStakedToken.decimals).dp(farms[0].farmStakedToken.decimals, BigNumber.ROUND_DOWN);
             const newNewStakes = farms.map((farm): NewStake => {
                 return {
-                    amount: amount.toNumber(),
+                    amount: amount.toString(10),
                     contract: farm.farmContractAddress,
                     stakeDecimals: farm.farmStakedToken.decimals,
                     farmStakedToken: farm.farmStakedToken.contractAddress
@@ -152,7 +156,7 @@ export default function StakeAll({balances, balanceDispatch, balance, loading, r
 
     const findValueForInput = (farmContractAddress: string): string => {
         const stake = newStakes.find((stake) => stake.contract === farmContractAddress);
-        return stake ? stake.amount.toString() : "";
+        return stake ? stake.amount : "";
     };
 
     const renderRow = (farm: FarmConfig) => {
@@ -169,7 +173,7 @@ export default function StakeAll({balances, balanceDispatch, balance, loading, r
                 </FarmingStyledTableCell>
                 <FarmingStyledTableCell align='center'>{findCurrentWalletBalance(farm)}</FarmingStyledTableCell>
                 <FarmingStyledTableCell align='center'>
-                    <input className={classes.input} type='number'
+                    <input className={classes.input}
                            onChange={(e) => inputChangeHandler(e, farm.farmContractAddress, farm.farmStakedToken.contractAddress, farm.farmStakedToken.decimals)}
                            value={findValueForInput(farm.farmContractAddress)}
                            placeholder='Enter Amount...'/>
