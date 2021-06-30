@@ -5,7 +5,7 @@ import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
-import {PaperFooter} from "../../../components/paper/Paper";
+import { PaperFooter } from '../../../components/paper/Paper';
 import LoadableButton from "../../../components/button/LoadableButton";
 import React, {useState} from "react";
 import {FarmConfig} from "../../../config";
@@ -63,6 +63,10 @@ const useStyles = makeStyles((theme) => createStyles({
             outline: 'none',
             borderBottomColor: '200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms'
         }
+    },
+    balanceTitle: {
+        textAlign: 'center',
+        marginTop: '0'
     }
 }));
 
@@ -204,9 +208,7 @@ export default function StakeAll({balances, balanceDispatch, balance, loading, r
         <>
             <FarmingContractHeader title="All farms" path={paths.FARMING_ROOT}/>
             <Box className={classes.containBox}>
-                <PaperFooter>
-                    <h4>Available $WRAP tokens: {availableTokens()}</h4>
-                </PaperFooter>
+                <h4 className={classes.balanceTitle}>Available $WRAP tokens: {availableTokens()}</h4>
                 <TableContainer>
                     <Table className={classes.table}>
                         <TableHead>
