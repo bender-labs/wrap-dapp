@@ -1,5 +1,5 @@
 import {useWalletContext} from "../../../../runtime/wallet/WalletContext";
-import {useCallback, useEffect, useState} from "react";
+import {useCallback, useEffect, useMemo, useState} from "react";
 import {ConnectionStatus} from "../../../wallet/connectionStatus";
 import {useSnackbar} from "notistack";
 import FarmingContractApi, {FarmConfigWithClaimBalances} from "../../api/FarmingContractApi";
@@ -10,7 +10,7 @@ export enum ClaimAllStatus {
     NOT_CONNECTED = 'NOT_CONNECTED',
     NOT_READY = 'NOT_READY',
     READY = 'READY',
-    UNSTAKING = 'UNSTAKING',
+    CLAIMING = 'CLAIMING',
 }
 
 const nextStatus = (claimBalances: FarmConfigWithClaimBalances[]) => {
@@ -27,22 +27,30 @@ const nextStatus = (claimBalances: FarmConfigWithClaimBalances[]) => {
 export default function useClaimAll(farms: FarmConfig[]) {
     const walletContext = useWalletContext();
     const {status, library, account} = walletContext.tezos;
-    const [claimAllStatus, setStatus] = useState(ClaimAllStatus.NOT_CONNECTED);
-    const [claimBalances, setClaimBalances] = useState<FarmConfigWithClaimBalances[]>([]);
     const connected =
         status === ConnectionStatus.CONNECTED && account !== undefined;
+    const [claimAllStatus, setStatus] = useState(ClaimAllStatus.NOT_CONNECTED);
+    const [claimBalances, setClaimBalances] = useState<FarmConfigWithClaimBalances[]>([]);
     const {enqueueSnackbar} = useSnackbar();
 
-    useEffect(() => {
-        const loadClaimBalances = async () => {
-            const api = new FarmingContractApi(library!);
-            setClaimBalances(await api.claimBalances(farms, account!));
+    const api = useMemo(() => {
+        if (typeof library !== "undefined") {
+            return new FarmingContractApi(library!);
         }
+    }, [library]);
 
-        if (account) {
-            loadClaimBalances();
+    useEffect(() => {
+        if (typeof account !== "undefined" && typeof library !== "undefined" && typeof api !== "undefined") {
+            const loadClaimBalances = async () => {
+                // const api = new FarmingContractApi(library!);
+                setClaimBalances(await api.claimBalances(farms, account!));
+            };
+
+            if (farms.length > 0 && status === ConnectionStatus.CONNECTED) {
+                loadClaimBalances();
+            }
         }
-    }, [farms, account]);
+    }, [farms, account, status]);
 
     useEffect(() => {
         if (!connected) {
@@ -54,7 +62,7 @@ export default function useClaimAll(farms: FarmConfig[]) {
 
     const claimAll = useCallback(async (successCallback: () => void) => {
         const api = new FarmingContractApi(library!);
-        setStatus(ClaimAllStatus.UNSTAKING);
+        setStatus(ClaimAllStatus.CLAIMING);
         try {
             await api.claimAll(claimBalances);
             successCallback();

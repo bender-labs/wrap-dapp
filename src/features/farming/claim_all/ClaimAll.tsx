@@ -17,7 +17,7 @@ import useClaimAll, {ClaimAllStatus} from "./hook/useClaimAll";
 import FarmingStyledTableCell from "../../../components/farming/FarmingStyledCell";
 import FarmingStyledTableRow from "../../../components/farming/FarmingStyledTableRow";
 import BigNumber from "bignumber.js";
-import {FarmAllProps} from "../../../screens/farming/AllFarms";
+import {useConfig} from "../../../runtime/config/ConfigContext";
 
 const useStyles = makeStyles((theme) => createStyles({
     table: {
@@ -60,7 +60,8 @@ const useStyles = makeStyles((theme) => createStyles({
     }
 }));
 
-export default function ClaimAll({balances, balanceDispatch, balance, loading, refresh, farms}: FarmAllProps) {
+export default function ClaimAll() {
+    const {farms} = useConfig();
     const classes = useStyles();
     const walletContext = useWalletContext();
     const {claimAllStatus, claimAll, setClaimBalances, claimBalances} = useClaimAll(farms);
@@ -117,12 +118,12 @@ export default function ClaimAll({balances, balanceDispatch, balance, loading, r
                 <PaperFooter className={classes.footer}>
                     {claimAllStatus !== ClaimAllStatus.NOT_CONNECTED && (
                         <LoadableButton
-                            loading={claimAllStatus === ClaimAllStatus.UNSTAKING || balances.isDirty}
+                            loading={claimAllStatus === ClaimAllStatus.CLAIMING}
                             onClick={async () => {
                                 await claimAll(reset);
                             }}
                             disabled={claimAllStatus !== ClaimAllStatus.READY}
-                            text={balances.isDirty ? "Waiting for confirmation" : "Claim from all farms"}
+                            text={"Claim from all farms"}
                             variant={'contained'}
                         />
                     )}

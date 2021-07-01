@@ -17,8 +17,8 @@ import WalletConnection from "../../../components/tezos/WalletConnection";
 import {useWalletContext} from "../../../runtime/wallet/WalletContext";
 import FarmingStyledTableCell from "../../../components/farming/FarmingStyledCell";
 import FarmingStyledTableRow from "../../../components/farming/FarmingStyledTableRow";
-import {FarmAllProps} from "../../../screens/farming/AllFarms";
 import {changeBalances} from "../balance-actions";
+import {FarmAllProps} from "../../../screens/farming/WithBalancesScreen";
 
 const useStyles = makeStyles((theme) => createStyles({
     table: {

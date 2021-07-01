@@ -5,7 +5,7 @@ import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
-import { PaperFooter } from '../../../components/paper/Paper';
+import {PaperFooter} from '../../../components/paper/Paper';
 import LoadableButton from "../../../components/button/LoadableButton";
 import React, {useState} from "react";
 import {FarmConfig} from "../../../config";
@@ -19,9 +19,9 @@ import FarmingStyledTableRow from "../../../components/farming/FarmingStyledTabl
 import WalletConnection from "../../../components/tezos/WalletConnection";
 import {useWalletContext} from "../../../runtime/wallet/WalletContext";
 import useStakeAll, {NewStake, StakeAllStatus} from "./hook/useStakeAll";
-import {FarmAllProps} from "../../../screens/farming/AllFarms";
 import {changeBalances} from "../balance-actions";
 import {ContractBalance} from "../balances-reducer";
+import {FarmAllProps} from "../../../screens/farming/WithBalancesScreen";
 
 const useStyles = makeStyles((theme) => createStyles({
     table: {
