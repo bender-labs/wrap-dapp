@@ -42,7 +42,6 @@ export default function useClaimAll(farms: FarmConfig[]) {
     useEffect(() => {
         if (typeof account !== "undefined" && typeof library !== "undefined" && typeof api !== "undefined") {
             const loadClaimBalances = async () => {
-                // const api = new FarmingContractApi(library!);
                 setClaimBalances(await api.claimBalances(farms, account!));
             };
 

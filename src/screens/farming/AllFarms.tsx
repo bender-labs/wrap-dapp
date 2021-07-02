@@ -3,10 +3,8 @@ import {Container, Tab, Tabs} from '@material-ui/core';
 import {Route, Switch} from 'react-router-dom';
 import {createStyles, makeStyles} from '@material-ui/core/styles';
 import {paths} from "../routes";
-import UnstakeAll from "../../features/farming/unstake_all/UnstakeAll";
 import ClaimAll from "../../features/farming/claim_all/ClaimAll";
 import {useHistory, useRouteMatch} from "react-router";
-import StakeAll from "../../features/farming/stake_all/StakeAll";
 import WithBalancesScreen from "./WithBalancesScreen";
 
 const useStyles = makeStyles((theme) => createStyles({
@@ -41,12 +39,8 @@ function AllFarms() {
                 <Tab label="Claim from all farms" value={paths.ALL_FARMS_CLAIM} className={classes.tab}/>
             </Tabs>
             <Switch>
-                <Route path={paths.ALL_FARMS_STAKE} exact
-                       component={WithBalancesScreen(StakeAll)}/>
-                <Route path={paths.ALL_FARMS_UNSTAKE} exact
-                       component={WithBalancesScreen(UnstakeAll)}/>
-                <Route path={paths.ALL_FARMS_CLAIM} exact
-                       component={ClaimAll}/>
+                <Route path={[paths.ALL_FARMS_STAKE, paths.ALL_FARMS_UNSTAKE]} exact component={WithBalancesScreen}/>
+                <Route path={paths.ALL_FARMS_CLAIM} exact component={ClaimAll}/>
             </Switch>
         </Container>
     );

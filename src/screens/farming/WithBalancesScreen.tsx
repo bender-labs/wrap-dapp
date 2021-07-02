@@ -6,6 +6,10 @@ import {FarmConfig} from "../../config";
 import {useConfig} from "../../runtime/config/ConfigContext";
 import useTokenBalance from "../../features/token/hook/useTokenBalance";
 import useBalances from "../../features/farming/useBalances";
+import {Route} from "react-router-dom";
+import {paths} from "../routes";
+import StakeAll from "../../features/farming/stake_all/StakeAll";
+import UnstakeAll from "../../features/farming/unstake_all/UnstakeAll";
 
 export interface FarmAllProps {
     balances: BalancesState,
@@ -16,7 +20,7 @@ export interface FarmAllProps {
     farms: FarmConfig[],
 }
 
-function WithBalancesScreen(Comp: React.FunctionComponent<FarmAllProps>) {
+function WithBalancesScreen() {
     const {balances, balanceDispatch} = useBalances();
     const {farms} = useConfig();
     const {
@@ -31,9 +35,17 @@ function WithBalancesScreen(Comp: React.FunctionComponent<FarmAllProps>) {
         }
     }, [balances, refresh]);
 
-    return () => (
-        <Comp balances={balances} balanceDispatch={balanceDispatch} balance={balance} loading={loading}
-              refresh={refresh} farms={farms}/>
+    return (
+        <>
+            <Route path={paths.ALL_FARMS_STAKE} exact
+                   component={() => <StakeAll balances={balances} balanceDispatch={balanceDispatch} balance={balance}
+                                              loading={loading}
+                                              refresh={refresh} farms={farms}/>}/>
+            <Route path={paths.ALL_FARMS_UNSTAKE} exact
+                   component={() => <UnstakeAll balances={balances} balanceDispatch={balanceDispatch} balance={balance}
+                                                loading={loading}
+                                                refresh={refresh} farms={farms}/>}/>
+        </>
     );
 }
 
