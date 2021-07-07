@@ -1,5 +1,4 @@
 import React from 'react';
-import './App.css';
 import {Web3ReactProvider} from '@web3-react/core';
 import {getLibrary as getEthLibrary} from './features/ethereum/web3React';
 import {getLibrary as getTezosLibrary} from './features/tezos/beacon';
