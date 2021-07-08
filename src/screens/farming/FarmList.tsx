@@ -41,7 +41,7 @@ const useStyle = makeStyles(() =>
       },
     },
     apy: {
-      fontSize: '16px',
+      fontSize: '14px',
 
       '& > span': {
         fontWeight: 900,
