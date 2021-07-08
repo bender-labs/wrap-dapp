@@ -3,6 +3,7 @@ import axios, {AxiosInstance} from 'axios';
 export interface StakingApy {
     asset: string;
     apy: string;
+    apr: string;
     totalRewards: string;
     totalRewardsInUsd: string;
     totalStaked: string;

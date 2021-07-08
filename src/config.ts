@@ -23,6 +23,7 @@ export interface FarmConfig {
   rewardTokenSymbol: string;
   rewards: IndexerFarmConfigurationRewardsPayload | undefined;
   apy?: string;
+  apr?: string;
 }
 
 export interface InitialConfig {

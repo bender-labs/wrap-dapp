@@ -102,7 +102,8 @@ export default function Provider({children}: PropsWithChildren<{}>) {
                             rewardTokenDecimals: tokenMetadata.decimals,
                             rewardTokenSymbol: tokenMetadata.tezosSymbol,
                             rewards: farmConfiguration.rewards,
-                            apy: apy ? parseFloat(apy.apy).toFixed(0) : undefined
+                            apy: apy ? parseFloat(apy.apy).toFixed(0) : undefined,
+                            apr: apy ? parseFloat(apy.apr).toFixed(0) : undefined
                         });
                     }
                     return validFarms;

@@ -113,7 +113,7 @@ function Rewards({
     return (
       <>
         { farmConfig.apy && <Typography className={apyClassName}>
-            APY: <span>{farmConfig.apy}%</span>
+            APY: <span>{farmConfig.apy}%</span>{'  '}APR: <span>{farmConfig.apr}%</span>
           </Typography>
         }
         <Typography className={className}>

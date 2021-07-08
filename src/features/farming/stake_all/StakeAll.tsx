@@ -176,6 +176,9 @@ export default function StakeAll({balances, balanceDispatch, balance, loading, r
                     {farm.apy ?? 0}%
                 </FarmingStyledTableCell>
                 <FarmingStyledTableCell align='center'>
+                    {farm.apr ?? 0}%
+                </FarmingStyledTableCell>
+                <FarmingStyledTableCell align='center'>
                     {findFarmTotalStaked(farm, balances.balances)}
                 </FarmingStyledTableCell>
                 <FarmingStyledTableCell align='center'>{findCurrentWalletBalance(farm)}</FarmingStyledTableCell>
@@ -216,7 +219,8 @@ export default function StakeAll({balances, balanceDispatch, balance, loading, r
                                 <FarmingStyledTableCell align='center'>Symbol</FarmingStyledTableCell>
                                 <FarmingStyledTableCell align='center'>Token Name</FarmingStyledTableCell>
                                 <FarmingStyledTableCell align='center'>APY</FarmingStyledTableCell>
-                                <FarmingStyledTableCell align='center'>Total Global Stake</FarmingStyledTableCell>
+                                <FarmingStyledTableCell align='center'>APR</FarmingStyledTableCell>
+                                <FarmingStyledTableCell align='center'>Global Stake</FarmingStyledTableCell>
                                 <FarmingStyledTableCell align='center'>Your current Stake</FarmingStyledTableCell>
                                 <FarmingStyledTableCell align='center'>New Stake</FarmingStyledTableCell>
                             </TableRow>
