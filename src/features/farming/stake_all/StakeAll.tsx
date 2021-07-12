@@ -258,7 +258,7 @@ export default function StakeAll({balances, balanceDispatch, balance, loading, r
                                 await stakeAll(newStakes, updateBalances);
                             }}
                             disabled={stakeAllStatus !== StakeAllStatus.READY || isTotalInvalid()}
-                            text={balances.isDirty ? "Waiting for confirmation" : "Stake on all farms"}
+                            text={balances.isDirty ? "Waiting for confirmation" : "Stake on all selected farms"}
                             variant={'contained'}
                         />
                     )}
