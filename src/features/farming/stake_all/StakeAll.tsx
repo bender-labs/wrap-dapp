@@ -231,9 +231,7 @@ export default function StakeAll({balances, balanceDispatch, balance, loading, r
                                 <TableRow><TableCell>No data to display...</TableCell></TableRow>
                             }
                             <FarmingStyledTableRow>
-                                <FarmingStyledTableCell align='center'/>
-                                <FarmingStyledTableCell align='center'/>
-                                <FarmingStyledTableCell/>
+                                <FarmingStyledTableCell colSpan={4}/>
                                 <FarmingStyledTableCell>
                                     <Typography>
                                         Total :
