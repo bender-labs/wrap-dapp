@@ -101,7 +101,7 @@ function Rewards({
           +farmConfig.rewards.duration) *
         100;
     const nextRewardsDuration = Duration.fromMillis(
-      (endLevel - currentTezosLevel) * 60 * 1000
+      (endLevel - currentTezosLevel) * 30 * 1000
     );
 
     const nextRewardLabel = periodEnded
