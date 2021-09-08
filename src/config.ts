@@ -102,7 +102,7 @@ const WRAP_MAINNET: FarmStakedToken = {
 };
 
 const WRAP_TESTNET: FarmStakedToken = {
-  contractAddress: 'KT1L1xYJit22TmuhDXaeng4AZDhRqZwcacNj',
+  contractAddress: 'KT1M6RSfdbWL6RH5tPdxekrZhtXUh67x2N9Y',
   thumbnailUri: 'ipfs://Qma2o69VRZe8aPsuCUN1VRUE5k67vw2mFDXb35uDkqn17o',
   decimals: 8,
   symbol: 'WRAP',
