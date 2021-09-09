@@ -126,7 +126,7 @@ export default class IndexerApi {
     ): Promise<IndexerWrapPayload> {
         return this.client
             .get('/wraps', {
-                params: {ethereumAddress, tezosAddress, status},
+                params: {ethereumAddress, tezosAddress, status, type: 'ERC20'},
             })
             .then(({data}) => data);
     }
@@ -152,7 +152,7 @@ export default class IndexerApi {
     ): Promise<IndexerUnwrapPayload> {
         return this.client
             .get('/unwraps', {
-                params: {ethereumAddress, tezosAddress, status},
+                params: {ethereumAddress, tezosAddress, status, type: 'ERC20'},
             })
             .then(({data}) => data);
     }
